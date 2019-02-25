@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="jumbotron text-center mb-0">
+    <div class="container">
+        <h1 class="jumbotron-heading">Talks.Tue</h1>
+        <p class="lead text-muted">A simple way to find the best talks at hosted at our University for you.</p>
+        <p>
+            <a href="{{ url_for('core.talks') }}" class="btn btn-primary my-2">Browse talks</a>
+            {% if current_user.is_anonymous %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-secondary my-2">Register to build your profile</a>
+            {% else %}
+                <a href="{{ url_for('auth.profile') }}" class="btn btn-secondary my-2">Your profile</a>
+            {% endif %}
+        </p>
+    </div>
+</section>
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+        {% for talk in up_next %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ talk.name }}</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#talkModal" data-id="{{ talk.id }}">View</button>
+                                <a href="" class="btn btn-sm btn-outline-secondary">Goto</a>
+                            </div>
+                            <small class="text-muted">{{ talk.timestamp }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% include 'snippets/talk/modal.html' %}
+{% endblock %}
+{% block script %}
+{% include 'snippets/talk/modal_js.html' %}
+<script type="text/javascript">
+$('#talkModal').on('show.bs.modal', function (event) {
+    var id = $(event.relatedTarget).data('id');
+    if (!("talk" + id in sessionStorage)) {
+        $.getJSON("{{ url_for('api.talk') }}" + "?id=" + id)
+        .done(function(talk){
+            sessionStorage["talk" + id] = JSON.stringify(talk);
+            populate_talk_modal(id);
+        })
+    } else {
+        populate_talk_modal(id);
+    }
+})
+</script>
+{% endblock script %}

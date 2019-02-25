@@ -1,0 +1,15 @@
+<div class="card">
+    <div class="card-header"><h5>Talks</h5></div>
+    <div class="card-body">
+        {{ talk_table.generate_html() | safe }}
+    </div>
+    <div class="card-footer">
+        <a href="{{ url_for('admin.talk') }}" class="btn btn-primary">Neuen Talk anlegen</a>
+    </div>
+</div>
+{% include 'snippets/talk/modal.html' %}
+{% include 'snippets/talk/modal_js.html' %}
+{{ talk_table.generate_js(
+    table_url=url_for('api.talk_table'), 
+    createdRow="function ( row, talk, index ) {$(row).click(function(event){populate_talk_modal(talk.id);});}"
+) | safe }}

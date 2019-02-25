@@ -1,0 +1,15 @@
+<script type="text/javascript">
+populate_talk_modal = function(id) {
+    var modal = $('#talkModal');
+    if (id !== modal.data('lastId')) {
+        var talk = JSON.parse(sessionStorage["talk" + id]);
+        modal.find('.modal-title').text(talk.name);
+        modal.find('.description').html(talk.rendered_description);
+        modal.find('.time').html(talk.timestamp);
+        modal.find('.tags').html(talk.rendered_tags);
+        modal.find('.link').attr('href', "")
+        modal.data('lastId', id);
+    }
+    modal.modal('toggle');
+};
+</script>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+        {% block title %}
+            {% if title %}{{ title }} - Talks.Tue{% else %}Talks.Tue{% endif %}
+        {% endblock %}
+        </title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/datatables.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome-solid.min.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jQuery.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}" ></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/datatables.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/markdown.converter.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/markdown.sanitizer.min.js') }}"></script>
+        {% block head %}{% endblock head %}
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                {% block navbar %}
+                <a class="navbar-brand" href="{{ url_for('core.index') }}"><i class="fas fa-university"></i> Talks.Tue</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ url_for('core.index') }}">Home</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
+                            <div class="dropdown-menu" aria-labelledby="dropdown">
+                                {% if current_user.is_anonymous %}
+                                    <a class="dropdown-item" href="{{ url_for('auth.login') }}">Login</a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.register') }}">Register</a>
+                                {% else %}
+                                    <a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                {% endblock navbar %}
+            </nav>
+        </header>
+        <main role="main">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row justify-content-center py-2" style="position: fixed; width: 100%; z-index: 999999;">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <script type="text/javascript">
+                        $(document).ready (function(){
+                            $(".alert").fadeTo(2000, 500).slideUp(500, function(){
+                                    $(".alert").slideUp(500);
+                            });
+                        });
+                    </script>
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock content%}
+        </main>
+        <footer class="text-muted">
+            <div class="container">
+                <p class="float-right">
+                    <a href="#">Back to top</a>
+                </p>
+            </div>
+        </footer>
+        {% block script %}
+        {% endblock script %}
+    </body>
+</html>

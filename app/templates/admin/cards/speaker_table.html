@@ -1,0 +1,15 @@
+<div class="card">
+    <div class="card-header"><h5>Speakers</h5></div>
+    <div class="card-body">
+        {{ speaker_table.generate_html() | safe }}
+    </div>
+    <div class="card-footer">
+        <a href="{{ url_for('admin.speaker') }}" class="btn btn-primary">Neuen Speaker anlegen</a>
+    </div>
+</div>
+{% include 'snippets/speaker/modal.html' %}
+{% include 'snippets/speaker/modal_js.html' %}
+{{ speaker_table.generate_js(
+    table_url=url_for('api.speaker_table'), 
+    createdRow="function ( row, speaker, index ) {$(row).click(function(event){populate_speaker_modal(speaker.id);});}"
+) | safe }}

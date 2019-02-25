@@ -1,0 +1,41 @@
+{% include 'snippets/speaker/modal_js.html' %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#speakerTable').DataTable({
+        "fixedHeader": {
+            "header": true,
+        },
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "dataType": 'json',
+            "contentType": "application/json; charset=utf-8",
+            "type": "GET",
+            "url":"{{ url_for('api.speaker_table') }}",
+            "dataSrc": function(json) {
+                if (!("speaker_fields" in sessionStorage)) {
+                    sessionStorage["speaker_fields"] = JSON.stringify(json.fields);
+                } else if (JSON.stringify(json.fields) !== sessionStorage["speaker_fields"]) {
+                    // The give fields have updated so clear the whole sessions local storage
+                    // "enable"/force repopulation with updated values
+                    sessionStorage.clear();
+                    sessionStorage["speaker_fields"] = JSON.stringify(json.fields);
+                }
+                return json.data;
+            }
+        },
+        "deferRender": true,
+        "columns": [
+            { "data": "full_name" },
+        ],
+        "createdRow": function ( row, speaker, index ) {
+            if (!("speaker" + speaker.id in sessionStorage)) {
+                sessionStorage["speaker" + speaker.id] = JSON.stringify(speaker);
+            }
+            $(row).click(function(event){
+                populate_speaker_modal(speaker.id);
+            });
+        }
+    });
+});
+</script>
