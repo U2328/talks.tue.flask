@@ -63,8 +63,7 @@ class Talk(db.Model):
     description = db.Column(db.Text)
     speaker_id = db.Column(db.Integer, db.ForeignKey('speaker.id'))
     speaker = db.relationship('Speaker', backref='talks')
-    _tags = db.relationship("Tag", secondary=lambda: talk_tags)
-    tags = association_proxy('_tags', 'name', creator=lambda s: Tag(name=s))
+    tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=db.backref('talks'))
 
     def serialize(self, *, recursive=True):
         return {
@@ -74,7 +73,8 @@ class Talk(db.Model):
             "description": self.description,
             "rendered_description": mistune.markdown(self.description), 
             "speaker": self.speaker.serialize(recursive=False) if recursive and self.speaker else self.speaker_id,
-            "tags": list(self.tags)
+            "tags": [tag.serialize(recursive=False) for tag in self.tags],
+            "rendered_tags": ' '.join(tag.render() for tag in self.tags)
         }
 
     def set_password(self, password):
@@ -87,7 +87,23 @@ class Talk(db.Model):
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
-    talks = db.relationship("Talk", secondary=lambda: talk_tags)
+
+    def __str__(self):
+        return self.name
+
+    def render(self):
+        return self.name
+
+    def serialize(self, *, recursive=True):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "talks": (
+                [talk.serialize(recursive=False) for talk in self.talks]
+                if recursive else
+                [talk.id for talk in self.talks]
+            )
+        }
 
 
 talk_tags = db.Table('talk_tags',

@@ -21,8 +21,8 @@ login.login_view = 'auth.login'
 # login.login_message = _l('Please log in to access this page.')
 pagedown = PageDown()
 
-from app.auth import bp as auth_bp
 from app.core import bp as core_bp
+from app.auth import bp as auth_bp
 from app.api import bp as api_bp
 from app.errors import bp as errors_bp
 from app.admin import bp as admin_bp

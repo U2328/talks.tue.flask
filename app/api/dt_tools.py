@@ -21,6 +21,7 @@ class DataTable:
 
     model = None
     cols = None
+    row_controls = None
 
     @classmethod
     def generate_html(cls, class_=None, table_class=None, table_style=None):
@@ -42,9 +43,8 @@ class DataTable:
         """.split('\n'))
 
     @classmethod
-    def generate_js(cls, table_url, **kwargs):
+    def generate_js(cls, table_url, row_class="", **kwargs):
         return "".join(_.strip() for _ in f"""
-        <script type="text/javascript">
         $(document).ready(function() {{
             $('#{cls.model.__name__.lower()}Table').DataTable({{
                 "fixedHeader": {{"header": true,}},
@@ -66,21 +66,25 @@ class DataTable:
                     }}
                 }},
                 "deferRender": true,
-                "columns": [{', '.join(f'{{ "data": "{col["field"]}"}}' for col in cls.cols)}],
+                "columns": [{', '.join(f'{{ "data": "{col["field"]}", "orderable": {str(col.get("orderable", True)).lower()} }}' for col in cls.cols)}],
+                "createdRow" : function( row, data, index ) {{
+                    sessionStorage["{cls.model.__name__.lower()}" + data.id] = JSON.stringify(data);
+                    $(row).addClass("{cls.model.__name__.lower()}-row {row_class}");
+                    if( data.hasOwnProperty("id") ) {{row.id = data.id}}
+                }},
                 {",".join(f'"{name}": {value}' for name, value in kwargs.items())}
             }});
         }});
-        </script>
         """.split('\n'))
 
     def __init__(self, pre_filter=None):
         self._pre_filter = pre_filter or or_()
 
     @classmethod
-    def get_col_def(cls, col):
-        for col_def in cls.cols:
-            if col_def['col'] == col:
-                return col_def
+    def get_col_def(cls, col_idx):
+        for col in cls.cols:
+            if col['col'] == col_idx:
+                return col
         return None
 
     def _parse_ordering(self):
@@ -98,7 +102,7 @@ class DataTable:
         _ = sorted((
             ordering for ordering in _
             if ordering["def"] is not None and ordering["def"].get("orderable", True)
-        ), key=lambda ordering: ordering["def"]["weight"])
+        ), key=lambda ordering: ordering["def"].get("weight", float('inf')))
         return sum((
             [getattr(
                 getattr(self.model, ordering["def"]["field"]),
@@ -112,11 +116,19 @@ class DataTable:
     def filter(self, value):
         return or_(
             *(
-                getattr(self.model, col_def['field']).contains(value)
-                if "custom_filter" not in col_def else
-                col_def["custom_filter"](value)
-                for col_def in self.cols
+                getattr(self.model, col['field']).contains(value)
+                if "custom_filter" not in col else
+                col["custom_filter"](value)
+                for col in self.cols
+                if 'value' not in col
             )
+        )
+
+    def filter_values(self, value):
+        return lambda obj: not any('value' in col for col in self.cols) or any(
+            (col['value'](obj) if callable(col['value']) else col['value']) == value
+            for col in self.cols
+            if 'value' in col
         )
 
     def _parse_filtering(self):
@@ -127,13 +139,26 @@ class DataTable:
             return or_()
 
     def get_data(self):
+        current_app.logger.info(self._parse_filtering())
         q = self.model.query.filter(self._pre_filter).filter(self._parse_filtering()).order_by(*self._parse_ordering())
-        amount = q.count()
+        l = list(filter(self.filter_values(request.args.get("search[value]")), q))
+        amount = len(l)
         return {
             "fields": list(self.model.__table__.columns.keys()),
             "recordsTotal": amount,
             "recordsFiltered": amount,
-            "data": [_.serialize() for _ in q[int(request.args.get('start')):int(request.args.get('start'))+int(request.args.get('length'))]],
+            "data": [self._serialize(_) for _ in l[int(request.args.get('start')):int(request.args.get('start'))+int(request.args.get('length'))]],
+        }
+
+    @classmethod
+    def _serialize(cls, obj):
+        return {
+            **(obj.serialize() if hasattr(obj, 'serialize') and callable(obj.serialize) else {}),
+            **{
+                col['field']: col['value'](obj) if callable(col['value']) else col['value']
+                for col in cls.cols
+                if 'value' in col
+            }
         }
 
     def get_response(self):

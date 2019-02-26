@@ -12,12 +12,24 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/datatables.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome-solid.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.contextMenu.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/tempusdominus-bootstrap-4.min.css') }}">
         <script type="text/javascript" src="{{ url_for('static', filename='js/jQuery.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}" ></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/moment.min.js') }}" ></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/tempusdominus-bootstrap-4.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/datatables.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/markdown.converter.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/markdown.sanitizer.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.contextMenu.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.ui.position.js') }}"></script>
+        <style type="text/css">
+            .datepicker td, .datepicker th {
+                width: 1.5em;
+                height: 1.5em;
+            }
+        </style>
         {% block head %}{% endblock head %}
     </head>
     <body>
@@ -53,7 +65,7 @@
         <main role="main">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    <div class="row justify-content-center py-2" style="position: fixed; width: 100%; z-index: 999999;">
+                    <div id="messages" class="row justify-content-center py-2" style="position: fixed; width: 100%; z-index: 999999;">
                         {% for category, message in messages %}
                             <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
                                 {{ message }}
@@ -64,9 +76,9 @@
                         {% endfor %}
                     </div>
                     <script type="text/javascript">
-                        $(document).ready (function(){
+                        $(document).ready(function(){
                             $(".alert").fadeTo(2000, 500).slideUp(500, function(){
-                                    $(".alert").slideUp(500);
+                                        $(".alert").slideUp(500);
                             });
                         });
                     </script>
@@ -81,6 +93,21 @@
                 </p>
             </div>
         </footer>
+        <script type="text/javascript">
+            $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'far fa-calendar-alt',
+                    up: 'fas fa-arrow-up',
+                    down: 'fas fa-arrow-down',
+                    previous: 'fas fa-chevron-left',
+                    next: 'fas fa-chevron-right',
+                    today: 'fas fa-calendar-check',
+                    clear: 'fas fa-trash-alt ',
+                    close: 'fas fa-times'
+                }
+            });
+        </script>
         {% block script %}
         {% endblock script %}
     </body>

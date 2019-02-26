@@ -4,12 +4,39 @@
         {{ talk_table.generate_html() | safe }}
     </div>
     <div class="card-footer">
-        <a href="{{ url_for('admin.talk') }}" class="btn btn-primary">Neuen Talk anlegen</a>
+        <a href="{{ url_for('admin.talk') }}" class="btn btn-primary">Add new talk</a>
     </div>
 </div>
 {% include 'snippets/talk/modal.html' %}
+{% block script %}
 {% include 'snippets/talk/modal_js.html' %}
-{{ talk_table.generate_js(
-    table_url=url_for('api.talk_table'), 
-    createdRow="function ( row, talk, index ) {$(row).click(function(event){populate_talk_modal(talk.id);});}"
-) | safe }}
+<script type="text/javascript">
+    {{ talk_table.generate_js(url_for('api.talk_table')) | safe }}
+    $('#talkTable').on('click', '.talk-row', function () {populate_talk_modal($(this).attr('id'));});
+    $('#talkTable').contextMenu({
+        selector: '.talk-row',
+        callback: function(key, options) {
+            var id = $(this).attr('id');
+            if (key == "open") {populate_talk_modal(id);}
+            if (key == "edit") {window.open("{{ url_for('admin.talk') }}/" + id, "_self");}
+            if (key == "copy") {window.open("{{ url_for('admin.talk') }}/" + id + "?copy=1", "_self");}
+            if (key == "delete") {
+                $.ajax({
+                    url: '{{ url_for("api.talk") }}/' + id,
+                    type: 'DELETE',
+                    success: function(result) {
+                        alert("deleted " + id);
+                        $("#talkTable").dt.ajax.reload(function(x) {$("#talkTable").draw();});
+                    }
+                });
+            }
+        },
+        items: {
+            "open": {name: "Open", icon: "far fa-eye"},
+            "edit": {name: "Edit", icon: "fa-edit"},
+            "copy": {name: "Copy", icon: "fa-copy"},
+            "delete": {name: "Delete", icon: "far fa-trash-alt"},
+        }
+    });
+</script>
+{% endblock script %}

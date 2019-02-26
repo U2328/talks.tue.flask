@@ -3,67 +3,93 @@ from flask import render_template, request, redirect, url_for, abort,current_app
 from . import bp
 from .forms import TalkForm, SpeakerForm
 from app import db
-from app.utils import is_safe_url
-from app.api.routes import TalkTable, SpeakerTable
+from app.utils import is_safe_url, copy_row
+from app.api.routes import TalkTable, SpeakerTable, TagTable
 from app.auth.utils import has_perms
-from app.core.models import Talk, Speaker
+from app.core.models import Talk, Speaker, Tag
 
 
 @bp.route('/', methods=['GET'])
 @has_perms('admin')
 def index():
-    return render_template('admin/index.html', title="Admin", talk_table=TalkTable, speaker_table=SpeakerTable)
+    return render_template(
+        'admin/index.html',
+        title="Admin",
+        talk_table=TalkTable,
+        speaker_table=SpeakerTable,
+        tag_table=TagTable
+    )
 
 
 @bp.route('/talk', methods=['GET', 'POST'])
 @bp.route('/talk/<int:id>', methods=['GET', 'POST'])
 @has_perms('admin')
 def talk(id=None):
-    talk = None if id is None else Talk.query.filter_by(id=id).first()
-    form = TalkForm(request.form, obj=talk)
-    if form.validate_on_submit():
+    if request.method == 'GET':
+        talk = Talk() if id is None else Talk.query.get(id)
         if talk is None:
-            talk = Talk(
-                name=form.name.data,
-                timestamp=form.timestamp.data,
-                description=form.description.data,
-                _tags=form.tags.data,
-                speaker=form.speaker.data
-            )
-            talk.set_password(form.password.data)
+            return abort(404)
+        if request.args.get('copy', False):
+            talk = copy_row(Talk, talk, ['id'])
             db.session.add(talk)
-        else:
+            db.session.commit()
+            current_app.logger.info(talk)
+            return redirect(url_for('admin.talk', id=talk.id))
+        if id is None:
+            db.session.add(talk)
+            db.session.commit()
+        form = TalkForm(obj=talk)
+        is_new = id is None
+    elif request.method == 'POST':
+        form = TalkForm(request.form)
+        if form.validate():
+            talk = Talk.query.get(form.id.data)
+            if talk is None:
+                return abort(400) if id is None else abort(404)
             form.populate_obj(talk)
-            talk.set_password(form.password.data)
-        db.session.commit()
-        next = request.args.get('next')
-        if not is_safe_url(next):
-            return abort(400)
-        return redirect(next or url_for('admin.index'))
-    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=talk is None)
+            if form.password.data:
+                talk.set_password(form.password.data)
+            db.session.commit()
+            next = request.args.get('next')
+            if not is_safe_url(next):
+                return abort(400)
+            return redirect(next or url_for('admin.index'))
+        is_new = False
+    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new)
 
 
 @bp.route('/speaker', methods=['GET', 'POST'])
 @bp.route('/speaker/<int:id>', methods=['GET', 'POST'])
 @has_perms('admin')
 def speaker(id=None):
-    speaker = None if id is None else speaker.query.filter_by(id=id).first()
-    form = SpeakerForm(request.form, obj=speaker)
-    if form.validate_on_submit():
+    if request.method == 'GET':
+        speaker = Speaker() if id is None else Speaker.query.get(id)
         if speaker is None:
-            speaker = Speaker(
-                name=form.name.data,
-                familiy_name=form.familiy_name.data,
-                about_me=form.about_me.data,
-            )
-            speaker.set_password(form.password.data)
+            return abort(404)
+        if request.args.get('copy', False):
+            speaker = copy_row(Speaker, speaker, ['id'])
             db.session.add(speaker)
-        else:
+            db.session.commit()
+            current_app.logger.info(speaker)
+            return redirect(url_for('admin.speaker', id=speaker.id))
+        if id is None:
+            db.session.add(speaker)
+            db.session.commit()
+        form = SpeakerForm(obj=speaker)
+        is_new = id is None
+    elif request.method == 'POST':
+        form = SpeakerForm(request.form)
+        if form.validate():
+            speaker = Speaker.query.get(form.id.data)
+            if speaker is None:
+                return abort(400) if id is None else abort(404)
             form.populate_obj(speaker)
-            speaker.set_password(form.password.data)
-        db.session.commit()
-        next = request.args.get('next')
-        if not is_safe_url(next):
-            return abort(400)
-        return redirect(next or url_for('admin.index'))
-    return render_template('admin/speaker.html', title="speaker - Admin", form=form, new=speaker is None)
+            if form.password.data:
+                speaker.set_password(form.password.data)
+            db.session.commit()
+            next = request.args.get('next')
+            if not is_safe_url(next):
+                return abort(400)
+            return redirect(next or url_for('admin.index'))
+        is_new = False
+    return render_template('admin/speaker.html', title="Speaker - Admin", form=form, new=is_new)

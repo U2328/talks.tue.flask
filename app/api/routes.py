@@ -1,19 +1,29 @@
 from dateutil.parser import parse as parse_datetime
-from flask import jsonify, request, current_app
+from flask import jsonify, request, current_app, abort
 from sqlalchemy import or_, cast, DateTime
 
 from app import db
 from app.core.models import Talk, Speaker, Tag
+from app.auth.utils import has_perms
 from . import bp
 from .dt_tools import DataTable
 
 
-@bp.route('/talk', methods=['GET'])
-@bp.route('/talk/<int:id>', methods=['GET'])
+@bp.route('/talk', methods=['GET', 'DELETE'])
+@bp.route('/talk/<int:id>', methods=['GET', 'DELETE'])
 def talk(id=None):
     if id is None:
         id = request.args.get('id')
-    return jsonify(Talk.query.filter(Talk.id == id)[0].serialize())    
+    if Talk.query.get(id) is None:
+        return abort(404)
+    if request.method == 'DELETE':
+        if not has_perms('admin'):
+            raise abort(403)
+        Talk.query.filter_by(id=id).delete()
+        db.session.commit()
+        return jsonify({"message": f"Deleted Talk with id = {id}"})
+    else:
+        return jsonify(Talk.query.filter(Talk.id == id)[0].serialize())    
 
 
 @bp.route('/talks', methods=['GET'])
@@ -28,7 +38,6 @@ class TalkTable(DataTable):
             'col': 0,
             'field': 'name',
             'name': 'Name',
-            'weight': 1,
         }, {
             'col': 1,
             'field': 'timestamp',
@@ -36,7 +45,7 @@ class TalkTable(DataTable):
             'weight': 0,
         }, {
             'col': 2,
-            'field': 'tags',
+            'field': 'rendered_tags',
             'name': 'Tags',
             'orderable': False,
         }
@@ -55,12 +64,21 @@ def talk_table():
     return table.get_response()
 
 
-@bp.route('/speaker', methods=['GET'])
-@bp.route('/speaker/<int:id>', methods=['GET'])
+@bp.route('/speaker', methods=['GET', 'DELETE'])
+@bp.route('/speaker/<int:id>', methods=['GET', 'DELETE'])
 def speaker(id=None):
     if id is None:
         id = request.args.get('id')
-    return jsonify(Speaker.query.filter(speaker.id == id)[0].serialize())    
+    if Speaker.query.get(id) is None:
+        return abort(404)
+    if request.method == 'DELETE':
+        if not has_perms('admin'):
+            raise abort(403)
+        Speaker.query.filter_by(id=id).delete()
+        db.session.commit()
+        return jsonify({"message": f"Deleted Speaker with id = {id}"})
+    else:
+        return jsonify(Speaker.query.get(id).serialize())    
 
 
 @bp.route('/speakers', methods=['GET'])
@@ -77,7 +95,6 @@ class SpeakerTable(DataTable):
             'name': 'Name',
             'custom_order': lambda dir: (getattr(Speaker.name, dir)(), getattr(Speaker.familiy_name, dir)()),
             'custom_filter': lambda value: or_(Speaker.name.contains(value), Speaker.familiy_name.contains(value)),
-            'weight': 0,
         }
     ]
 
@@ -85,4 +102,20 @@ class SpeakerTable(DataTable):
 @bp.route('/speaker_table', methods=['GET'])
 def speaker_table():
     table = SpeakerTable()
+    return table.get_response()
+
+
+class TagTable(DataTable):
+    model = Tag
+    cols = [
+        {
+            'col': 0,
+            'field': 'name',
+            'name': 'Name',
+        }
+    ]
+
+@bp.route('/tag_table', methods=['GET'])
+def tag_table():
+    table = TagTable()
     return table.get_response()

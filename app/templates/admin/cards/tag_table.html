@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-header"><h5>Tags</h5></div>
+    <div class="card-body">
+        {{ tag_table.generate_html() | safe }}
+    </div>
+    <div class="card-footer">
+        <a href="#" class="btn btn-primary">...</a>
+    </div>
+</div>
+{% include 'snippets/speaker/modal.html' %}
+{% block script %}
+{% include 'snippets/speaker/modal_js.html' %}
+<script type="text/javascript">
+    {{ tag_table.generate_js(url_for('api.tag_table')) | safe }}
+    $('#tagTable').contextMenu({
+        selector: '.tag-row',
+        callback: function(key, options) {
+            console.log(key); 
+            console.log(options);
+            console.log($(this));  
+        },
+        items: {
+            "edit": {name: "Edit", icon: "fa-edit"},
+            "delete": {name: "Delete", icon: "far fa-trash-alt"},
+        }
+    });
+</script>
+{% endblock script %}

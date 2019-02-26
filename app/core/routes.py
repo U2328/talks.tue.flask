@@ -5,6 +5,7 @@ from flask import render_template
 from app import db
 from . import bp
 from .models import Talk
+from app.api.routes import TalkTable
 
 
 @bp.route('/')
@@ -15,4 +16,5 @@ def index():
 
 @bp.route('/talks')
 def talks():
-    return render_template('core/talks.html', title='Talks')
+    table = TalkTable()
+    return render_template('core/talks.html', title='Talks', table=table)

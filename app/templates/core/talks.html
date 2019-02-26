@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-{% include 'snippets/talk/table.html' %}
+{{ table.generate_html() | safe }}
 {% endblock content %}
 {% block script %}
-{% include 'snippets/talk/table_js.html' %}
+{% include 'snippets/talk/modal.html' %}
+{% include 'snippets/talk/modal_js.html' %}
+{{ table.generate_js(
+    table_url=url_for('api.talk_table'), 
+    createdRow="function ( row, talk, index ) {$(row).click(function(event){populate_talk_modal(talk.id);});}"
+) | safe }}
 {% endblock script %}

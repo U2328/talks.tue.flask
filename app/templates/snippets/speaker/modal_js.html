@@ -1,6 +1,7 @@
 <script type="text/javascript">
 populate_speaker_modal = function(id) {
     var modal = $('#speakerModal');
+    console.warn(sessionStorage["speaker" + id]);
     if (id !== modal.data('lastId')) {
         var speaker = JSON.parse(sessionStorage["speaker" + id]);
         modal.find('.modal-title').text(speaker.full_name);
