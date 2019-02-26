@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, abort,current_app
 
 from . import bp
-from .forms import TalkForm, SpeakerForm
+from .forms import TalkForm, SpeakerForm, TagForm
 from app import db
 from app.utils import is_safe_url, copy_row
 from app.api.routes import TalkTable, SpeakerTable, TagTable
@@ -17,9 +17,25 @@ def index():
         title="Admin",
         talk_table=TalkTable,
         speaker_table=SpeakerTable,
-        tag_table=TagTable
+        tag_table=TagTable,
+        tag_form=TagForm()
     )
 
+
+@bp.route('/tag', methods=['POST'])
+@has_perms('admin')
+def tag():
+    form = TagForm(request.form)
+    if form.validate_on_submit():
+        tag = Tag()
+        form.populate_obj(tag)
+        db.session.add(tag)
+        db.session.commit()
+        next = request.args.get('next')
+        if not is_safe_url(next):
+            return abort(400)
+        return redirect(next or url_for('admin.index'))
+    return redirect(url_for('admin.index'))
 
 @bp.route('/talk', methods=['GET', 'POST'])
 @bp.route('/talk/<int:id>', methods=['GET', 'POST'])

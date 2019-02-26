@@ -4,7 +4,24 @@
         {{ tag_table.generate_html() | safe }}
     </div>
     <div class="card-footer">
-        <a href="#" class="btn btn-primary">...</a>
+        <form class="form-inline" id="tagForm" method="POST" action="{{ url_for('admin.tag') }}" novalidate>
+            {{ tag_form.hidden_tag() }}
+            <label class="sr-only" for="name">{{ tag_form.name.label }}</label>
+            <div class="input-group mb-2 mr-sm-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">@</div>
+                </div>
+                {{ tag_form.name(size=32, class_='form-control' + ('' if tag_form.name.errors|length == 0 else 'is-invalid')) }}
+                <div class="invalid-feedback">
+                    {% for error in tag_form.name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                <div class="input-group-append">
+                    {{ tag_form.submit(form='tagForm', class="btn btn-primary rounded-right") }}
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 {% include 'snippets/speaker/modal.html' %}

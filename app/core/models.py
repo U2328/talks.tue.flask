@@ -17,10 +17,10 @@ __all__ = (
 class Speaker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    password_hash = db.Column(db.String(128))
     familiy_name = db.Column(db.String(64))
     familiy_name_first = db.Column(db.Boolean, default=False)
     about_me = db.Column(db.Text)
+    password_hash = db.Column(db.String(128))
 
     @property
     def full_name(self):
