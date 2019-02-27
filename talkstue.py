@@ -66,7 +66,7 @@ def compile():
         raise RuntimeError('compile command failed')
 
 @translate.command()
-@click.argument('lang')
+@click.option('--lang', prompt=True)
 def init(lang):
     """Initialize a new language."""
     if os.system('pybabel extract -F babel.cfg -k _l -o messages.pot .'):

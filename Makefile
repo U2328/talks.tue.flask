@@ -53,4 +53,13 @@ deploy: ## init server setup
 	pipenv run flask deploy
 
 createsuperuser: ## create a superuser
-	pipenv run flask createsuperuser
+	pipenv run flask auth createsuperuser
+
+babel_init: ## intialize new language
+	pipenv run flask translate init
+
+babel_update: ## update all language files
+	pipenv run flask translate update
+
+babel_compile: ## compile all language files
+	pipenv run flask translate compile
