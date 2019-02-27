@@ -19,3 +19,6 @@ Run `make upgrade` and you should be golden.
 1. Don't panic
 2. `make full_clean`
 3. start over
+
+## What else can `make` do for me?
+Just run `make` and it will tell you. ;)
