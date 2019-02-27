@@ -6,18 +6,17 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+python-dotenv = "*"
+mistune = "*"
+python-dateutil = "*"
 flask = "*"
 flask-sqlalchemy = "*"
-python-dotenv = "*"
 flask-wtf = "*"
 flask-migrate = "*"
 flask-login = "*"
 flask-markdown = "*"
 flask-pagedown = "*"
-mistune = "*"
 flask-permissions = "*"
-urlparse = "*"
-python-dateutil = "*"
 
 [requires]
 python_version = "3.7"

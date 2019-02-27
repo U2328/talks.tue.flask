@@ -1,12 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-{{ table.generate_html() | safe }}
+<div class="container pt-2">
+    <div class="card">
+        <div class="card-header"><h5>Talks</h5></div>
+        <div class="card-body">
+            {{ table.generate_html() | safe }}
+        </div>
+    </div>
+</div>
+{% include 'snippets/talk/modal.html' %}
 {% endblock content %}
 {% block script %}
-{% include 'snippets/talk/modal.html' %}
 {% include 'snippets/talk/modal_js.html' %}
-{{ table.generate_js(
-    table_url=url_for('api.talk_table'), 
-    createdRow="function ( row, talk, index ) {$(row).click(function(event){populate_talk_modal(talk.id);});}"
-) | safe }}
+<script type="text/javascript">
+    {{ table.generate_js(url_for('api.talk_table')) | safe }}
+    $('#talkTable').on('click', '.talk-row', function () {populate_talk_modal($(this).attr('id'));});
+</script>
 {% endblock script %}

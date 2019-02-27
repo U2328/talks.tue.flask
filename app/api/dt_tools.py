@@ -50,6 +50,7 @@ class DataTable:
                 "fixedHeader": {{"header": true,}},
                 "processing": true,
                 "serverSide": true,
+                "responsive": true,
                 "ajax": {{
                     "dataType": 'json',
                     "contentType": "application/json; charset=utf-8",
