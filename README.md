@@ -2,7 +2,7 @@
 A webapp to manage talks and more at the Eberhard Karls University of Tübingen.
 
 ## Inital setup
-1. install [pipenv](https://pypi.org/project/pipenv/)
+1. install [pipenv](https://pypi.org/project/pipenv/) and make sure you can reach an installation of Python 3.7
 2. run `make init`
 3. run `make run`
 
