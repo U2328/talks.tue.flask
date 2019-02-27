@@ -6,11 +6,12 @@ from app import db
 from app.utils import is_safe_url, copy_row
 from app.api.routes import TalkTable, SpeakerTable, TagTable
 from app.auth.utils import has_perms
+from app.auth.models import Permission
 from app.core.models import Talk, Speaker, Tag
 
 
 @bp.route('/', methods=['GET'])
-@has_perms('admin')
+@has_perms(Permission.ADMIN)
 def index():
     return render_template(
         'admin/index.html',
@@ -23,7 +24,7 @@ def index():
 
 
 @bp.route('/tag', methods=['POST'])
-@has_perms('admin')
+@has_perms(Permission.ADMIN)
 def tag():
     form = TagForm(request.form)
     if form.validate_on_submit():
@@ -39,7 +40,7 @@ def tag():
 
 @bp.route('/talk', methods=['GET', 'POST'])
 @bp.route('/talk/<int:id>', methods=['GET', 'POST'])
-@has_perms('admin')
+@has_perms(Permission.ADMIN)
 def talk(id=None):
     if request.method == 'GET':
         talk = Talk() if id is None else Talk.query.get(id)
@@ -76,7 +77,7 @@ def talk(id=None):
 
 @bp.route('/speaker', methods=['GET', 'POST'])
 @bp.route('/speaker/<int:id>', methods=['GET', 'POST'])
-@has_perms('admin')
+@has_perms(Permission.ADMIN)
 def speaker(id=None):
     if request.method == 'GET':
         speaker = Speaker() if id is None else Speaker.query.get(id)

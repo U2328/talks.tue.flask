@@ -25,7 +25,7 @@ class Speaker(db.Model):
     @property
     def full_name(self):
         return '{} {}'.format(*[*(
-            (self.family_name, self.name)
+            (self.familiy_name, self.name)
             if self.familiy_name_first else
             (self.name, self.familiy_name)
         )])
