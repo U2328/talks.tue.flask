@@ -1,5 +1,6 @@
 from dateutil.parser import parse as parse_datetime
 from flask import jsonify, request, current_app, abort
+from flask_babel import lazy_gettext as _l
 from sqlalchemy import or_, cast, DateTime
 
 from app import db, moment
@@ -37,17 +38,17 @@ class TalkTable(DataTable):
         {
             'col': 0,
             'field': 'name',
-            'name': 'Name',
+            'name': _l('Name'),
         }, {
             'col': 1,
             'field': 'timestamp',
-            'name': 'Time',
+            'name': _l('Date/Time'),
             'weight': 0,
             'render': 'function(data, type, row) {return moment(data).calendar();}'
         }, {
             'col': 2,
             'field': 'rendered_tags',
-            'name': 'Tags',
+            'name': _l('Tags'),
             'orderable': False,
         }
     ]
@@ -96,7 +97,7 @@ class SpeakerTable(DataTable):
         {
             'col': 0,
             'field': 'full_name',
-            'name': 'Name',
+            'name': _l('Name'),
             'custom_order': lambda dir: (getattr(Speaker.name, dir)(), getattr(Speaker.familiy_name, dir)()),
             'custom_filter': lambda value: or_(Speaker.name.contains(value), Speaker.familiy_name.contains(value)),
         }
@@ -115,7 +116,7 @@ class TagTable(DataTable):
         {
             'col': 0,
             'field': 'name',
-            'name': 'Name',
+            'name': _l('Name'),
         }
     ]
 

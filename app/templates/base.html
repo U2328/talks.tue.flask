@@ -25,6 +25,7 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.contextMenu.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.ui.position.js') }}"></script>
         {{ moment.include_moment(no_js=True) }}
+        {{ moment.lang(g.locale) }}
         <style type="text/css">
             .datepicker td, .datepicker th {
                 width: 1.5em;

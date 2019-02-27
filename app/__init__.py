@@ -1,10 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, current_user
 from flask_pagedown import PageDown
 from flask_moment import Moment
-from flask_babel import Babel, lazy_gettext as _l
+from flask_babel import Babel, lazy_gettext as _l, get_locale
 from flaskext.markdown import Markdown
 
 from app.config import Config
@@ -36,6 +36,8 @@ def context_processor():
         'can_view_admin': hasattr(current_user, 'role') and current_user.role.name != auth.models.Role.DEFAULT_ROLE,
     }
 
+def before_request():
+    g.locale = str(get_locale())
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -60,5 +62,6 @@ def create_app(config_class=Config):
         return request.accept_languages.best_match(app.config['LANGUAGES'])
 
     app.context_processor(context_processor)
+    app.before_request(before_request)
 
     return app

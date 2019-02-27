@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import mistune
+from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.associationproxy import association_proxy
 
@@ -71,7 +72,7 @@ class Talk(db.Model):
             "name": self.name,
             "timestamp": self.timestamp,
             "description": self.description,
-            "rendered_description": mistune.markdown(self.description), 
+            "rendered_description": mistune.markdown(str(self.description)),
             "speaker": self.speaker.serialize(recursive=False) if recursive and self.speaker else self.speaker_id,
             "tags": [tag.serialize(recursive=False) for tag in self.tags],
             "rendered_tags": ' '.join(tag.render() for tag in self.tags)

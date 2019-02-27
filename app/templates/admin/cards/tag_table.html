@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-header"><h5>Tags</h5></div>
+    <div class="card-header"><h5>{{ _('Tags') }}</h5></div>
     <div class="card-body">
         {{ tag_table.generate_html() | safe }}
     </div>
@@ -37,8 +37,8 @@
             console.log($(this));  
         },
         items: {
-            "edit": {name: "Edit", icon: "fa-edit"},
-            "delete": {name: "Delete", icon: "far fa-trash-alt"},
+            "edit": {name: "{{ _("Edit") }}", icon: "fa-edit"},
+            "delete": {name: "{{ _("Delete") }}", icon: "far fa-trash-alt"},
         }
     });
 </script>

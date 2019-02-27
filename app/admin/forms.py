@@ -5,33 +5,33 @@ from wtforms import StringField, PasswordField, SubmitField, TextField, HiddenFi
 from wtforms.validators import DataRequired, ValidationError, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_pagedown.fields import PageDownField
-from flask_babel import _
+from flask_babel import _, lazy_gettext as _l
 
 from app.core.models import Tag, Speaker
 
 
 class TalkForm(FlaskForm):
     id = HiddenField('id')
-    name = StringField(_('Name'), validators=[DataRequired(), Length(max=64)])
-    description = PageDownField(_('Description'))
-    timestamp = DateTimeField(_('Date/Time'), format="%Y.%m.%d %H:%M", validators=[DataRequired()])
-    speaker = QuerySelectField(_('Speaker'), query_factory=lambda: Speaker.query.all(), get_pk=lambda s: s.id, validators=[DataRequired()])
-    tags = QuerySelectMultipleField(_('Categories'), query_factory=lambda: Tag.query.all())
-    password = PasswordField(_('Password'))
-    submit = SubmitField(_('Save'))
+    name = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
+    description = PageDownField(_l('Description'))
+    timestamp = DateTimeField(_l('Date/Time'), format="%Y.%m.%d %H:%M", validators=[DataRequired()])
+    speaker = QuerySelectField(_l('Speaker'), query_factory=lambda: Speaker.query.all(), get_pk=lambda s: s.id, validators=[DataRequired()])
+    tags = QuerySelectMultipleField(_l('Categories'), query_factory=lambda: Tag.query.all())
+    password = PasswordField(_l('Password'))
+    submit = SubmitField(_l('Save'))
 
 
 
 class SpeakerForm(FlaskForm):
     id = HiddenField('id')
-    name = StringField(_('Name'), validators=[DataRequired(), Length(max=64)])
-    familiy_name = StringField(_('Familiy Name'), validators=[DataRequired(), Length(max=64)])
-    familiy_name_first = BooleanField(_('Family name first?'))
-    about_me = PageDownField(_('About me'))
-    password = PasswordField(_('Password'))
-    submit = SubmitField(_('Save'))
+    name = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
+    familiy_name = StringField(_l('Familiy Name'), validators=[DataRequired(), Length(max=64)])
+    familiy_name_first = BooleanField(_l('Family name first?'))
+    about_me = PageDownField(_l('About me'))
+    password = PasswordField(_l('Password'))
+    submit = SubmitField(_l('Save'))
 
 
 class TagForm(FlaskForm):
-    name = StringField(_('Name'), validators=[Length(min=1, max=32)])
-    submit = SubmitField(_('Add'))
+    name = StringField(_l('Name'), validators=[Length(min=1, max=32)])
+    submit = SubmitField(_l('Add'))

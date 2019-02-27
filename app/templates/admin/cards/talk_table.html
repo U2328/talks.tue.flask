@@ -1,10 +1,10 @@
 <div class="card">
-    <div class="card-header"><h5>Talks</h5></div>
+    <div class="card-header"><h5>{{ _('Talks') }}</h5></div>
     <div class="card-body">
         {{ talk_table.generate_html() | safe }}
     </div>
     <div class="card-footer">
-        <a href="{{ url_for('admin.talk') }}" class="btn btn-primary">Add new talk</a>
+        <a href="{{ url_for('admin.talk') }}" class="btn btn-primary">{{ _("Add new talk") }}</a>
     </div>
 </div>
 {% include 'snippets/talk/modal.html' %}
@@ -17,7 +17,7 @@
         selector: '.talk-row',
         callback: function(key, options) {
             var id = $(this).attr('id');
-            if (key == "open") {populate_talk_modal(id);}
+            if (key == "view") {populate_talk_modal(id);}
             if (key == "edit") {window.open("{{ url_for('admin.talk') }}/" + id, "_self");}
             if (key == "copy") {window.open("{{ url_for('admin.talk') }}/" + id + "?copy=1", "_self");}
             if (key == "delete") {
@@ -32,10 +32,10 @@
             }
         },
         items: {
-            "open": {name: "Open", icon: "far fa-eye"},
-            "edit": {name: "Edit", icon: "fa-edit"},
-            "copy": {name: "Copy", icon: "fa-copy"},
-            "delete": {name: "Delete", icon: "far fa-trash-alt"},
+            "view": {name: "{{ _("View") }}", icon: "far fa-eye"},
+            "edit": {name: "{{ _("Edit") }}", icon: "fa-edit"},
+            "copy": {name: "{{ _("Copy") }}", icon: "fa-copy"},
+            "delete": {name: "{{ _("Delete") }}", icon: "far fa-trash-alt"},
         }
     });
 </script>
