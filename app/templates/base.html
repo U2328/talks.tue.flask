@@ -52,6 +52,9 @@
                                     <a class="dropdown-item" href="{{ url_for('auth.login') }}">Login</a>
                                     <a class="dropdown-item" href="{{ url_for('auth.register') }}">Register</a>
                                 {% else %}
+                                    {% if can_view_admin %}
+                                        <a class="dropdown-item" href="{{ url_for('admin.index') }}">Admin</a>
+                                    {% endif %}
                                     <a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a>
                                     <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
                                 {% endif %}

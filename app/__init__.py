@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_pagedown import PageDown
 from flaskext.markdown import Markdown
 
@@ -27,6 +27,11 @@ from app.api import bp as api_bp
 from app.errors import bp as errors_bp
 from app.admin import bp as admin_bp
 
+def context_processor():
+    return {
+        'can_view_admin': current_user.role.name != auth.models.Role.DEFAULT_ROLE,
+    }
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -43,5 +48,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(api_bp, url_prefix='/api')
+
+    app.context_processor(context_processor)
 
     return app
