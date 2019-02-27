@@ -17,6 +17,8 @@ flask-login = "*"
 flask-markdown = "*"
 flask-pagedown = "*"
 flask-permissions = "*"
+flask-babel = "*"
+flask-moment = "*"
 
 [requires]
 python_version = "3.7"

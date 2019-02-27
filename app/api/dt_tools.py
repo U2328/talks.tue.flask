@@ -22,6 +22,7 @@ class DataTable:
     model = None
     cols = None
     row_controls = None
+    js_kwargs = None
 
     @classmethod
     def generate_html(cls, class_=None, table_class=None, table_style=None):
@@ -44,10 +45,10 @@ class DataTable:
 
     @classmethod
     def generate_js(cls, table_url, row_class="", **kwargs):
+        kwargs = {**(cls.js_kwargs or {}), **kwargs}
         return "".join(_.strip() for _ in f"""
         $(document).ready(function() {{
             $('#{cls.model.__name__.lower()}Table').DataTable({{
-                "fixedHeader": {{"header": true,}},
                 "processing": true,
                 "serverSide": true,
                 "responsive": true,
@@ -67,11 +68,12 @@ class DataTable:
                     }}
                 }},
                 "deferRender": true,
-                "columns": [{', '.join(f'{{ "data": "{col["field"]}", "orderable": {str(col.get("orderable", True)).lower()} }}' for col in cls.cols)}],
+                "columns": [{', '.join(f'{{ "data": "{col["field"]}", "orderable": {str(col.get("orderable", True)).lower()}, "render": {col.get("render", "undefined")}}}' for col in cls.cols)}],
                 "createdRow" : function( row, data, index ) {{
                     sessionStorage["{cls.model.__name__.lower()}" + data.id] = JSON.stringify(data);
                     $(row).addClass("{cls.model.__name__.lower()}-row {row_class}");
                     if( data.hasOwnProperty("id") ) {{row.id = data.id}}
+                    {kwargs.pop('createdRow', '')}
                 }},
                 {",".join(f'"{name}": {value}' for name, value in kwargs.items())}
             }});
@@ -127,7 +129,8 @@ class DataTable:
 
     def filter_values(self, value):
         return lambda obj: not any('value' in col for col in self.cols) or any(
-            (col['value'](obj) if callable(col['value']) else col['value']) == value
+            col.get("custom_filter", lambda generate_value, value: generate_value == value)\
+                ((col['value'](obj) if callable(col['value']) else col['value']), value)
             for col in self.cols
             if 'value' in col
         )
@@ -140,7 +143,6 @@ class DataTable:
             return or_()
 
     def get_data(self):
-        current_app.logger.info(self._parse_filtering())
         q = self.model.query.filter(self._pre_filter).filter(self._parse_filtering()).order_by(*self._parse_ordering())
         l = list(filter(self.filter_values(request.args.get("search[value]")), q))
         amount = len(l)

@@ -24,15 +24,11 @@
                                 {{ form.timestamp(data_target="#timestamp", data_toggle="datetimepicker", class_='form-control datetimepicker-input ' + ('' if form.timestamp.errors|length == 0 else 'is-invalid')) }}
                                 <div class="invalid-feedback">
                                     {% for error in form.timestamp.errors %}
-                                        {{ error }}
+                                        {{ _(error) }}
                                     {% endfor %}
                                 </div>
                                 <script type="text/javascript">
-                                    $(document).ready(function() {
-                                        $('#timestamp').datetimepicker({
-                                            format: "YYYY.MM.DD HH:mm"
-                                        });
-                                    });
+                                    $(document).ready(function() {$('#timestamp').datetimepicker({format: "YYYY.MM.DD HH:mm"});});
                                 </script>
                             </div>
                         </div>
@@ -42,7 +38,7 @@
                                 {{ form.speaker(class_='form-control ' + ('' if form.speaker.errors|length == 0 else 'is-invalid')) }}
                                 <div class="invalid-feedback">
                                     {% for error in form.speaker.errors %}
-                                        {{ error }}
+                                        {{ _(error) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -53,7 +49,7 @@
                                 {{ form.tags(class_='form-control ' + ('' if form.tags.errors|length == 0 else 'is-invalid')) }}
                                 <div class="invalid-feedback">
                                     {% for error in form.tags.errors %}
-                                        {{ error }}
+                                        {{ _(error) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -64,7 +60,7 @@
                                 {{ form.password(size=32, class_='form-control ' + ('' if form.password.errors|length == 0 else 'is-invalid')) }}
                                 <div class="invalid-feedback">
                                     {% for error in form.password.errors %}
-                                        {{ error }}
+                                        {{ _(error) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -73,7 +69,7 @@
                 </div>
                 <div class="card-footer">
                     {{ form.submit(form='talkForm', class="btn btn-primary") }}
-                    <a class="btn btn-secondary"href="{{ url_for('admin.index') }}">Cancel</a>
+                    <a class="btn btn-secondary"href="{{ url_for('admin.index') }}">{{ _('Cancle') }}</a>
                 </div>
             </div>
         </div>

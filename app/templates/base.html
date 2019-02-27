@@ -24,6 +24,7 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/markdown.sanitizer.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.contextMenu.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.ui.position.js') }}"></script>
+        {{ moment.include_moment(no_js=True) }}
         <style type="text/css">
             .datepicker td, .datepicker th {
                 width: 1.5em;
@@ -49,14 +50,14 @@
                             <a class="nav-link dropdown-toggle" href="#" id="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
                             <div class="dropdown-menu" aria-labelledby="dropdown">
                                 {% if current_user.is_anonymous %}
-                                    <a class="dropdown-item" href="{{ url_for('auth.login') }}">Login</a>
-                                    <a class="dropdown-item" href="{{ url_for('auth.register') }}">Register</a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.register') }}">{{ _('Register') }}</a>
                                 {% else %}
                                     {% if can_view_admin %}
-                                        <a class="dropdown-item" href="{{ url_for('admin.index') }}">Admin</a>
+                                        <a class="dropdown-item" href="{{ url_for('admin.index') }}">{{ _('Admin') }}</a>
                                     {% endif %}
-                                    <a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a>
-                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
                                 {% endif %}
                             </div>
                         </li>
@@ -79,11 +80,7 @@
                         {% endfor %}
                     </div>
                     <script type="text/javascript">
-                        $(document).ready(function(){
-                            $(".alert").fadeTo(2000, 500).slideUp(500, function(){
-                                        $(".alert").slideUp(500);
-                            });
-                        });
+                        $(document).ready(function(){$(".alert").fadeTo(2000, 500).slideUp(500, function(){$(".alert").slideUp(500);});});
                     </script>
                 {% endif %}
             {% endwith %}
@@ -92,7 +89,7 @@
         <footer class="text-muted">
             <div class="container">
                 <p class="float-right">
-                    <a href="#">Back to top</a>
+                    <a href="#">{{ _('Back to top') }}</a>
                 </p>
             </div>
         </footer>

@@ -17,7 +17,7 @@
                                 {{ form.username(size=32, class_='form-control ' + ('' if form.username.errors|length == 0 else 'is-invalid')) }}
                                 <div class="invalid-feedback">
                                     {% for error in form.username.errors %}
-                                        {{ error }}
+                                        {{ _(error) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -28,7 +28,7 @@
                                 {{ form.email(size=32, class_='form-control ' + ('' if form.email.errors|length == 0 else 'is-invalid')) }}
                                 <div class="invalid-feedback">
                                     {% for error in form.email.errors %}
-                                        {{ error }}
+                                        {{ _(error) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -39,7 +39,7 @@
                                 {{ form.password(size=32, class_='form-control ' + ('' if form.password.errors|length == 0 else 'is-invalid')) }}
                                 <div class="invalid-feedback">
                                     {% for error in form.password.errors %}
-                                        {{ error }}
+                                        {{ _(error) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -50,7 +50,7 @@
                                 {{ form.password2(size=32, class_='form-control ' + ('' if form.password2.errors|length == 0 else 'is-invalid')) }}
                                 <div class="invalid-feedback">
                                     {% for error in form.password2.errors %}
-                                        {{ error }}
+                                        {{ _(error) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="card-footer">
                     {{ form.submit(form='loginForm', class="btn btn-primary") }}
-                    <a class="btn btn-secondary"href="{{ url_for('auth.login') }}">Login</a>
+                    <a class="btn btn-secondary"href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
                 </div>
             </div>
         </div>

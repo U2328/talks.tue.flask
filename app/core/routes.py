@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import render_template
+from flask import render_template, current_app
 
 from app import db
 from . import bp

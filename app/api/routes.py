@@ -2,7 +2,7 @@ from dateutil.parser import parse as parse_datetime
 from flask import jsonify, request, current_app, abort
 from sqlalchemy import or_, cast, DateTime
 
-from app import db
+from app import db, moment
 from app.core.models import Talk, Speaker, Tag
 from app.auth.utils import has_perms
 from . import bp
@@ -43,6 +43,7 @@ class TalkTable(DataTable):
             'field': 'timestamp',
             'name': 'Time',
             'weight': 0,
+            'render': 'function(data, type, row) {return moment(data).calendar();}'
         }, {
             'col': 2,
             'field': 'rendered_tags',
@@ -56,6 +57,9 @@ class TalkTable(DataTable):
             self.model.name.contains(value),
             self.model.tags.any(Tag.name.contains(value)),
         )
+
+    def filter_values(self, value):
+        return lambda talk: value in str(talk.timestamp)
 
 
 @bp.route('/talk_table', methods=['GET'])

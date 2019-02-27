@@ -1,5 +1,6 @@
 from flask import render_template, redirect, flash, url_for, send_from_directory, request, abort, current_app
 from flask_login import current_user, login_user, logout_user, login_required
+from flask_babel import _
 
 from app import db, login
 from app.utils import is_safe_url
@@ -16,10 +17,10 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password', 'danger')
+            flash(_('Invalid username or password'), 'danger')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
-        flash(f'Logged in as {user.username}.', 'info')
+        flash(_('Logged in as %(username)s.', username=user.username), 'info')
         current_app.logger.info(f"User logged in: {user}")
         next = request.args.get('next')
         if not is_safe_url(next):
@@ -32,7 +33,7 @@ def login():
 def logout():
     current_app.logger.info(f"User logged out: {current_user}")
     logout_user()
-    flash('Logged out.', 'info')
+    flash(_('Logged out.'), 'info')
     return redirect(url_for('core.index'))
 
 
@@ -46,7 +47,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!', 'success')
+        flash(_('Congratulations, you are now a registered user!'), 'success')
         current_app.logger.info(f"New user registered: {user}")
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Register', form=form)
@@ -65,7 +66,7 @@ def profile():
         if form.tags is not None:
             user.tags = form.tags.data
         db.session.commit()
-        flash('Your profile has been updated.', 'success')
+        flash(_('Your profile has been updated.'), 'success')
         current_app.logger.info(f"Updated user: {user}")
         return redirect(url_for('auth.login'))
     return render_template('auth/profile.html', title="Profile", form=form, user=user)

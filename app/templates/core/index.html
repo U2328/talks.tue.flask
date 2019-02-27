@@ -4,13 +4,13 @@
 <section class="jumbotron text-center mb-0">
     <div class="container">
         <h1 class="jumbotron-heading">Talks.Tue</h1>
-        <p class="lead text-muted">A simple way to find the best talks at hosted at our University for you.</p>
+        <p class="lead text-muted">{{ _('A simple way to find the best talks at hosted at our University for you.') }}</p>
         <p>
-            <a href="{{ url_for('core.talks') }}" class="btn btn-primary my-2">Browse talks</a>
+            <a href="{{ url_for('core.talks') }}" class="btn btn-primary my-2">{{ _('Browse talks') }}</a>
             {% if current_user.is_anonymous %}
-                <a href="{{ url_for('auth.register') }}" class="btn btn-secondary my-2">Register to build your profile</a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-secondary my-2">{{ _('Register to build your profile') }}</a>
             {% else %}
-                <a href="{{ url_for('auth.profile') }}" class="btn btn-secondary my-2">Your profile</a>
+                <a href="{{ url_for('auth.profile') }}" class="btn btn-secondary my-2">{{ _('Your profile') }}</a>
             {% endif %}
         </p>
     </div>
@@ -25,10 +25,10 @@
                         <h5 class="card-title">{{ talk.name }}</h5>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#talkModal" data-id="{{ talk.id }}">View</button>
-                                <a href="" class="btn btn-sm btn-outline-secondary">Goto</a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#talkModal" data-id="{{ talk.id }}">{{ _('View') }}</button>
+                                <a href="" class="btn btn-sm btn-outline-secondary">{{ _('Goto') }}</a>
                             </div>
-                            <small class="text-muted">{{ talk.timestamp }}</small>
+                            <small class="text-muted">{{ moment(talk.timestamp).calendar() }}</small>
                         </div>
                     </div>
                 </div>

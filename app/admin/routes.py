@@ -50,7 +50,6 @@ def talk(id=None):
             talk = copy_row(Talk, talk, ['id'])
             db.session.add(talk)
             db.session.commit()
-            current_app.logger.info(talk)
             return redirect(url_for('admin.talk', id=talk.id))
         if id is None:
             db.session.add(talk)
@@ -87,7 +86,6 @@ def speaker(id=None):
             speaker = copy_row(Speaker, speaker, ['id'])
             db.session.add(speaker)
             db.session.commit()
-            current_app.logger.info(speaker)
             return redirect(url_for('admin.speaker', id=speaker.id))
         if id is None:
             db.session.add(speaker)
