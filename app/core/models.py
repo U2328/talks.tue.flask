@@ -1,9 +1,7 @@
 from datetime import datetime
 
 import mistune
-from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.ext.associationproxy import association_proxy
 
 from app import db
 

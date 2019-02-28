@@ -1,12 +1,20 @@
-from flask import render_template, redirect, flash, url_for, send_from_directory, request, abort, current_app
+from flask import render_template, redirect, flash, url_for, request, abort, current_app
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import _
 
-from app import db, login
+from app import db
 from app.utils import is_safe_url
 from . import bp
 from .models import User
 from .forms import LoginForm, RegistrationForm, ProfileForm
+
+
+__all__ = (
+    'login',
+    'logout',
+    'register',
+    'profile',
+)
 
 
 @bp.route('/login', methods=['GET', 'POST'])

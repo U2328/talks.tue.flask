@@ -10,28 +10,26 @@ help: ## view this help text
 
 init: ## init the whole env
 	pipenv install
-	$(MAKE) upgrade
-	$(MAKE) deploy
+	$(MAKE) db_deploy
 
 init_dev: ## init the whole env for dev
-	pipenv install --dev
-	$(MAKE) upgrade
-	$(MAKE) deploy
+	pipenv install --deve
+	$(MAKE) db_deploy
 
-migrate: ## generate database-migration
+db_migrate: ## generate database-migration
 	pipenv run flask db migrate
 
-upgrade: ## upgrade database
+db_upgrade: ## upgrade database
 	pipenv run flask db upgrade
 
-auto_upgrade: ## migrate + upgrade
-	$(MAKE) migrate
-	$(MAKE) upgrade
+db_auto_upgrade: ## migrate + upgrade
+	$(MAKE) db_migrate
+	$(MAKE) db_upgrade
 
-current_migration: ## find out what the current db revision is
+db_current_migration: ## find out what the current db revision is
 	pipenv run flask db show
 
-list_migrations: ## list all known migrations
+db_list_migrations: ## list all known migrations
 	pipenv run flask db history
 
 clean_db: ## remove db files
@@ -49,10 +47,10 @@ full_clean: ## cleanup everythin
 run: ## run the webserver
 	pipenv run flask run
 
-deploy: ## init server setup
+db_deploy: ## init server setup
 	pipenv run flask deploy
 
-createsuperuser: ## create a superuser
+auth_createsuperuser: ## create a superuser
 	pipenv run flask auth createsuperuser
 
 babel_init: ## intialize new language
@@ -63,3 +61,6 @@ babel_update: ## update all language files
 
 babel_compile: ## compile all language files
 	pipenv run flask translate compile
+
+lint: ## run linters on project files (dev only)
+	pipenv run flake8

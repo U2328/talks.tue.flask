@@ -1,8 +1,7 @@
 from collections import defaultdict
-from functools import reduce
 
 from sqlalchemy import or_
-from flask import request, jsonify, current_app
+from flask import request, jsonify
 
 
 __all__ = (
@@ -143,14 +142,14 @@ class DataTable:
             return or_()
 
     def get_data(self):
-        q = self.model.query.filter(self._pre_filter).filter(self._parse_filtering()).order_by(*self._parse_ordering())
-        l = list(filter(self.filter_values(request.args.get("search[value]")), q))
-        amount = len(l)
+        data = self.model.query.filter(self._pre_filter).filter(self._parse_filtering()).order_by(*self._parse_ordering())
+        data = list(filter(self.filter_values(request.args.get("search[value]")), data))
+        amount = len(data)
         return {
             "fields": list(self.model.__table__.columns.keys()),
             "recordsTotal": amount,
             "recordsFiltered": amount,
-            "data": [self._serialize(_) for _ in l[int(request.args.get('start')):int(request.args.get('start'))+int(request.args.get('length'))]],
+            "data": [self._serialize(_) for _ in data[int(request.args.get('start')):int(request.args.get('start'))+int(request.args.get('length'))]],
         }
 
     @classmethod

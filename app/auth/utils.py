@@ -1,10 +1,12 @@
 from functools import wraps
 
 from flask import abort, current_app
-from flask_login import current_user, login_required
+from flask_login import current_user
 
-from app import db
-from .models import Permission
+
+__all__ = (
+    'has_perms',
+)
 
 
 def has_perms(*permissions, any=False):

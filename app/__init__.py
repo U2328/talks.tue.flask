@@ -12,7 +12,8 @@ from app.config import Config
 
 __all__ = (
     'db', 'migrate', 'login',
-    'md', 'create_app'
+    'md', 'create_app', 'babel',
+    'moment', 'pagedown'
 )
 
 
@@ -25,19 +26,23 @@ login.login_view = 'auth.login'
 login.login_message = _l('Please log in to access this page.')
 pagedown = PageDown()
 
-from app.core import bp as core_bp
-from app.auth import bp as auth_bp
-from app.api import bp as api_bp
-from app.errors import bp as errors_bp
-from app.admin import bp as admin_bp
+
+from app.core import bp as core_bp  # noqa: E402
+from app.auth import bp as auth_bp, models as auth_models  # noqa: E402
+from app.api import bp as api_bp  # noqa: E402
+from app.errors import bp as errors_bp  # noqa: E402
+from app.admin import bp as admin_bp  # noqa: E402
+
 
 def context_processor():
     return {
-        'can_view_admin': hasattr(current_user, 'role') and current_user.role.name != auth.models.Role.DEFAULT_ROLE,
+        'can_view_admin': hasattr(current_user, 'role') and current_user.role.name != auth_models.Role.DEFAULT_ROLE,
     }
+
 
 def before_request():
     g.locale = str(get_locale())
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -49,8 +54,8 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     pagedown.init_app(app)
-    markdown = Markdown(app)
-    
+    markdown = Markdown(app)  # noqa: F841
+
     app.register_blueprint(core_bp)
     app.register_blueprint(errors_bp)
     app.register_blueprint(auth_bp)

@@ -1,4 +1,5 @@
-from flask import render_template, request, redirect, url_for, abort,current_app
+from flask import render_template, request, redirect,\
+                  url_for, abort
 
 from . import bp
 from .forms import TalkForm, SpeakerForm, TagForm
@@ -8,6 +9,14 @@ from app.api.routes import TalkTable, SpeakerTable, TagTable
 from app.auth.utils import has_perms
 from app.auth.models import Permission
 from app.core.models import Talk, Speaker, Tag
+
+
+__all__ = (
+    'index',
+    'tag',
+    'talk',
+    'speaker'
+)
 
 
 @bp.route('/', methods=['GET'])
@@ -37,6 +46,7 @@ def tag():
             return abort(400)
         return redirect(next or url_for('admin.index'))
     return redirect(url_for('admin.index'))
+
 
 @bp.route('/talk', methods=['GET', 'POST'])
 @bp.route('/talk/<int:id>', methods=['GET', 'POST'])

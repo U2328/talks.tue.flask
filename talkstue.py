@@ -1,15 +1,14 @@
 import os
 
 import click
-from flask.cli import AppGroup, with_appcontext
 from flask_migrate import upgrade
 
-from app import create_app, cli, db
+from app import create_app, db
 from app.core import models as core_models
 from app.auth import models as auth_models
 
+
 app = create_app()
-cli.register(app)
 
 
 def get_all_in_all(module):

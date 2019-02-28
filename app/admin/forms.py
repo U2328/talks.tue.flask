@@ -1,25 +1,32 @@
 from datetime import datetime
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextField, HiddenField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, ValidationError, Length
+from wtforms import StringField, PasswordField, SubmitField,\
+                    HiddenField, DateTimeField, BooleanField
+from wtforms.validators import DataRequired, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_pagedown.fields import PageDownField
-from flask_babel import _, lazy_gettext as _l
+from flask_babel import azy_gettext as _l
 
 from app.core.models import Tag, Speaker
+
+
+__all__ = (
+    'TalkForm',
+    'SpeakerForm',
+    'TagForm',
+)
 
 
 class TalkForm(FlaskForm):
     id = HiddenField('id')
     name = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
     description = PageDownField(_l('Description'))
-    timestamp = DateTimeField(_l('Date/Time'), format="%Y.%m.%d %H:%M", validators=[DataRequired()])
+    timestamp = DateTimeField(_l('Date/Time'), format="%Y.%m.%d %H:%M", default=datetime.now(), validators=[DataRequired()])
     speaker = QuerySelectField(_l('Speaker'), query_factory=lambda: Speaker.query.all(), get_pk=lambda s: s.id, validators=[DataRequired()])
     tags = QuerySelectMultipleField(_l('Categories'), query_factory=lambda: Tag.query.all())
     password = PasswordField(_l('Password'))
     submit = SubmitField(_l('Save'))
-
 
 
 class SpeakerForm(FlaskForm):

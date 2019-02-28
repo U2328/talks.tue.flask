@@ -9,12 +9,18 @@ from .models import User
 from app.core.models import Tag
 
 
+__all__ = (
+    'LoginForm',
+    'RegistrationForm',
+    'ProfileForm',
+)
+
+
 class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
     remember_me = BooleanField(_l('Remember Me'))
     submit = SubmitField(_l('Login'))
-
 
 
 class RegistrationForm(FlaskForm):
@@ -33,7 +39,6 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError(_('Please use a different email address.'))
-
 
 
 class ProfileForm(FlaskForm):

@@ -1,13 +1,19 @@
-from dateutil.parser import parse as parse_datetime
-from flask import jsonify, request, current_app, abort
+from flask import jsonify, request, abort
 from flask_babel import lazy_gettext as _l
-from sqlalchemy import or_, cast, DateTime
+from sqlalchemy import or_
 
-from app import db, moment
+from app import db
 from app.core.models import Talk, Speaker, Tag
 from app.auth.utils import has_perms
 from . import bp
 from .dt_tools import DataTable
+
+
+__all__ = (
+    'talk',    'talks',    'talk_table',    'TalkTable',     # noqa: E241
+    'speaker', 'speakers', 'speaker_table', 'SpeakerTable',  # noqa: E241
+                           'tag_table',     'TagTable'       # noqa: E241
+)
 
 
 @bp.route('/talk', methods=['GET', 'DELETE'])
@@ -24,7 +30,7 @@ def talk(id=None):
         db.session.commit()
         return jsonify({"message": f"Deleted Talk with id = {id}"})
     else:
-        return jsonify(Talk.query.filter(Talk.id == id)[0].serialize())    
+        return jsonify(Talk.query.filter(Talk.id == id)[0].serialize())
 
 
 @bp.route('/talks', methods=['GET'])
@@ -83,7 +89,7 @@ def speaker(id=None):
         db.session.commit()
         return jsonify({"message": f"Deleted Speaker with id = {id}"})
     else:
-        return jsonify(Speaker.query.get(id).serialize())    
+        return jsonify(Speaker.query.get(id).serialize())
 
 
 @bp.route('/speakers', methods=['GET'])
@@ -119,6 +125,7 @@ class TagTable(DataTable):
             'name': _l('Name'),
         }
     ]
+
 
 @bp.route('/tag_table', methods=['GET'])
 def tag_table():

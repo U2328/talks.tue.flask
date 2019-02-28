@@ -2,4 +2,4 @@ from flask import Blueprint
 
 bp = Blueprint('core', __name__)
 
-from app.core import models, routes
+from . import models, routes  # noqa: F401, E402
