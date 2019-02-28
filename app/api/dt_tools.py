@@ -1,12 +1,24 @@
 from collections import defaultdict
 
 from sqlalchemy import or_
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 
 
 __all__ = (
     'DataTable',
 )
+
+import operator
+
+def as_callable(x):
+    if callable(x):
+        return x
+    elif isinstance(x, str):
+        return operator.attrgetter(x)
+    elif isinstance(x, int):
+        return operator.itemgetter(x)
+    else:
+        raise TypeError(f"Can't generate callable for {x!r}")
 
 
 class DataTable:
@@ -19,16 +31,18 @@ class DataTable:
             raise ValueError('Need to specify column definitions in cols.')
 
     model = None
+    query = None
     cols = None
+    dom = None
     row_controls = None
     js_kwargs = None
 
     @classmethod
-    def generate_html(cls, class_=None, table_class=None, table_style=None):
+    def generate_html(cls, class_=None):
         return "".join(_.strip() for _ in f"""
         <div class="{'container pt-2' if class_ is None else str(class_)}">
             <div class"row">
-                <table id="{cls.model.__name__.lower()}Table" class="{'table table-striped table-bordered' if table_class is None else str(table_class)}" style="{'' if table_style is None else str(table_style)}">
+                <table id="{cls.model.__name__.lower()}Table" class="table table-striped table-bordered responsive responsive" style="width: 100%;">
                     <thead>
                         <tr>
                             {"".join(
@@ -43,11 +57,13 @@ class DataTable:
         """.split('\n'))
 
     @classmethod
-    def generate_js(cls, table_url, row_class="", **kwargs):
+    def generate_js(cls, table_url, row_class="", dom=None, **kwargs):
+        dom = dom or "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
         kwargs = {**(cls.js_kwargs or {}), **kwargs}
         return "".join(_.strip() for _ in f"""
         $(document).ready(function() {{
             $('#{cls.model.__name__.lower()}Table').DataTable({{
+                "dom": "{dom}",
                 "processing": true,
                 "serverSide": true,
                 "responsive": true,
@@ -115,35 +131,29 @@ class DataTable:
             for ordering in _ 
         ), [])
 
-    def filter(self, value):
-        return or_(
-            *(
-                getattr(self.model, col['field']).contains(value)
-                if "custom_filter" not in col else
-                col["custom_filter"](value)
-                for col in self.cols
-                if 'value' not in col
-            )
-        )
-
-    def filter_values(self, value):
-        return lambda obj: not any('value' in col for col in self.cols) or any(
-            col.get("custom_filter", lambda generate_value, value: generate_value == value)\
-                ((col['value'](obj) if callable(col['value']) else col['value']), value)
-            for col in self.cols
-            if 'value' in col
-        )
-
     def _parse_filtering(self):
-        requested_filtering = request.args.get("search[value]")
-        if requested_filtering:
-            return self.filter(requested_filtering)
-        else:
-            return or_()
+        value = request.args.get("search[value]", None)
+        def _filter_func(obj):
+            values = value.split("|")
+            current_app.logger.info(values)
+            return all(
+                any(
+                    col.get(
+                        'custom_filter',
+                        lambda obj, value: (
+                            as_callable(col['value'])(obj)
+                            if 'value' in col else
+                            value in getattr(obj, col['field'])
+                        )
+                    )(obj, value)
+                    for col in self.cols
+                )
+                for value in values
+            )
+        return _filter_func if value is not None else lambda obj: True
 
     def get_data(self):
-        data = self.model.query.filter(self._pre_filter).filter(self._parse_filtering()).order_by(*self._parse_ordering())
-        data = list(filter(self.filter_values(request.args.get("search[value]")), data))
+        data = list(filter(self._parse_filtering(), (as_callable(self.__class__.query)() if self.query is not None else self.model.query).filter(self._pre_filter).order_by(*self._parse_ordering())))
         amount = len(data)
         return {
             "fields": list(self.model.__table__.columns.keys()),
@@ -157,7 +167,7 @@ class DataTable:
         return {
             **(obj.serialize() if hasattr(obj, 'serialize') and callable(obj.serialize) else {}),
             **{
-                col['field']: col['value'](obj) if callable(col['value']) else col['value']
+                col['field']: as_callable(col['value'])(obj)
                 for col in cls.cols
                 if 'value' in col
             }

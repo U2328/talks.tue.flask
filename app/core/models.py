@@ -1,25 +1,119 @@
 from datetime import datetime
+from collections import namedtuple
+from enum import Enum, unique, auto
 
 import mistune
+from flask import current_app
+from flask_babel import lazy_gettext as _l
+from sqlalchemy import and_, event
+from sqlalchemy.orm import foreign, backref, remote
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
+from app.utils import DotDict
 
 
 __all__ = (
+    'HistoryItem'
     'Speaker',
     'Talk',
     'Tag',
 )
 
 
-class Speaker(db.Model):
+HistoryItemType = namedtuple('HistoryItemType', ('icon', 'template'))
+
+
+class HistoryItem(db.Model):
+    @unique
+    class Types(Enum):
+        MISC   = HistoryItemType(
+            'fas fa-feather-alt text-info',
+            lambda obj: _l('%(message)s', message=obj.message)
+        )
+        CREATE = HistoryItemType(
+            'fas fa-plus-circle text-success',
+            lambda obj: _l('%(user)s created %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
+        )
+        EDIT   = HistoryItemType(
+            'fa fa-edit text-warning',
+            lambda obj: _l('%(user)s edited %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
+        )
+        DELETE = HistoryItemType(
+            'far fa-trash-alt text-danger',
+            lambda obj: _l('%(user)s deleted %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
+        )
+
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Enum(Types))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", backref='history')
+    message = db.Column(db.String(128))
+    timestamp =  db.Column(db.DateTime, default=lambda: datetime.now())
+
+    target_discriminator = db.Column(db.String())
+    target_id = db.Column(db.Integer())
+
+    @property
+    def target(self):
+        return getattr(self, f"target_{self.target_discriminator}")
+
+    def render_message(self):
+        return f"<i class='{self.type.value.icon}'></i> {self.type.value.template(self)}"
+
+    def serialize(self, *, recursive=True):
+        return {
+            "id": self.id,
+            "type": self.type,
+            "user": self.user.serialize(),
+            "message": self.message,
+            "timestamp": self.timestamp,
+            "target": (
+                self.target.serialize(recursive=False)
+                if recursive else
+                {
+                    "type": self.target_discriminator,
+                    "id": self.target_id
+                }
+            )
+        }
+
+
+class HasHistory:
+    ...
+
+@event.listens_for(HasHistory, "mapper_configured", propagate=True)
+def setup_listener(mapper, class_):
+    discriminator = class_.__name__.lower()
+    class_.history = db.relationship(
+        HistoryItem,
+        primaryjoin=and_(
+            class_.id == foreign(remote(HistoryItem.target_id)),
+            HistoryItem.target_discriminator == discriminator,
+        ),
+        backref=backref(
+            f"target_{discriminator}",
+            primaryjoin=remote(class_.id) == foreign(HistoryItem.target_id),
+        ),
+    )
+
+    @event.listens_for(class_.history, "append")
+    def append_history(self, history_item, event):
+        history_item.target_discriminator = discriminator
+
+
+class Speaker(HasHistory, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    viewable = db.Column(db.Boolean, default=False)
     name = db.Column(db.String(64))
     familiy_name = db.Column(db.String(64))
     familiy_name_first = db.Column(db.Boolean, default=False)
     about_me = db.Column(db.Text)
     password_hash = db.Column(db.String(128))
+
+    @classmethod
+    def query_viewable(cls):
+        return cls.query.filter_by(viewable=True)
 
     @property
     def full_name(self):
@@ -54,8 +148,9 @@ class Speaker(db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-class Talk(db.Model):
+class Talk(HasHistory, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    viewable = db.Column(db.Boolean, default=False)
     name = db.Column(db.String(64))
     password_hash = db.Column(db.String(128))
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
@@ -63,6 +158,10 @@ class Talk(db.Model):
     speaker_id = db.Column(db.Integer, db.ForeignKey('speaker.id'))
     speaker = db.relationship('Speaker', backref='talks')
     tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=db.backref('talks'))
+
+    @classmethod
+    def query_viewable(cls):
+        return cls.query.filter_by(viewable=True)
 
     def serialize(self, *, recursive=True):
         return {
@@ -83,7 +182,7 @@ class Talk(db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-class Tag(db.Model):
+class Tag(HasHistory, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
 
@@ -109,6 +208,7 @@ talk_tags = db.Table('talk_tags',
     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True),
     db.Column('talk_id', db.Integer, db.ForeignKey('talk.id'), primary_key=True),
 )
+
 
 tag_preferences = db.Table('tag_preferences',
     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True),

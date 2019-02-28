@@ -115,6 +115,9 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+        
+    def __str__(self):
+        return self.username
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -131,6 +134,7 @@ class User(UserMixin, db.Model):
             "username": self.username,
             "email": self.email,
             "tag_preferences": list(self.tag_preferences),
+            "role": self.role.name,
         }
 
 

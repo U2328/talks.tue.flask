@@ -69,7 +69,7 @@
                 </div>
                 <div class="card-footer">
                     {{ form.submit(form='talkForm', class="btn btn-primary") }}
-                    <a class="btn btn-secondary"href="{{ url_for('admin.index') }}">{{ _('Cancle') }}</a>
+                    <a class="btn btn-secondary"href="{% if new %}{{ url_for('admin.talk_cancel_create', id=id) }}{% else %}{{ url_for('admin.index') }}{% endif %}">{{ _('Cancel') }}</a>
                 </div>
             </div>
         </div>

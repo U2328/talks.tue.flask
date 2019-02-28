@@ -11,6 +11,7 @@ python-dotenv = "*"
 mistune = "*"
 python-dateutil = "*"
 flask = "*"
+sqlalchemy = "*"
 flask-sqlalchemy = "*"
 flask-wtf = "*"
 flask-migrate = "*"
@@ -23,3 +24,6 @@ flask-moment = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true

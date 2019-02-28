@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-02-27 22:44+0100\n"
+"POT-Creation-Date: 2019-03-01 00:38+0100\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,114 +18,134 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: app/__init__.py:25
+#: app/__init__.py:26
 msgid "Please log in to access this page."
 msgstr "Bitte loggen sie sich ein um diese Seite zu besuchen."
 
-#: app/admin/forms.py:15 app/admin/forms.py:27 app/admin/forms.py:36
-#: app/api/routes.py:41 app/api/routes.py:100 app/api/routes.py:119
+#: app/admin/forms.py:23 app/admin/forms.py:34 app/admin/forms.py:43
+#: app/api/routes.py:65 app/api/routes.py:125 app/api/routes.py:144
 msgid "Name"
 msgstr "Name"
 
-#: app/admin/forms.py:16
+#: app/admin/forms.py:24
 msgid "Description"
 msgstr "Beschreibung"
 
-#: app/admin/forms.py:17 app/api/routes.py:45
+#: app/admin/forms.py:25 app/api/routes.py:69
 msgid "Date/Time"
 msgstr "Datum/Uhrzeit"
 
-#: app/admin/forms.py:18
+#: app/admin/forms.py:26
 msgid "Speaker"
 msgstr "Speaker"
 
-#: app/admin/forms.py:19 app/auth/forms.py:43
+#: app/admin/forms.py:27 app/auth/forms.py:48
 msgid "Categories"
 msgstr "Kategorien"
 
-#: app/admin/forms.py:20 app/admin/forms.py:31 app/auth/forms.py:14
-#: app/auth/forms.py:23 app/auth/forms.py:41
+#: app/admin/forms.py:28 app/admin/forms.py:38 app/auth/forms.py:21
+#: app/auth/forms.py:29 app/auth/forms.py:46
 msgid "Password"
 msgstr "Passwort"
 
-#: app/admin/forms.py:21 app/admin/forms.py:32 app/auth/forms.py:44
+#: app/admin/forms.py:29 app/admin/forms.py:39 app/auth/forms.py:49
 msgid "Save"
 msgstr "Speichern"
 
-#: app/admin/forms.py:28
+#: app/admin/forms.py:35
 msgid "Familiy Name"
 msgstr "Familienname"
 
-#: app/admin/forms.py:29
+#: app/admin/forms.py:36
 msgid "Family name first?"
 msgstr "Familienname zuerst?"
 
-#: app/admin/forms.py:30
+#: app/admin/forms.py:37
 msgid "About me"
 msgstr "Über mich"
 
-#: app/admin/forms.py:37
+#: app/admin/forms.py:44
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: app/api/routes.py:51 app/templates/admin/cards/tag_table.html:2
+#: app/api/routes.py:76 app/templates/admin/cards/tag_table.html:2
 msgid "Tags"
 msgstr "Kategorien"
 
-#: app/auth/forms.py:13 app/auth/forms.py:21
+#: app/auth/forms.py:20 app/auth/forms.py:27
 msgid "Username"
 msgstr "Benutzername"
 
-#: app/auth/forms.py:15
+#: app/auth/forms.py:22
 msgid "Remember Me"
 msgstr "Speichern"
 
-#: app/auth/forms.py:16 app/templates/auth/register.html:62
+#: app/auth/forms.py:23 app/templates/auth/register.html:62
 #: app/templates/base.html:54
 msgid "Login"
 msgstr "Einloggen"
 
-#: app/auth/forms.py:22 app/auth/forms.py:40
+#: app/auth/forms.py:28 app/auth/forms.py:45
 msgid "Email"
 msgstr "E-Mail"
 
-#: app/auth/forms.py:24 app/auth/forms.py:42
+#: app/auth/forms.py:30 app/auth/forms.py:47
 msgid "Repeat Password"
 msgstr "Passwort widerholen"
 
-#: app/auth/forms.py:25 app/templates/auth/login.html:41
+#: app/auth/forms.py:31 app/templates/auth/login.html:41
 #: app/templates/base.html:55
 msgid "Register"
 msgstr "Registrieren"
 
-#: app/auth/forms.py:30
+#: app/auth/forms.py:36
 msgid "Please use a different username."
 msgstr "Bitte benutzen sie einen anderen Benutzernamen."
 
-#: app/auth/forms.py:35 app/auth/forms.py:49
+#: app/auth/forms.py:41 app/auth/forms.py:54
 msgid "Please use a different email address."
 msgstr "Bitte benutzen sie eine andere E-Mail-Adresse."
 
-#: app/auth/routes.py:20
+#: app/auth/routes.py:28
 msgid "Invalid username or password"
 msgstr "Ungülitger Benutzername u.o. Passwort"
 
-#: app/auth/routes.py:23
+#: app/auth/routes.py:31
 #, python-format
 msgid "Logged in as %(username)s."
 msgstr "Eingloggt als %(username)s."
 
-#: app/auth/routes.py:36
+#: app/auth/routes.py:44
 msgid "Logged out."
 msgstr "Ausgeloggt."
 
-#: app/auth/routes.py:50
+#: app/auth/routes.py:58
 msgid "Congratulations, you are now a registered user!"
 msgstr "herzlich glückwunsch, sie sind ein registrierter Benutzer!"
 
-#: app/auth/routes.py:69
+#: app/auth/routes.py:77
 msgid "Your profile has been updated."
 msgstr "Ihr Profil wurde aktualisiert."
+
+#: app/core/models.py:32
+#, python-format
+msgid "%(message)s"
+msgstr "%(message)s"
+
+#: app/core/models.py:36
+#, python-format
+msgid "%(user)s created %(desc)s #%(id)d"
+msgstr "%(user)s erstellte %(desc)s #%(id)d"
+
+#: app/core/models.py:40
+#, python-format
+msgid "%(user)s edited %(desc)s #%(id)d"
+msgstr "%(user)s bearbeitete %(desc)s #%(id)d"
+
+#: app/core/models.py:44
+#, python-format
+msgid "%(user)s deleted %(desc)s #%(id)d"
+msgstr "%(user)s löschte %(desc)s #%(id)d"
 
 #: app/templates/base.html:58
 msgid "Admin"
@@ -143,13 +163,15 @@ msgstr "Ausloggen"
 msgid "Back to top"
 msgstr "Zurück an den Seitenanfang"
 
-#: app/templates/admin/speaker.html:61 app/templates/auth/profile.html:68
+#: app/templates/admin/speaker.html:61 app/templates/admin/talk.html:72
+#: app/templates/auth/login.html:42 app/templates/auth/profile.html:68
+#: app/templates/auth/register.html:63
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: app/templates/admin/talk.html:72
-msgid "Cancle"
-msgstr "Abbrechen"
+#: app/templates/admin/cards/history_items.html:2
+msgid "History"
+msgstr "Letzte Änderungen"
 
 #: app/templates/admin/cards/speaker_table.html:2
 msgid "Speakers"
@@ -159,24 +181,24 @@ msgstr "Speakers"
 msgid "Add new speaker"
 msgstr "Neuen Speaker anlegen"
 
-#: app/templates/admin/cards/speaker_table.html:36
+#: app/templates/admin/cards/speaker_table.html:39
 #: app/templates/admin/cards/talk_table.html:35
 #: app/templates/core/index.html:28
 msgid "View"
 msgstr "Ansehen"
 
-#: app/templates/admin/cards/speaker_table.html:37
+#: app/templates/admin/cards/speaker_table.html:40
 #: app/templates/admin/cards/tag_table.html:40
 #: app/templates/admin/cards/talk_table.html:36
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: app/templates/admin/cards/speaker_table.html:38
+#: app/templates/admin/cards/speaker_table.html:41
 #: app/templates/admin/cards/talk_table.html:37
 msgid "Copy"
 msgstr "Kopie erstellen"
 
-#: app/templates/admin/cards/speaker_table.html:39
+#: app/templates/admin/cards/speaker_table.html:42
 #: app/templates/admin/cards/tag_table.html:41
 #: app/templates/admin/cards/talk_table.html:38
 msgid "Delete"
@@ -212,4 +234,7 @@ msgstr ""
 
 #~ msgid "Open"
 #~ msgstr "Öffnen"
+
+#~ msgid "Cancle"
+#~ msgstr "Abbrechen"
 

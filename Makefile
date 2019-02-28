@@ -9,11 +9,11 @@ help: ## view this help text
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 init: ## init the whole env
-	pipenv install
+	pipenv install --skip-lock
 	$(MAKE) db_deploy
 
 init_dev: ## init the whole env for dev
-	pipenv install --deve
+	pipenv install --dev --pre
 	$(MAKE) db_deploy
 
 db_migrate: ## generate database-migration

@@ -8,7 +8,8 @@ from app.utils import is_safe_url, copy_row
 from app.api.routes import TalkTable, SpeakerTable, TagTable
 from app.auth.utils import has_perms
 from app.auth.models import Permission
-from app.core.models import Talk, Speaker, Tag
+from app.core.models import Talk, Speaker, Tag, HistoryItem
+from app.core.utils import add_historyitem
 
 
 __all__ = (
@@ -28,7 +29,8 @@ def index():
         talk_table=TalkTable,
         speaker_table=SpeakerTable,
         tag_table=TagTable,
-        tag_form=TagForm()
+        tag_form=TagForm(),
+        history_items=HistoryItem.query.order_by(HistoryItem.timestamp.desc())[:10]
     )
 
 
@@ -75,13 +77,31 @@ def talk(id=None):
             form.populate_obj(talk)
             if form.password.data:
                 talk.set_password(form.password.data)
+            add_historyitem(
+                talk, "",
+                HistoryItem.Types.CREATE
+                if id is None else
+                HistoryItem.Types.EDIT
+            )
+            talk.viewable = True
             db.session.commit()
             next = request.args.get('next')
             if not is_safe_url(next):
                 return abort(400)
             return redirect(next or url_for('admin.index'))
         is_new = False
-    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new)
+    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new, id=talk.id)
+
+
+@bp.route('/talk/<int:id>/cancel_create', methods=['GET'])
+@has_perms(Permission.ADMIN)
+def talk_cancel_create(id):
+    Talk.query.filter_by(id=id, viewable=False).delete()
+    db.session.commit()
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    return redirect(next or url_for('admin.index'))
 
 
 @bp.route('/speaker', methods=['GET', 'POST'])
@@ -111,10 +131,28 @@ def speaker(id=None):
             form.populate_obj(speaker)
             if form.password.data:
                 speaker.set_password(form.password.data)
+            add_historyitem(
+                speaker, "",
+                HistoryItem.Types.CREATE
+                if id is None else
+                HistoryItem.Types.EDIT
+            )
+            speaker.viewable = True
             db.session.commit()
             next = request.args.get('next')
             if not is_safe_url(next):
                 return abort(400)
             return redirect(next or url_for('admin.index'))
         is_new = False
-    return render_template('admin/speaker.html', title="Speaker - Admin", form=form, new=is_new)
+    return render_template('admin/speaker.html', title="Speaker - Admin", form=form, new=is_new, id=speaker.id)
+
+
+@bp.route('/speaker/<int:id>/cancel_create', methods=['GET'])
+@has_perms(Permission.ADMIN)
+def speaker_cancel_create(id):
+    Speaker.query.filter_by(id=id).delete()
+    db.session.commit()
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    return redirect(next or url_for('admin.index'))

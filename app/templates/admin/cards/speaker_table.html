@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-header"><h5>{{ _('Speakers') }}</h5></div>
+    <div class="card-header"><h5><i class="fas fa-user"></i> {{ _('Speakers') }}</h5></div>
     <div class="card-body">
         {{ speaker_table.generate_html() | safe }}
     </div>
@@ -11,7 +11,10 @@
 {% block script %}
 {% include 'snippets/speaker/modal_js.html' %}
 <script type="text/javascript">
-    {{ speaker_table.generate_js(url_for('api.speaker_table')) | safe }}
+    {{ speaker_table.generate_js(
+        table_url=url_for('api.speaker_table'),
+        dom="<'row'<'col-sm-12'f>><'row'<'col-sm-12'tr>><'row d-sm-flex justify-content-between'<'mr-auto'i><'mr-auto text-right'p>>"
+    ) | safe }}
     $('#speakerTable').on('click', '.speaker-row', function () {populate_speaker_modal($(this).attr('id'));});
     $('#speakerTable').contextMenu({
         selector: '.speaker-row',
