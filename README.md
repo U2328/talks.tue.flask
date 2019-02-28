@@ -10,10 +10,10 @@ A webapp to manage talks and more at the Eberhard Karls University of Tübingen.
 Same as normal, just be sure to use `make init_dev` to install all the development dependecies.
 
 ## Creating a superuser
-Simply run `make createsuperuser` and fill out the prompts.
+Simply run `make auth_createsuperuser` and fill out the prompts.
 
 ## Applying migrations
-Run `make upgrade` and you should be golden.
+Run `make db_upgrade` and you should be golden.
 
 ## I messed up how can I fix this?
 1. Don't panic
