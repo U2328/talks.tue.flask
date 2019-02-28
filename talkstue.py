@@ -18,6 +18,7 @@ def get_all_in_all(module):
         for model_name in module.__all__
     }
 
+
 @app.shell_context_processor
 def make_shell_context():
     return {
@@ -26,9 +27,11 @@ def make_shell_context():
         **get_all_in_all(auth_models),
     }
 
+
 @app.cli.group()
 def auth():
     """User  and authentication commands."""
+
 
 @auth.command(with_appcontext=True)
 @click.option('--username', prompt=True,
@@ -45,10 +48,12 @@ def createsuperuser(username, email, password):
     db.session.add(u)
     db.session.commit()
 
+
 @app.cli.group()
 def translate():
     """Translation and localization commands."""
     ...
+
 
 @translate.command()
 def update():
@@ -59,11 +64,13 @@ def update():
         raise RuntimeError('update command failed')
     os.remove('messages.pot')
 
+
 @translate.command()
 def compile():
     """Compile all languages."""
     if os.system('pybabel compile -d app/translations'):
         raise RuntimeError('compile command failed')
+
 
 @translate.command()
 @click.option('--lang', prompt=True)
@@ -75,6 +82,7 @@ def init(lang):
             'pybabel init -i messages.pot -d app/translations -l ' + lang):
         raise RuntimeError('init command failed')
     os.remove('messages.pot')
+
 
 @app.cli.command()
 def deploy():

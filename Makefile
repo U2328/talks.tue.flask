@@ -10,12 +10,12 @@ help: ## view this help text
 
 init: ## init the whole env
 	pipenv install
-	$(MAKE) auto_upgrade
+	$(MAKE) upgrade
 	$(MAKE) deploy
 
 init_dev: ## init the whole env for dev
 	pipenv install --dev
-	$(MAKE) auto_upgrade
+	$(MAKE) upgrade
 	$(MAKE) deploy
 
 migrate: ## generate database-migration
@@ -35,11 +35,11 @@ list_migrations: ## list all known migrations
 	pipenv run flask db history
 
 clean_db: ## remove db files
-	find -type f -name *.db -exec rm {} \;
+	find . -type f -name '*.db' -exec rm {} \;
 
 clean_cache: ## remove cached files
-	find -type f -name *.pyc -exec rm {} \;
-	find $(root_dir) -type d -name __pycache__ -exec rmdir {} \;
+	find $(root_dir) -type f -name '*.pyc' -exec rm {} \;
+	find $(root_dir) -type d -name '__pycache__' -exec rmdir {} \;
 
 full_clean: ## cleanup everythin
 	$(MAKE) clean_cache
