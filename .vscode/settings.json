@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/Users/tim/.local/share/virtualenvs/talks.tue-I9RhgjC2/bin/python",
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true
+}
