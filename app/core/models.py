@@ -27,7 +27,7 @@ HistoryItemType = namedtuple('HistoryItemType', ('icon', 'template'))
 class HistoryItem(db.Model):
     @unique
     class Types(Enum):
-        MISC   = HistoryItemType(
+        MISC   = HistoryItemType(  # noqa: E221
             'fas fa-feather-alt text-info',
             lambda obj: _l('%(message)s', message=obj.message)
         )
@@ -35,7 +35,7 @@ class HistoryItem(db.Model):
             'fas fa-plus-circle text-success',
             lambda obj: _l('%(user)s created %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
         )
-        EDIT   = HistoryItemType(
+        EDIT   = HistoryItemType(  # noqa: E221
             'fa fa-edit text-warning',
             lambda obj: _l('%(user)s edited %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
         )
@@ -49,7 +49,7 @@ class HistoryItem(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User", backref='history')
     message = db.Column(db.String(128))
-    timestamp =  db.Column(db.DateTime, default=lambda: datetime.now())
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
 
     target_discriminator = db.Column(db.String())
     target_id = db.Column(db.Integer())
@@ -79,8 +79,8 @@ class HistoryItem(db.Model):
         }
 
 
-class HasHistory:
-    ...
+class HasHistory: ...  # noqa: E701
+
 
 @event.listens_for(HasHistory, "mapper_configured", propagate=True)
 def setup_listener(mapper, class_):
@@ -133,13 +133,16 @@ class Speaker(HasHistory, db.Model):
             "familiy_name": self.familiy_name,
             'full_name': self.full_name,
             "about_me": self.about_me,
-            "rendered_about_me": mistune.markdown(self.about_me),
+            "rendered_about_me": mistune.markdown(self.about_me or ""),
             "talks": (
                 [talk.serialize(recursive=False) for talk in self.talks]
                 if recursive else
                 [talk.id for talk in self.talks]
             )
         }
+
+    def __hash__(self):
+        return hash(str(self.serialize(recursive=False)) + (self.password_hash or ""))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -169,11 +172,14 @@ class Talk(HasHistory, db.Model):
             "name": self.name,
             "timestamp": self.timestamp,
             "description": self.description,
-            "rendered_description": mistune.markdown(str(self.description)),
+            "rendered_description": mistune.markdown(self.description or None),
             "speaker": self.speaker.serialize(recursive=False) if recursive and self.speaker else self.speaker_id,
             "tags": [tag.serialize(recursive=False) for tag in self.tags],
             "rendered_tags": ' '.join(tag.render() for tag in self.tags)
         }
+
+    def __hash__(self):
+        return hash(str(self.serialize(recursive=False)) + (self.password_hash or ""))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

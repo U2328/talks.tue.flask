@@ -15,15 +15,11 @@ def is_safe_url(target):
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
 
-def copy_row(model, row, ignored_columns=[]):
-    copy = model()
+def copy_row(row, ignored_columns=[]):
+    copy = type(row)()
     for col in row.__table__.columns:
         if col.name not in ignored_columns:
-            try:
-                copy.__setattr__(col.name, getattr(row, col.name))
-            except Exception as e:
-                print(e)
-                continue
+            setattr(copy, col.name, getattr(row, col.name))
     return copy
 
 

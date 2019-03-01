@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect,\
                   url_for, abort
+from flask_login import current_user
 
 from . import bp
 from .forms import TalkForm, SpeakerForm, TagForm
@@ -54,105 +55,79 @@ def tag():
 @bp.route('/talk/<int:id>', methods=['GET', 'POST'])
 @has_perms(Permission.ADMIN)
 def talk(id=None):
-    if request.method == 'GET':
-        talk = Talk() if id is None else Talk.query.get(id)
-        if talk is None:
-            return abort(404)
-        if request.args.get('copy', False):
-            talk = copy_row(Talk, talk, ['id'])
-            db.session.add(talk)
-            db.session.commit()
-            return redirect(url_for('admin.talk', id=talk.id))
-        if id is None:
-            db.session.add(talk)
-            db.session.commit()
-        form = TalkForm(obj=talk)
-        is_new = id is None
-    elif request.method == 'POST':
-        form = TalkForm(request.form)
-        if form.validate():
-            talk = Talk.query.get(form.id.data)
-            if talk is None:
-                return abort(400) if id is None else abort(404)
-            form.populate_obj(talk)
-            if form.password.data:
-                talk.set_password(form.password.data)
+    talk = Talk() if id is None else Talk.query.get(id)
+    if talk is None and id is not None:
+        return abort(404)
+    if request.args.get('copy', False):
+        talk = copy_row(talk, ['id'])
+
+    is_new = talk.id is None
+    form = TalkForm(obj=talk)
+
+    if form.validate_on_submit():
+        old = hash(talk)
+        form.populate_obj(talk)
+        if form.password.data:
+            talk.set_password(form.password.data)
+        talk.viewable = True
+        changed = old != hash(talk)
+
+        if changed or is_new:
             add_historyitem(
                 talk, "",
                 HistoryItem.Types.CREATE
-                if id is None else
+                if is_new else
                 HistoryItem.Types.EDIT
             )
-            talk.viewable = True
-            db.session.commit()
-            next = request.args.get('next')
-            if not is_safe_url(next):
-                return abort(400)
-            return redirect(next or url_for('admin.index'))
-        is_new = False
-    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new, id=talk.id)
 
+        if is_new:
+            db.session.add(talk)
+        db.session.commit()
 
-@bp.route('/talk/<int:id>/cancel_create', methods=['GET'])
-@has_perms(Permission.ADMIN)
-def talk_cancel_create(id):
-    Talk.query.filter_by(id=id, viewable=False).delete()
-    db.session.commit()
-    next = request.args.get('next')
-    if not is_safe_url(next):
-        return abort(400)
-    return redirect(next or url_for('admin.index'))
+        next = request.args.get('next')
+        if not is_safe_url(next):
+            return abort(400)
+        return redirect(next or url_for('admin.index'))
+
+    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new)
 
 
 @bp.route('/speaker', methods=['GET', 'POST'])
 @bp.route('/speaker/<int:id>', methods=['GET', 'POST'])
 @has_perms(Permission.ADMIN)
 def speaker(id=None):
-    if request.method == 'GET':
-        speaker = Speaker() if id is None else Speaker.query.get(id)
-        if speaker is None:
-            return abort(404)
-        if request.args.get('copy', False):
-            speaker = copy_row(Speaker, speaker, ['id'])
-            db.session.add(speaker)
-            db.session.commit()
-            return redirect(url_for('admin.speaker', id=speaker.id))
-        if id is None:
-            db.session.add(speaker)
-            db.session.commit()
-        form = SpeakerForm(obj=speaker)
-        is_new = id is None
-    elif request.method == 'POST':
-        form = SpeakerForm(request.form)
-        if form.validate():
-            speaker = Speaker.query.get(form.id.data)
-            if speaker is None:
-                return abort(400) if id is None else abort(404)
-            form.populate_obj(speaker)
-            if form.password.data:
-                speaker.set_password(form.password.data)
+    speaker = Speaker() if id is None else Speaker.query.get(id)
+    if speaker is None and id is not None:
+        return abort(404)
+    if request.args.get('copy', False):
+        speaker = copy_row(speaker, ['id'])
+
+    is_new = speaker.id is None
+    form = SpeakerForm(obj=speaker)
+
+    if form.validate_on_submit():
+        old = hash(speaker)
+        form.populate_obj(speaker)
+        if form.password.data:
+            speaker.set_password(form.password.data)
+        speaker.viewable = True
+        changed = old != hash(speaker)
+
+        if changed or is_new:
             add_historyitem(
                 speaker, "",
                 HistoryItem.Types.CREATE
-                if id is None else
+                if is_new else
                 HistoryItem.Types.EDIT
             )
-            speaker.viewable = True
-            db.session.commit()
-            next = request.args.get('next')
-            if not is_safe_url(next):
-                return abort(400)
-            return redirect(next or url_for('admin.index'))
-        is_new = False
-    return render_template('admin/speaker.html', title="Speaker - Admin", form=form, new=is_new, id=speaker.id)
 
+        if is_new:
+            db.session.add(speaker)
+        db.session.commit()
 
-@bp.route('/speaker/<int:id>/cancel_create', methods=['GET'])
-@has_perms(Permission.ADMIN)
-def speaker_cancel_create(id):
-    Speaker.query.filter_by(id=id).delete()
-    db.session.commit()
-    next = request.args.get('next')
-    if not is_safe_url(next):
-        return abort(400)
-    return redirect(next or url_for('admin.index'))
+        next = request.args.get('next')
+        if not is_safe_url(next):
+            return abort(400)
+        return redirect(next or url_for('admin.index'))
+
+    return render_template('admin/speaker.html', title="Speaker - Admin", form=form, new=is_new)

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField,\
-                    HiddenField, DateTimeField, BooleanField
+                    DateTimeField, BooleanField
 from wtforms.validators import DataRequired, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_pagedown.fields import PageDownField
@@ -19,7 +19,6 @@ __all__ = (
 
 
 class TalkForm(FlaskForm):
-    id = HiddenField('id')
     name = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
     description = PageDownField(_l('Description'))
     timestamp = DateTimeField(_l('Date/Time'), format="%Y.%m.%d %H:%M", default=datetime.now(), validators=[DataRequired()])
@@ -30,7 +29,6 @@ class TalkForm(FlaskForm):
 
 
 class SpeakerForm(FlaskForm):
-    id = HiddenField('id')
     name = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
     familiy_name = StringField(_l('Familiy Name'), validators=[DataRequired(), Length(max=64)])
     familiy_name_first = BooleanField(_l('Family name first?'))
