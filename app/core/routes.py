@@ -1,7 +1,8 @@
-from flask import render_template
+from flask import render_template, current_app
+from flask_login import current_user
 
 from . import bp
-from .models import Talk
+from app.models import Talk
 from app.api.routes import TalkTable
 
 
@@ -14,6 +15,7 @@ __all__ = (
 @bp.route('/')
 @bp.route('/index')
 def index():
+    current_app.logger.info(current_user)
     talks = Talk.query[:9]
     return render_template('core/index.html', up_next=talks)
 

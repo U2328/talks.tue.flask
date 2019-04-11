@@ -1,5 +1,5 @@
-<div class="card">
-    <div class="card-header"><h5><i class="fas fa-calendar-day"></i> {{ _('Talks') }}</h5></div>
+<div class="card border-dark">
+    <div class="card-header"><h5><a href="{{ url_for("admin.talks") }}"><i class="fas fa-calendar-day"></i> {{ _('Talks') }}</a></h5></div>
     <div class="card-body">
         {{ talk_table.generate_html() | safe }}
     </div>
@@ -20,16 +20,7 @@
             if (key == "view") {populate_talk_modal(id);}
             if (key == "edit") {window.open("{{ url_for('admin.talk') }}/" + id, "_self");}
             if (key == "copy") {window.open("{{ url_for('admin.talk') }}/" + id + "?copy=1", "_self");}
-            if (key == "delete") {
-                $.ajax({
-                    url: '{{ url_for("api.talk") }}/' + id,
-                    type: 'DELETE',
-                    success: function(result) {
-                        alert("deleted " + id);
-                        $("#talkTable").dt.ajax.reload(function(x) {$("#talkTable").draw();});
-                    }
-                });
-            }
+            if (key == "delete") {window.open("{{ url_for('admin.talk') }}/" + id + "/delete", "_self");}
         },
         items: {
             "view": {name: "{{ _("View") }}", icon: "far fa-eye"},

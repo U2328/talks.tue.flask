@@ -5,7 +5,6 @@ from flask import request
 __all__ = (
     'is_safe_url',
     'copy_row',
-    'DotDict',
 )
 
 
@@ -21,9 +20,3 @@ def copy_row(row, ignored_columns=[]):
         if col.name not in ignored_columns:
             setattr(copy, col.name, getattr(row, col.name))
     return copy
-
-
-class DotDict(dict):
-    __getattr__ = dict.__getitem__
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__

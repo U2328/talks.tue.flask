@@ -1,0 +1,33 @@
+<div class="card border-dark">
+    <div class="card-header"><h5><a href="{{ url_for("admin.collections") }}"><i class="fas fa-list"></i> {{ _('Collections') }}</a></h5></div>
+    <div class="card-body">
+        {{ collection_table.generate_html() | safe }}
+    </div>
+    <div class="card-footer">
+        <a href="{{ url_for('admin.collection') }}" class="btn btn-primary">{{ _("Add new collection") }}</a>
+    </div>
+</div>
+{% include 'snippets/collection/modal.html' %}
+{% block script %}
+{% include 'snippets/collection/modal_js.html' %}
+<script type="text/javascript">
+    {{ collection_table.generate_js(url_for('api.collection_table')) | safe }}
+    $('#collectionTable').on('click', '.collection-row', function () {populate_collection_modal($(this).attr('id'));});
+    $('#collectionTable').contextMenu({
+        selector: '.collection-row',
+        callback: function(key, options) {
+            var id = $(this).attr('id');
+            if (key == "view") {populate_collection_modal(id);}
+            if (key == "edit") {window.open("{{ url_for('admin.collection') }}/" + id, "_self");}
+            if (key == "copy") {window.open("{{ url_for('admin.collection') }}/" + id + "?copy=1", "_self");}
+            if (key == "delete") {window.open("{{ url_for('admin.collection') }}/" + id + "/delete", "_self");}
+        },
+        items: {
+            "view": {name: "{{ _("View") }}", icon: "far fa-eye"},
+            "edit": {name: "{{ _("Edit") }}", icon: "fa-edit"},
+            "copy": {name: "{{ _("Copy") }}", icon: "fa-copy"},
+            "delete": {name: "{{ _("Delete") }}", icon: "far fa-trash-alt"},
+        }
+    });
+</script>
+{% endblock script %}

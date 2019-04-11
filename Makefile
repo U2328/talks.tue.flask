@@ -16,21 +16,42 @@ init_dev: ## init the whole env for dev
 	pipenv install --dev --pre
 	$(MAKE) db_deploy
 
+run: ## run the webserver
+	pipenv run flask run
+
+auth_createsuperuser: ## create a superuser
+	pipenv run flask auth createsuperuser
+
+babel_init: ## intialize new language
+	pipenv run pybabel extract -F babel.cfg -k _l -o messages.pot .
+	@read -p "locale:" locale; pipenv run pybabel init -i messages.pot -d app/translations -l $$locale
+	rm messages.pot
+
+babel_update: ## update all language files
+	pipenv run pybabel extract -F babel.cfg -k _l -o messages.pot .
+	pipenv run pybabel update -i messages.pot -d app/translations
+	rm messages.pot
+
+babel_compile: ## compile all language files
+	pipenv run pybabel compile -d app/translations
+
+lint: ## run linters on project files (dev only)
+	pipenv run flake8
+
 db_migrate: ## generate database-migration
 	pipenv run flask db migrate
 
 db_upgrade: ## upgrade database
 	pipenv run flask db upgrade
 
-db_auto_upgrade: ## migrate + upgrade
-	$(MAKE) db_migrate
-	$(MAKE) db_upgrade
-
-db_current_migration: ## find out what the current db revision is
+db_migration: ## find out what the current db revision is
 	pipenv run flask db show
 
-db_list_migrations: ## list all known migrations
+db_migrations: ## list all known migrations
 	pipenv run flask db history
+
+db_deploy: ## init server setup
+	pipenv run flask deploy
 
 clean_db: ## remove db files
 	find . -type f -name '*.db' -exec rm {} \;
@@ -43,24 +64,3 @@ full_clean: ## cleanup everythin
 	$(MAKE) clean_cache
 	$(MAKE) clean_db
 	pipenv --rm
-
-run: ## run the webserver
-	pipenv run flask run
-
-db_deploy: ## init server setup
-	pipenv run flask deploy
-
-auth_createsuperuser: ## create a superuser
-	pipenv run flask auth createsuperuser
-
-babel_init: ## intialize new language
-	pipenv run flask translate init
-
-babel_update: ## update all language files
-	pipenv run flask translate update
-
-babel_compile: ## compile all language files
-	pipenv run flask translate compile
-
-lint: ## run linters on project files (dev only)
-	pipenv run flake8

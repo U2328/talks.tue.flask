@@ -1,43 +1,38 @@
 from flask import render_template, request, redirect,\
-                  url_for, abort
+                  url_for, abort, current_app
 from flask_login import current_user
 
 from . import bp
-from .forms import TalkForm, SpeakerForm, TagForm
+from .forms import TalkForm, TagForm, CollectionForm
 from app import db
 from app.utils import is_safe_url, copy_row
-from app.api.routes import TalkTable, SpeakerTable, TagTable
-from app.auth.utils import has_perms
-from app.auth.models import Permission
-from app.core.models import Talk, Speaker, Tag, HistoryItem
-from app.core.utils import add_historyitem
+from app.api.routes import TalkTable, TagTable, CollectionTable
+from app.models import Talk, Tag, Collection  # , Activity
 
 
 __all__ = (
     'index',
     'tag',
     'talk',
-    'speaker'
 )
 
 
 @bp.route('/', methods=['GET'])
-@has_perms(Permission.ADMIN)
 def index():
     return render_template(
         'admin/index.html',
         title="Admin",
-        talk_table=TalkTable,
-        speaker_table=SpeakerTable,
-        tag_table=TagTable,
+        talk_table=TalkTable(),
+        tag_table=TagTable(),
+        collection_table=CollectionTable(),
         tag_form=TagForm(),
-        history_items=HistoryItem.query.order_by(HistoryItem.timestamp.desc())[:10]
     )
 
 
 @bp.route('/tag', methods=['POST'])
-@has_perms(Permission.ADMIN)
 def tag():
+    if not current_user.is_admin:
+        return abort(403)
     form = TagForm(request.form)
     if form.validate_on_submit():
         tag = Tag()
@@ -53,35 +48,26 @@ def tag():
 
 @bp.route('/talk', methods=['GET', 'POST'])
 @bp.route('/talk/<int:id>', methods=['GET', 'POST'])
-@has_perms(Permission.ADMIN)
 def talk(id=None):
     talk = Talk() if id is None else Talk.query.get(id)
+
+    if id is not None and not current_user.is_admin:
+        return abort(403)
     if talk is None and id is not None:
         return abort(404)
     if request.args.get('copy', False):
         talk = copy_row(talk, ['id'])
 
     is_new = talk.id is None
+    current_app.logger.debug(f">>> {talk.timestamp}")
     form = TalkForm(obj=talk)
+    current_app.logger.debug(f">>> {form.timestamp()}")
 
     if form.validate_on_submit():
-        old = hash(talk)
         form.populate_obj(talk)
-        if form.password.data:
-            talk.set_password(form.password.data)
-        talk.viewable = True
-        changed = old != hash(talk)
-
-        if changed or is_new:
-            add_historyitem(
-                talk, "",
-                HistoryItem.Types.CREATE
-                if is_new else
-                HistoryItem.Types.EDIT
-            )
-
         if is_new:
             db.session.add(talk)
+
         db.session.commit()
 
         next = request.args.get('next')
@@ -92,37 +78,57 @@ def talk(id=None):
     return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new)
 
 
-@bp.route('/speaker', methods=['GET', 'POST'])
-@bp.route('/speaker/<int:id>', methods=['GET', 'POST'])
-@has_perms(Permission.ADMIN)
-def speaker(id=None):
-    speaker = Speaker() if id is None else Speaker.query.get(id)
-    if speaker is None and id is not None:
+@bp.route('/talk/<int:id>/delete', methods=['GET', 'POST'])
+def delete_talk(id):
+    talk = Talk.query.get(id)
+
+    if talk is None:
+        return abort(404)
+    if not current_user.is_admin:
+        return abort(403)
+
+    db.session.delete(talk)
+    db.session.commit()
+    return redirect(url_for('admin.index'))
+
+
+@bp.route('/talks', methods=['GET'])
+def talks():
+    return render_template(
+        'admin/talks.html',
+        title="Talks - Admin",
+        talk_table=TalkTable(),
+    )
+
+
+@bp.route('/collection', methods=['GET', 'POST'])
+@bp.route('/collection/<int:id>', methods=['GET', 'POST'])
+def collection(id=None):
+    collection = Collection() if id is None else Collection.query.get(id)
+
+    if id is not None and not current_user.is_admin:
+        return abort(403)
+    if collection is None and id is not None:
         return abort(404)
     if request.args.get('copy', False):
-        speaker = copy_row(speaker, ['id'])
+        collection = copy_row(collection, ['id'])
 
-    is_new = speaker.id is None
-    form = SpeakerForm(obj=speaker)
+    is_new = collection.id is None
+    form = CollectionForm(obj=collection)
 
     if form.validate_on_submit():
-        old = hash(speaker)
-        form.populate_obj(speaker)
-        if form.password.data:
-            speaker.set_password(form.password.data)
-        speaker.viewable = True
-        changed = old != hash(speaker)
-
-        if changed or is_new:
-            add_historyitem(
-                speaker, "",
-                HistoryItem.Types.CREATE
-                if is_new else
-                HistoryItem.Types.EDIT
-            )
-
+        form.populate_obj(collection)
         if is_new:
-            db.session.add(speaker)
+            db.session.add(collection)
+        """
+        db.session.flush()
+
+        activity = Activity(
+            verb='create' if is_new else 'edit',
+            object=collection
+        )
+        db.session.add(activity)
+        """
         db.session.commit()
 
         next = request.args.get('next')
@@ -130,4 +136,27 @@ def speaker(id=None):
             return abort(400)
         return redirect(next or url_for('admin.index'))
 
-    return render_template('admin/speaker.html', title="Speaker - Admin", form=form, new=is_new)
+    return render_template('admin/collection.html', title="Collection - Admin", form=form, new=is_new)
+
+
+@bp.route('/collection/<int:id>/delete', methods=['GET', 'POST'])
+def delete_collection(id):
+    collection = Collection.query.get(id)
+
+    if collection is None:
+        return abort(404)
+    if not current_user.is_admin:
+        return abort(403)
+
+    db.session.delete(collection)
+    db.session.commit()
+    return redirect(url_for('admin.index'))
+
+
+@bp.route('/collections', methods=['GET'])
+def collections():
+    return render_template(
+        'admin/collections.html',
+        title="Collections - Admin",
+        collection_table=CollectionTable(),
+    )

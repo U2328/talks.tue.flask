@@ -4,8 +4,7 @@ import click
 from flask_migrate import upgrade
 
 from app import create_app, db
-from app.core import models as core_models
-from app.auth import models as auth_models
+from app import models
 
 
 app = create_app()
@@ -22,8 +21,7 @@ def get_all_in_all(module):
 def make_shell_context():
     return {
         'db': db,
-        **get_all_in_all(core_models),
-        **get_all_in_all(auth_models),
+        **get_all_in_all(models),
     }
 
 
@@ -41,53 +39,16 @@ def auth():
               default=lambda: '*' * len(os.environ.get('ADMIN_PASSWORD', '')),)
 def createsuperuser(username, email, password):
     """Create a superuser"""
-    u = auth_models.User(username=username, email=email)
+    u = models.User(username=username, email=email, is_admin=True)
     u.set_password(password)
-    u.role = auth_models.Role.query.filter_by(name='admin').first()
     db.session.add(u)
     db.session.commit()
-
-
-@app.cli.group()
-def translate():
-    """Translation and localization commands."""
-    ...
-
-
-@translate.command()
-def update():
-    """Update all languages."""
-    if os.system('pybabel extract -F babel.cfg -k _l -o messages.pot .'):
-        raise RuntimeError('extract command failed')
-    if os.system('pybabel update -i messages.pot -d app/translations'):
-        raise RuntimeError('update command failed')
-    os.remove('messages.pot')
-
-
-@translate.command()
-def compile():
-    """Compile all languages."""
-    if os.system('pybabel compile -d app/translations'):
-        raise RuntimeError('compile command failed')
-
-
-@translate.command()
-@click.option('--lang', prompt=True)
-def init(lang):
-    """Initialize a new language."""
-    if os.system('pybabel extract -F babel.cfg -k _l -o messages.pot .'):
-        raise RuntimeError('extract command failed')
-    if os.system(
-            'pybabel init -i messages.pot -d app/translations -l ' + lang):
-        raise RuntimeError('init command failed')
-    os.remove('messages.pot')
 
 
 @app.cli.command()
 def deploy():
     """Run deployment tasks."""
     upgrade()
-    auth_models.Role.insert_roles()
 
 
 if __name__ == '__main__':

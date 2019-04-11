@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-03-01 00:38+0100\n"
+"POT-Creation-Date: 2019-03-02 09:00+0100\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -22,53 +22,55 @@ msgstr ""
 msgid "Please log in to access this page."
 msgstr "Bitte loggen sie sich ein um diese Seite zu besuchen."
 
-#: app/admin/forms.py:23 app/admin/forms.py:34 app/admin/forms.py:43
+#: app/admin/forms.py:22 app/admin/forms.py:32 app/admin/forms.py:41
 #: app/api/routes.py:65 app/api/routes.py:125 app/api/routes.py:144
 msgid "Name"
 msgstr "Name"
 
-#: app/admin/forms.py:24
+#: app/admin/forms.py:23
 msgid "Description"
 msgstr "Beschreibung"
 
-#: app/admin/forms.py:25 app/api/routes.py:69
+#: app/admin/forms.py:24 app/api/routes.py:69
+#: app/templates/snippets/talk/modal.html:18
 msgid "Date/Time"
 msgstr "Datum/Uhrzeit"
 
-#: app/admin/forms.py:26
+#: app/admin/forms.py:25
 msgid "Speaker"
 msgstr "Speaker"
 
-#: app/admin/forms.py:27 app/auth/forms.py:48
+#: app/admin/forms.py:26 app/auth/forms.py:48
 msgid "Categories"
 msgstr "Kategorien"
 
-#: app/admin/forms.py:28 app/admin/forms.py:38 app/auth/forms.py:21
+#: app/admin/forms.py:27 app/admin/forms.py:36 app/auth/forms.py:21
 #: app/auth/forms.py:29 app/auth/forms.py:46
 msgid "Password"
 msgstr "Passwort"
 
-#: app/admin/forms.py:29 app/admin/forms.py:39 app/auth/forms.py:49
+#: app/admin/forms.py:28 app/admin/forms.py:37 app/auth/forms.py:49
 msgid "Save"
 msgstr "Speichern"
 
-#: app/admin/forms.py:35
+#: app/admin/forms.py:33
 msgid "Familiy Name"
 msgstr "Familienname"
 
-#: app/admin/forms.py:36
+#: app/admin/forms.py:34
 msgid "Family name first?"
 msgstr "Familienname zuerst?"
 
-#: app/admin/forms.py:37
+#: app/admin/forms.py:35
 msgid "About me"
 msgstr "Über mich"
 
-#: app/admin/forms.py:44
+#: app/admin/forms.py:42
 msgid "Add"
 msgstr "Hinzufügen"
 
 #: app/api/routes.py:76 app/templates/admin/cards/tag_table.html:2
+#: app/templates/snippets/talk/modal.html:22
 msgid "Tags"
 msgstr "Kategorien"
 
@@ -188,7 +190,7 @@ msgid "View"
 msgstr "Ansehen"
 
 #: app/templates/admin/cards/speaker_table.html:40
-#: app/templates/admin/cards/tag_table.html:40
+#: app/templates/admin/cards/tag_table.html:43
 #: app/templates/admin/cards/talk_table.html:36
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -199,7 +201,7 @@ msgid "Copy"
 msgstr "Kopie erstellen"
 
 #: app/templates/admin/cards/speaker_table.html:42
-#: app/templates/admin/cards/tag_table.html:41
+#: app/templates/admin/cards/tag_table.html:44
 #: app/templates/admin/cards/talk_table.html:38
 msgid "Delete"
 msgstr "Löschen"
@@ -231,6 +233,13 @@ msgstr "Ihr Pofil"
 #: app/templates/core/index.html:29
 msgid "Goto"
 msgstr ""
+
+#: app/templates/snippets/speaker/modal.html:6
+#: app/templates/snippets/speaker/modal.html:15
+#: app/templates/snippets/talk/modal.html:6
+#: app/templates/snippets/talk/modal.html:31
+msgid "Close"
+msgstr "Schließen"
 
 #~ msgid "Open"
 #~ msgstr "Öffnen"

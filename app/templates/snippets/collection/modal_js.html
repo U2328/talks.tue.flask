@@ -1,0 +1,15 @@
+<script type="text/javascript">
+populate_collection_modal = function(id) {
+    var modal = $('#collectionModal');
+    if (id !== modal.data('lastId')) {
+        var collection = JSON.parse(sessionStorage["collection" + id]);
+        modal.find('.modal-title').text(collection.title);
+        modal.find('.description').html(collection.rendered_description);
+        modal.find('.time').html(moment(collection.timestamp).calendar());
+        modal.find('.tags').html(collection.rendered_tags);
+        modal.find('.link').attr('href', "")
+        modal.data('lastId', id);
+    }
+    modal.modal('toggle');
+};
+</script>

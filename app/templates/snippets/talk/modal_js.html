@@ -3,7 +3,7 @@ populate_talk_modal = function(id) {
     var modal = $('#talkModal');
     if (id !== modal.data('lastId')) {
         var talk = JSON.parse(sessionStorage["talk" + id]);
-        modal.find('.modal-title').text(talk.name);
+        modal.find('.modal-title').text(talk.title);
         modal.find('.description').html(talk.rendered_description);
         modal.find('.time').html(moment(talk.timestamp).calendar());
         modal.find('.tags').html(talk.rendered_tags);

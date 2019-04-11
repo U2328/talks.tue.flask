@@ -6,6 +6,9 @@ from flask_pagedown import PageDown
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l, get_locale
 from flaskext.markdown import Markdown
+import sqlalchemy
+from sqlalchemy_continuum import make_versioned
+from sqlalchemy_continuum.plugins import ActivityPlugin, FlaskPlugin
 
 from app.config import Config
 
@@ -16,7 +19,6 @@ __all__ = (
     'moment', 'pagedown'
 )
 
-
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
@@ -26,18 +28,14 @@ login.login_view = 'auth.login'
 login.login_message = _l('Please log in to access this page.')
 pagedown = PageDown()
 
+db_activity = ActivityPlugin()
+make_versioned(plugins=[db_activity, FlaskPlugin()])
 
 from app.core import bp as core_bp  # noqa: E402
-from app.auth import bp as auth_bp, models as auth_models  # noqa: E402
+from app.auth import bp as auth_bp  # noqa: E402
 from app.api import bp as api_bp  # noqa: E402
 from app.errors import bp as errors_bp  # noqa: E402
 from app.admin import bp as admin_bp  # noqa: E402
-
-
-def context_processor():
-    return {
-        'can_view_admin': hasattr(current_user, 'role') and current_user.role.name != auth_models.Role.DEFAULT_ROLE,
-    }
 
 
 def before_request():
@@ -54,7 +52,26 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     pagedown.init_app(app)
-    markdown = Markdown(app)  # noqa: F841
+    markdown = Markdown(  # noqa: F841
+        app,
+        extenensions=[
+            "markdown.extensions.sane_lists",
+            "markdown.extensions.nl2br",
+            "markdown.extensions.codehilite",
+            "pymdownx.extra",
+            "pymdownx.arithmatex",
+            "pymdownx.smartsymbols",
+        ],
+        extension_configs={
+            "pymdownx.arithmatex": {
+                "generic": True,
+            }
+        }
+    )
+
+    from app import models as _  # noqa: E402, F401
+
+    sqlalchemy.orm.configure_mappers()
 
     app.register_blueprint(core_bp)
     app.register_blueprint(errors_bp)
@@ -66,7 +83,6 @@ def create_app(config_class=Config):
     def get_locale():
         return request.accept_languages.best_match(app.config['LANGUAGES'])
 
-    app.context_processor(context_processor)
     app.before_request(before_request)
 
     return app

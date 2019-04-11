@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card border-dark">
     <div class="card-header"><h5><i class="fas fa-tags"></i> {{ _('Tags') }}</h5></div>
     <div class="card-body">
         {{ tag_table.generate_html() | safe }}
@@ -24,9 +24,7 @@
         </form>
     </div>
 </div>
-{% include 'snippets/speaker/modal.html' %}
 {% block script %}
-{% include 'snippets/speaker/modal_js.html' %}
 <script type="text/javascript">
     {{ tag_table.generate_js(
         table_url=url_for('api.tag_table'),

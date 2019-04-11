@@ -54,7 +54,7 @@
                                     <a class="dropdown-item" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
                                     <a class="dropdown-item" href="{{ url_for('auth.register') }}">{{ _('Register') }}</a>
                                 {% else %}
-                                    {% if can_view_admin %}
+                                    {% if current_user.is_admin %}
                                         <a class="dropdown-item" href="{{ url_for('admin.index') }}">{{ _('Admin') }}</a>
                                     {% endif %}
                                     <a class="dropdown-item" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
@@ -108,6 +108,41 @@
                     close: 'fas fa-times'
                 }
             });
+        </script>
+        <script type="text/javascript">
+            // setup katex for use with 
+            (function () {
+                'use strict';
+                var katexMath = (function () {
+                    var maths = document.querySelectorAll('.arithmatex'), tex;
+                    for (var i = 0; i < maths.length; i++) {
+                        tex = maths[i].textContent || maths[i].innerText;
+                        if (tex.startsWith('\\(') && tex.endsWith('\\)')) {
+                            katex.render(tex.slice(2, -2), maths[i], {'displayMode': false});
+                        } else if (tex.startsWith('\\[') && tex.endsWith('\\]')) {
+                            katex.render(tex.slice(2, -2), maths[i], {'displayMode': true});
+                        }
+                    }
+                });
+                (function () {
+                    var onReady = function onReady(fn) {
+                        if (document.addEventListener) {
+                            document.addEventListener("DOMContentLoaded", fn);
+                        } else {
+                            document.attachEvent("onreadystatechange", function () {
+                                if (document.readyState === "interactive") {
+                                    fn();
+                                }
+                            });
+                        }
+                    };
+                    onReady(function () {
+                        if (typeof katex !== "undefined") {
+                            katexMath();
+                        }
+                    });
+                })();
+            }());
         </script>
         {% block script %}
         {% endblock script %}

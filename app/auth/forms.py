@@ -5,8 +5,7 @@ from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 from flask_babel import _, lazy_gettext as _l
 
-from .models import User
-from app.core.models import Tag
+from app.models import Tag, User
 
 
 __all__ = (

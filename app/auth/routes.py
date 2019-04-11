@@ -4,8 +4,8 @@ from flask_babel import _
 
 from app import db
 from app.utils import is_safe_url
+from app.models import User
 from . import bp
-from .models import User
 from .forms import LoginForm, RegistrationForm, ProfileForm
 
 
