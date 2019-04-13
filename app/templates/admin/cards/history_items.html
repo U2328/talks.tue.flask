@@ -1,10 +1,10 @@
 <div class="card border-dark">
-    <div class="card-header"><h5><i class="far fa-clock"></i> {{ _('History') }}</h5></div>
+    <div class="card-header"><h5><i class="far fa-clock"></i> {{ _('Activity') }}</h5></div>
     <ul class="list-group list-group-flush">
-        {% for history_item in history_items %}
+        {% for activity in activities %}
             <li class="list-group-item">
-                <div class="row"><div class="col-sm-12">{{ history_item.render_message() | safe }}</div></div>
-                <div class="row text-muted float-right"><div class="col-sm-12"><small>{{ moment(history_item.timestamp).calendar() }}</small></div></div>
+                <div class="row"><div class="col-sm-12">{{ activity.render_message() | safe }}</div></div>
+                <div class="row text-muted float-right"><div class="col-sm-12"><small>{{ moment(activity.timestamp).calendar() }}</small></div></div>
             </li>
         {% endfor %}
     </ul>

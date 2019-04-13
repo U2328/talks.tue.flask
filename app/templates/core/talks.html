@@ -8,12 +8,10 @@
         </div>
     </div>
 </div>
-{% include 'snippets/talk/modal.html' %}
 {% endblock content %}
 {% block script %}
-{% include 'snippets/talk/modal_js.html' %}
 <script type="text/javascript">
     {{ table.generate_js(url_for('api.talk_table')) | safe }}
-    $('#talkTable').on('click', '.talk-row', function () {populate_talk_modal($(this).attr('id'));});
+    $('#talkTable').on('click', '.talk-row', function () {window.open("{{ url_for('core.talk') }}/" + id, "_self");});
 </script>
 {% endblock script %}

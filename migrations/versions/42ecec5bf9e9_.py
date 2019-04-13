@@ -1,8 +1,8 @@
-"""Added sqlalchemy_continuum
+"""Inital Setup
 
-Revision ID: 973e65a0675d
-Revises: d66adce9363c
-Create Date: 2019-04-11 18:29:22.059660
+Revision ID: 42ecec5bf9e9
+Revises: 
+Create Date: 2019-04-13 23:04:40.645432
 
 """
 from alembic import op
@@ -11,8 +11,8 @@ import sqlalchemy_utils
 
 
 # revision identifiers, used by Alembic.
-revision = '973e65a0675d'
-down_revision = 'd66adce9363c'
+revision = '42ecec5bf9e9'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -33,11 +33,23 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_activity_transaction_id'), 'activity', ['transaction_id'], unique=False)
+    op.create_table('collection_editors_version',
+    sa.Column('collection_id', sa.Integer(), autoincrement=False, nullable=False),
+    sa.Column('user_id', sa.Integer(), autoincrement=False, nullable=False),
+    sa.Column('transaction_id', sa.BigInteger(), autoincrement=False, nullable=False),
+    sa.Column('end_transaction_id', sa.BigInteger(), nullable=True),
+    sa.Column('operation_type', sa.SmallInteger(), nullable=False),
+    sa.PrimaryKeyConstraint('collection_id', 'user_id', 'transaction_id')
+    )
+    op.create_index(op.f('ix_collection_editors_version_end_transaction_id'), 'collection_editors_version', ['end_transaction_id'], unique=False)
+    op.create_index(op.f('ix_collection_editors_version_operation_type'), 'collection_editors_version', ['operation_type'], unique=False)
+    op.create_index(op.f('ix_collection_editors_version_transaction_id'), 'collection_editors_version', ['transaction_id'], unique=False)
     op.create_table('collection_version',
     sa.Column('id', sa.Integer(), autoincrement=False, nullable=False),
     sa.Column('title', sa.String(length=64), autoincrement=False, nullable=True),
     sa.Column('description', sa.Text(), autoincrement=False, nullable=True),
     sa.Column('is_meta', sa.Boolean(), autoincrement=False, nullable=True),
+    sa.Column('organizer_id', sa.Integer(), autoincrement=False, nullable=True),
     sa.Column('transaction_id', sa.BigInteger(), autoincrement=False, nullable=False),
     sa.Column('end_transaction_id', sa.BigInteger(), nullable=True),
     sa.Column('operation_type', sa.SmallInteger(), nullable=False),
@@ -57,6 +69,11 @@ def upgrade():
     op.create_index(op.f('ix_meta_collection_connections_version_end_transaction_id'), 'meta_collection_connections_version', ['end_transaction_id'], unique=False)
     op.create_index(op.f('ix_meta_collection_connections_version_operation_type'), 'meta_collection_connections_version', ['operation_type'], unique=False)
     op.create_index(op.f('ix_meta_collection_connections_version_transaction_id'), 'meta_collection_connections_version', ['transaction_id'], unique=False)
+    op.create_table('tag',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=32), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('tag_version',
     sa.Column('id', sa.Integer(), autoincrement=False, nullable=False),
     sa.Column('name', sa.String(length=32), autoincrement=False, nullable=True),
@@ -68,6 +85,15 @@ def upgrade():
     op.create_index(op.f('ix_tag_version_end_transaction_id'), 'tag_version', ['end_transaction_id'], unique=False)
     op.create_index(op.f('ix_tag_version_operation_type'), 'tag_version', ['operation_type'], unique=False)
     op.create_index(op.f('ix_tag_version_transaction_id'), 'tag_version', ['transaction_id'], unique=False)
+    op.create_table('talk',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=64), nullable=True),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('speaker_name', sa.String(length=64), nullable=True),
+    sa.Column('speaker_aboutme', sa.Text(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('talk_collections_version',
     sa.Column('talk_id', sa.Integer(), autoincrement=False, nullable=False),
     sa.Column('collection_id', sa.Integer(), autoincrement=False, nullable=False),
@@ -105,11 +131,23 @@ def upgrade():
     op.create_index(op.f('ix_talk_version_end_transaction_id'), 'talk_version', ['end_transaction_id'], unique=False)
     op.create_index(op.f('ix_talk_version_operation_type'), 'talk_version', ['operation_type'], unique=False)
     op.create_index(op.f('ix_talk_version_transaction_id'), 'talk_version', ['transaction_id'], unique=False)
+    op.create_table('user',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('username', sa.String(length=64), nullable=True),
+    sa.Column('email', sa.String(length=120), nullable=True),
+    sa.Column('is_admin', sa.Boolean(), nullable=True),
+    sa.Column('is_organizer', sa.Boolean(), nullable=True),
+    sa.Column('password_hash', sa.String(length=128), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
+    op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
     op.create_table('user_version',
     sa.Column('id', sa.Integer(), autoincrement=False, nullable=False),
     sa.Column('username', sa.String(length=64), autoincrement=False, nullable=True),
     sa.Column('email', sa.String(length=120), autoincrement=False, nullable=True),
     sa.Column('is_admin', sa.Boolean(), autoincrement=False, nullable=True),
+    sa.Column('is_organizer', sa.Boolean(), autoincrement=False, nullable=True),
     sa.Column('password_hash', sa.String(length=128), autoincrement=False, nullable=True),
     sa.Column('transaction_id', sa.BigInteger(), autoincrement=False, nullable=False),
     sa.Column('end_transaction_id', sa.BigInteger(), nullable=True),
@@ -121,6 +159,22 @@ def upgrade():
     op.create_index(op.f('ix_user_version_operation_type'), 'user_version', ['operation_type'], unique=False)
     op.create_index(op.f('ix_user_version_transaction_id'), 'user_version', ['transaction_id'], unique=False)
     op.create_index(op.f('ix_user_version_username'), 'user_version', ['username'], unique=False)
+    op.create_table('collection',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=64), nullable=True),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('is_meta', sa.Boolean(), nullable=True),
+    sa.Column('organizer_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['organizer_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('talk_tags',
+    sa.Column('tag_id', sa.Integer(), nullable=False),
+    sa.Column('talk_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['tag_id'], ['tag.id'], ),
+    sa.ForeignKeyConstraint(['talk_id'], ['talk.id'], ),
+    sa.PrimaryKeyConstraint('tag_id', 'talk_id')
+    )
     op.create_table('transaction',
     sa.Column('issued_at', sa.DateTime(), nullable=True),
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
@@ -130,19 +184,48 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_transaction_user_id'), 'transaction', ['user_id'], unique=False)
+    op.create_table('collection_editors',
+    sa.Column('collection_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['collection_id'], ['collection.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('collection_id', 'user_id')
+    )
+    op.create_table('meta_collection_connections',
+    sa.Column('sub_collection_id', sa.Integer(), nullable=False),
+    sa.Column('meta_collection_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['meta_collection_id'], ['collection.id'], ),
+    sa.ForeignKeyConstraint(['sub_collection_id'], ['collection.id'], ),
+    sa.PrimaryKeyConstraint('sub_collection_id', 'meta_collection_id')
+    )
+    op.create_table('talk_collections',
+    sa.Column('talk_id', sa.Integer(), nullable=False),
+    sa.Column('collection_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['collection_id'], ['collection.id'], ),
+    sa.ForeignKeyConstraint(['talk_id'], ['talk.id'], ),
+    sa.PrimaryKeyConstraint('talk_id', 'collection_id')
+    )
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('talk_collections')
+    op.drop_table('meta_collection_connections')
+    op.drop_table('collection_editors')
     op.drop_index(op.f('ix_transaction_user_id'), table_name='transaction')
     op.drop_table('transaction')
+    op.drop_table('talk_tags')
+    op.drop_table('collection')
     op.drop_index(op.f('ix_user_version_username'), table_name='user_version')
     op.drop_index(op.f('ix_user_version_transaction_id'), table_name='user_version')
     op.drop_index(op.f('ix_user_version_operation_type'), table_name='user_version')
     op.drop_index(op.f('ix_user_version_end_transaction_id'), table_name='user_version')
     op.drop_index(op.f('ix_user_version_email'), table_name='user_version')
     op.drop_table('user_version')
+    op.drop_index(op.f('ix_user_username'), table_name='user')
+    op.drop_index(op.f('ix_user_email'), table_name='user')
+    op.drop_table('user')
     op.drop_index(op.f('ix_talk_version_transaction_id'), table_name='talk_version')
     op.drop_index(op.f('ix_talk_version_operation_type'), table_name='talk_version')
     op.drop_index(op.f('ix_talk_version_end_transaction_id'), table_name='talk_version')
@@ -155,10 +238,12 @@ def downgrade():
     op.drop_index(op.f('ix_talk_collections_version_operation_type'), table_name='talk_collections_version')
     op.drop_index(op.f('ix_talk_collections_version_end_transaction_id'), table_name='talk_collections_version')
     op.drop_table('talk_collections_version')
+    op.drop_table('talk')
     op.drop_index(op.f('ix_tag_version_transaction_id'), table_name='tag_version')
     op.drop_index(op.f('ix_tag_version_operation_type'), table_name='tag_version')
     op.drop_index(op.f('ix_tag_version_end_transaction_id'), table_name='tag_version')
     op.drop_table('tag_version')
+    op.drop_table('tag')
     op.drop_index(op.f('ix_meta_collection_connections_version_transaction_id'), table_name='meta_collection_connections_version')
     op.drop_index(op.f('ix_meta_collection_connections_version_operation_type'), table_name='meta_collection_connections_version')
     op.drop_index(op.f('ix_meta_collection_connections_version_end_transaction_id'), table_name='meta_collection_connections_version')
@@ -167,6 +252,10 @@ def downgrade():
     op.drop_index(op.f('ix_collection_version_operation_type'), table_name='collection_version')
     op.drop_index(op.f('ix_collection_version_end_transaction_id'), table_name='collection_version')
     op.drop_table('collection_version')
+    op.drop_index(op.f('ix_collection_editors_version_transaction_id'), table_name='collection_editors_version')
+    op.drop_index(op.f('ix_collection_editors_version_operation_type'), table_name='collection_editors_version')
+    op.drop_index(op.f('ix_collection_editors_version_end_transaction_id'), table_name='collection_editors_version')
+    op.drop_table('collection_editors_version')
     op.drop_index(op.f('ix_activity_transaction_id'), table_name='activity')
     op.drop_table('activity')
     # ### end Alembic commands ###

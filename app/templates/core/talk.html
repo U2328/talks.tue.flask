@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row pt-3">
+        <div class="col-xs-11 col-md-10 col-lg-9 mx-auto">
+            <div class="row border-bottom">
+                <h2 class="text-center">{{ talk.title }}</h2>
+            </div>
+            <div class="row">
+                <div class="col-lg-5 col-xl-4 pt-3">
+                    <div class="card border-dark">
+                        <div class="card-header h-50 p-2 pl-3">
+                            <h4 class="mb-0"><i class="fas fa-info-circle"></i>&nbsp;{{ _("Info") }}</h4>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <small class="text-muted">{{ _("Speaker’s name") }}:</small>&nbsp;<span class="h6">{{ talk.speaker_name }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <small class="text-muted">{{ _("Date") }}:</small>&nbsp;<span class="h6">{{ talk.timestamp }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <small class="text-muted">{{ _("Tags") }}:</small>&nbsp;<span class="h6">{% for tag in talk.tags.all %}{% include 'snippets/tag.html' %} {% endfor %}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    {% if talk.collections.count %}
+                        <div class="card border-dark mt-2">
+                            <div class="card-header h-50 p-2 pl-3">
+                                <h4 class="mb-0"><i class="fas fa-list"></i>&nbsp;{{ _("Collections") }}:</h4>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                {% for collection in talk.collections %}
+                                    <li class="list-group-item" onclick="window.location='{{ url_for('core.collection', id=collection.id) }}';" style="cursor: pointer;">
+                                        {{ collection.title }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-lg-7 col-xl-8 pt-3">
+                    <div class="card border-dark">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">
+                                        <i class="fab fa-readme"></i>
+                                        {{ _("Description") }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="speaker-tab" data-toggle="tab" href="#speaker" role="tab" aria-controls="speaker" aria-selected="false">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        {{ _("Speaker’s about me") }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body tab-content pt-2">
+                            <div class="tab-pane active show" id="description" role="tabpanel" aria-labelledby="description-tab">
+                                <p class="md">{{ talk.description | markdown }}</p>
+                            </div>
+                            <div class="tab-pane" id="speaker" role="tabpanel" aria-labelledby="speaker-tab">
+                                <p class="md">{{ talk.speaker_aboutme | markdown }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

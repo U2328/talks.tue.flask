@@ -1,5 +1,5 @@
 <div class="card border-dark">
-    <div class="card-header"><h5><a href="{{ url_for("admin.talks") }}"><i class="fas fa-calendar-day"></i> {{ _('Talks') }}</a></h5></div>
+    <div class="card-header"><h5><i class="fas fa-calendar-day"></i> {{ _('Talks') }}</h5></div>
     <div class="card-body">
         {{ talk_table.generate_html() | safe }}
     </div>
@@ -7,17 +7,15 @@
         <a href="{{ url_for('admin.talk') }}" class="btn btn-primary">{{ _("Add new talk") }}</a>
     </div>
 </div>
-{% include 'snippets/talk/modal.html' %}
 {% block script %}
-{% include 'snippets/talk/modal_js.html' %}
 <script type="text/javascript">
     {{ talk_table.generate_js(url_for('api.talk_table')) | safe }}
-    $('#talkTable').on('click', '.talk-row', function () {populate_talk_modal($(this).attr('id'));});
+    $('#talkTable').on('click', '.talk-row', function () {window.open("{{ url_for('core.talk') }}/" + id, "_self");});
     $('#talkTable').contextMenu({
         selector: '.talk-row',
         callback: function(key, options) {
             var id = $(this).attr('id');
-            if (key == "view") {populate_talk_modal(id);}
+            if (key == "view") {window.open("{{ url_for('core.talk') }}/" + id, "_self");}
             if (key == "edit") {window.open("{{ url_for('admin.talk') }}/" + id, "_self");}
             if (key == "copy") {window.open("{{ url_for('admin.talk') }}/" + id + "?copy=1", "_self");}
             if (key == "delete") {window.open("{{ url_for('admin.talk') }}/" + id + "/delete", "_self");}

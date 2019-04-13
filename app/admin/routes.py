@@ -7,26 +7,13 @@ from .forms import TalkForm, TagForm, CollectionForm
 from app import db
 from app.utils import is_safe_url, copy_row
 from app.api.routes import TalkTable, TagTable, CollectionTable
-from app.models import Talk, Tag, Collection  # , Activity
+from app.models import Talk, Tag, Collection, Activity
 
 
 __all__ = (
-    'index',
     'tag',
     'talk',
 )
-
-
-@bp.route('/', methods=['GET'])
-def index():
-    return render_template(
-        'admin/index.html',
-        title="Admin",
-        talk_table=TalkTable(),
-        tag_table=TagTable(),
-        collection_table=CollectionTable(),
-        tag_form=TagForm(),
-    )
 
 
 @bp.route('/tag', methods=['POST'])
@@ -39,11 +26,10 @@ def tag():
         form.populate_obj(tag)
         db.session.add(tag)
         db.session.commit()
-        next = request.args.get('next')
-        if not is_safe_url(next):
-            return abort(400)
-        return redirect(next or url_for('admin.index'))
-    return redirect(url_for('admin.index'))
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    return redirect(next or url_for('core.index'))
 
 
 @bp.route('/talk', methods=['GET', 'POST'])
@@ -58,6 +44,12 @@ def talk(id=None):
     if request.args.get('copy', False):
         talk = copy_row(talk, ['id'])
 
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    else:
+        next = next or url_for('admin.talks')
+
     is_new = talk.id is None
     current_app.logger.debug(f">>> {talk.timestamp}")
     form = TalkForm(obj=talk)
@@ -67,15 +59,17 @@ def talk(id=None):
         form.populate_obj(talk)
         if is_new:
             db.session.add(talk)
+        db.session.flush()
 
+        activity = Activity(
+            verb='create' if is_new else 'edit',
+            object=talk
+        )
+        db.session.add(activity)
         db.session.commit()
+        return redirect(next)
 
-        next = request.args.get('next')
-        if not is_safe_url(next):
-            return abort(400)
-        return redirect(next or url_for('admin.index'))
-
-    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new)
+    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new, next=next)
 
 
 @bp.route('/talk/<int:id>/delete', methods=['GET', 'POST'])
@@ -113,6 +107,12 @@ def collection(id=None):
     if request.args.get('copy', False):
         collection = copy_row(collection, ['id'])
 
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    else:
+        next = next or url_for('admin.collections')
+
     is_new = collection.id is None
     form = CollectionForm(obj=collection)
 
@@ -120,7 +120,6 @@ def collection(id=None):
         form.populate_obj(collection)
         if is_new:
             db.session.add(collection)
-        """
         db.session.flush()
 
         activity = Activity(
@@ -128,15 +127,10 @@ def collection(id=None):
             object=collection
         )
         db.session.add(activity)
-        """
         db.session.commit()
+        return redirect(next)
 
-        next = request.args.get('next')
-        if not is_safe_url(next):
-            return abort(400)
-        return redirect(next or url_for('admin.index'))
-
-    return render_template('admin/collection.html', title="Collection - Admin", form=form, new=is_new)
+    return render_template('admin/collection.html', title="Collection - Admin", form=form, new=is_new, next=next)
 
 
 @bp.route('/collection/<int:id>/delete', methods=['GET', 'POST'])

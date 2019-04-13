@@ -22,11 +22,10 @@
             <div class="col-md-4">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">{{ talk.name }}</h5>
+                        <h5 class="card-title">{{ talk.title }}</h5>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#talkModal" data-id="{{ talk.id }}">{{ _('View') }}</button>
-                                <a href="" class="btn btn-sm btn-outline-secondary">{{ _('Goto') }}</a>
+                                <a href="{{ url_for('core.talk', id=talk.id) }}" class="btn btn-sm btn-outline-secondary">{{ _('Goto') }}</a>
                             </div>
                             <small class="text-muted">{{ moment(talk.timestamp).calendar() }}</small>
                         </div>
@@ -37,22 +36,6 @@
         </div>
     </div>
 </div>
-{% include 'snippets/talk/modal.html' %}
 {% endblock %}
 {% block script %}
-{% include 'snippets/talk/modal_js.html' %}
-<script type="text/javascript">
-$('#talkModal').on('show.bs.modal', function (event) {
-    var id = $(event.relatedTarget).data('id');
-    if (!("talk" + id in sessionStorage)) {
-        $.getJSON("{{ url_for('api.talk') }}" + "?id=" + id)
-        .done(function(talk){
-            sessionStorage["talk" + id] = JSON.stringify(talk);
-            populate_talk_modal(id);
-        })
-    } else {
-        populate_talk_modal(id);
-    }
-})
-</script>
 {% endblock script %}

@@ -1,15 +1,15 @@
 from datetime import datetime
 from dateutil.parser import parse as parse_datetime
 
+from sqlalchemy import or_
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField,\
-                    BooleanField, DateTimeField as _DateTimeField
+from wtforms import StringField, SubmitField, BooleanField, DateTimeField as _DateTimeField
 from wtforms.validators import DataRequired, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_pagedown.fields import PageDownField
 from flask_babel import lazy_gettext as _l
 
-from app.models import Tag, Collection
+from app.models import Tag, Collection, User
 
 
 __all__ = (
@@ -30,6 +30,20 @@ class DateTimeField(_DateTimeField):
                 raise ValueError(self.gettext("Not a valid datetime value"))
 
 
+class CollectionForm(FlaskForm):
+    title = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
+    description = PageDownField(_l('Description'))
+    is_meta = BooleanField(_l('Is meta?'), default=False)
+    meta_collections = QuerySelectMultipleField(_l('Meta Collections'), query_factory=lambda: Collection.query.filter(Collection.is_meta == True))
+    organizer = QuerySelectField(_l('Organizer'), query_factory=lambda: User.query.filter(or_(User.is_organizer == True, User.is_admin == True)))
+    submit = SubmitField(_l('Save'))
+
+
+class TagForm(FlaskForm):
+    name = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
+    submit = SubmitField(_l('Add'))
+
+
 class TalkForm(FlaskForm):
     title = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
     description = PageDownField(_l('Description'))
@@ -39,16 +53,3 @@ class TalkForm(FlaskForm):
     collections = QuerySelectMultipleField(_l('Collections'), query_factory=lambda: Collection.query.filter(Collection.is_meta == False))
     tags = QuerySelectMultipleField(_l('Categories'), query_factory=lambda: Tag.query.all())
     submit = SubmitField(_l('Save'))
-
-
-class CollectionForm(FlaskForm):
-    title = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
-    description = PageDownField(_l('Description'))
-    is_meta = BooleanField(_l('Is meta?'), default=False)
-    meta_collections = QuerySelectMultipleField(_l('Meta Collections'), query_factory=lambda: Collection.query.filter(Collection.is_meta == True))
-    submit = SubmitField(_l('Save'))
-
-
-class TagForm(FlaskForm):
-    name = StringField(_l('Name'), validators=[Length(min=1, max=32)])
-    submit = SubmitField(_l('Add'))

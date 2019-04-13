@@ -1,8 +1,8 @@
-from flask import render_template, current_app
+from flask import render_template, current_app, abort, request
 from flask_login import current_user
 
 from . import bp
-from app.models import Talk
+from app.models import Talk, Collection
 from app.api.routes import TalkTable
 
 
@@ -24,3 +24,27 @@ def index():
 def talks():
     table = TalkTable()
     return render_template('core/talks.html', title='Talks', table=table)
+
+
+@bp.route('/talk')
+@bp.route('/talk/<int:id>')
+def talk(id=None):
+    id = id or request.args.get("id")
+    if id is None:
+        return abort(404)
+    talk = Talk.query.get(id)
+    if talk is None:
+        return abort(404)
+    return render_template('core/talk.html', title=talk.title, talk=talk)
+
+
+@bp.route('/collection')
+@bp.route('/collection/<int:id>')
+def collection(id=None):
+    id = id or request.args.get("id")
+    if id is None:
+        return abort(404)
+    collection = Collection.query.get(id)
+    if collection is None:
+        return abort(404)
+    return render_template('core/collection.html', title=collection.title, collection=collection)

@@ -6,7 +6,7 @@ from app import db
 from app.models import Talk, Tag, Collection
 from app.auth.utils import has_perms
 from . import bp
-from .dt_tools import DataTable
+from .dt_tools import ModelDataTable
 
 
 __all__ = (
@@ -38,30 +38,25 @@ def talks():
     return jsonify([talk.serialize() for talk in Talk.query.all()])
 
 
-class TalkTable(DataTable):
+class TalkTable(ModelDataTable):
     model = Talk
     cols = [
         {
-            'col': 0,
             'field': 'title',
             'name': _l('Name'),
         }, {
-            'col': 1,
             'field': 'timestamp',
             'name': _l('Date/Time'),
             'weight': 0,
             'render': 'function(data, type, row) {return moment(data).calendar();}',
-            'custom_filter': lambda talk, value: current_app.logger.debug(f"{repr(value)} - {talk.timestamp}") or value in str(talk.timestamp),
         }, {
-            'col': 2,
             'field': 'speaker_name',
             'name': _l('Speaker\'s Name'),
         }, {
-            'col': 3,
-            'field': 'rendered_tags',
+            'field': 'tags',
             'name': _l('Tags'),
             'orderable': False,
-            'custom_filter': lambda talk, value: any(value in tag.name for tag in talk.tags),
+            'value': lambda talk: talk.rendered_tags,
         }
     ]
 
@@ -78,15 +73,13 @@ def talk_table():
     return table.get_response()
 
 
-class TagTable(DataTable):
+class TagTable(ModelDataTable):
     model = Tag
     cols = [
         {
-            'col': 0,
             'field': 'name',
             'name': _l('Name'),
         }, {
-            'col': 1,
             'field': 'num_of_talks',
             'value': lambda tag: len(tag.talks),
             'orderable': False,
@@ -123,11 +116,10 @@ def collections():
     return jsonify([Collection.serialize() for Collection in Collection.query.all()])
 
 
-class CollectionTable(DataTable):
+class CollectionTable(ModelDataTable):
     model = Collection
     cols = [
         {
-            'col': 0,
             'field': 'title',
             'name': _l('Name'),
         }

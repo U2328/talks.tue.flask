@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row pt-3">
+        <div class="col-xs-11 col-md-10 col-lg-9 mx-auto">
+            <div class="navbar border-bottom">
+                <h2>{{ collection.title }}</h2>
+                <a class="btn btn-primary btn-sm float-right{% if not can_subscribe %} disabled{% endif %}" href="#" role="button" {% if not can_subscribe %}aria-disabled="true"{% endif %}>{{ _('Subscribe') }}</a>
+            </div>
+            <div class="row">
+                <div class="col-lg-5 col-xl-4 pt-3">
+                    <div class="card border-dark">
+                        <div class="card-header h-50 p-2 pl-3">
+                            <h4 class="mb-0"><i class="fas fa-info-circle"></i>&nbsp;{{ _("Info") }}</h4>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <small class="text-muted">{{ _("Organizers’s username:") }}</small>&nbsp;<span class="h6">{{ collection.organizer.username }}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <small class="text-muted">{{ _("Tags:") }}</small>&nbsp;<span class="h6">{% for tag in collection.tags %}{% include 'snippets/tag.html' %} {% endfor %}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <small class="text-muted">{{ _("Subscribers:") }}</small>&nbsp;<span class="h6">{{ collection.subscriptions.count(collection.subscriptions) }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-xl-8 pt-3">
+                    <div class="card border-dark">
+                        <div class="card-header h-50 p-2 pl-3">
+                            <h4 class="mb-0"><i class="fab fa-readme"></i>&nbsp;{{ _("Description") }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p class="md">{{ collection.description | markdown }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card border-dark mt-2">
+                        <div class="card-header h-50 p-2 pl-3">
+                            <h4 class="mb-0"><i class="fas fa-list"></i>&nbsp;{% if collection.is_meta %}{{ _("Child Collections") }}{% else %}{{ _("Talks") }}{% endif %}</h4>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% if collection.is_meta %}
+                                {% if collection.sub_collections.count(collection.sub_collections) %}
+                                    {% for sub_collection in collection.sub_collections %}
+                                        <li class="list-group-item" onclick="window.location='{{ url_for('core.collection', id=sub_collection.id) }}';" style="cursor: pointer;">
+                                        <span>{{ sub_collection.title }}</span>
+                                    </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li class="list-group-item">
+                                        <span class="text-muted">{{ _("This collection has no child collections.") }}</span>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                {% if collection.talks.count(collection.talks) %}
+                                    {% for talk in collection.talks %}
+                                        <li class="list-group-item" onclick="window.location='{{ url_for('core.talk', id=talk.id) }}';" style="cursor: pointer;">
+                                            <span>{{ talk.title }} <small class="text-muted">{{ talk.timestamp }}</small></span>
+                                        </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li class="list-group-item">
+                                        <span class="text-muted">{{ _("This collection contains no talks.") }}</span>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card border-dark mt-2">
+                        <div class="card-header h-50 p-2 pl-3">
+                            <h4 class="mb-0"><i class="fas fa-list"></i>&nbsp;{{ _("Parent Collections") }}</h4>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% if collection.meta_collections.count(collection.meta_collections) %}
+                                {% for meta_collection in collection.meta_collections %}
+                                    <li class="list-group-item" onclick="window.location='{{ url_for('core.collection', id=meta_collection.id) }}';" style="cursor: pointer;">
+                                        <span>{{ meta_collection.title }}</span>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="list-group-item">
+                                    <span class="text-muted">{{ _("This collection has no parent collections.") }}</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

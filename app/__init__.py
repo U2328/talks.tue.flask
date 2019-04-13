@@ -66,7 +66,8 @@ def create_app(config_class=Config):
             "pymdownx.arithmatex": {
                 "generic": True,
             }
-        }
+        },
+        # safe_mode=True
     )
 
     from app import models as _  # noqa: E402, F401
