@@ -1,0 +1,11 @@
+<div class="card border-dark">
+    <div class="card-header"><h5><i class="far fa-clock"></i> {{ _('History') }}</h5></div>
+    <ul class="list-group list-group-flush">
+        {% for historyitem in historyitems %}
+            <li class="list-group-item">
+                <div class="row"><div class="col-sm-12">{{ historyitem.render_message() | safe }}</div></div>
+                <div class="row text-muted float-right"><div class="col-sm-12"><small>{{ moment(historyitem.timestamp).calendar() }}</small></div></div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

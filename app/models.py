@@ -1,12 +1,15 @@
+from collections import namedtuple
 from datetime import datetime
+from enum import Enum, unique
 
-from sqlalchemy import and_, false, orm
+from sqlalchemy import and_, false, event
+from sqlalchemy.orm import foreign, backref, remote
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from flask_pagedown.widgets import PageDown
 from flask_babel import lazy_gettext as _l
 
-from app import db, login, db_activity
+from app import db, login
 
 
 __all__ = (
@@ -15,11 +18,76 @@ __all__ = (
     'Tag',
     'User',
     'AnonymousUser',
+    'HistoryItem',
 )
 
 
+HistoryItemType = namedtuple('HistoryItemType', ('icon', 'template'))
+
+
+class HistoryItem(db.Model):
+    @unique
+    class Types(Enum):
+        MISC   = HistoryItemType(  # noqa: E221
+            'fas fa-feather-alt text-info',
+            lambda obj: _l('%(message)s', message=obj.message)
+        )
+        CREATE = HistoryItemType(
+            'fas fa-plus-circle text-success',
+            lambda obj: _l('%(user)s created %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
+        )
+        EDIT   = HistoryItemType(  # noqa: E221
+            'fa fa-edit text-warning',
+            lambda obj: _l('%(user)s edited %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
+        )
+        DELETE = HistoryItemType(
+            'far fa-trash-alt text-danger',
+            lambda obj: _l('%(user)s deleted %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
+        )
+
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Enum(Types))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", backref='history')
+    message = db.Column(db.String(128))
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
+
+    target_discriminator = db.Column(db.String())
+    target_id = db.Column(db.Integer())
+
+    @property
+    def target(self):
+        return getattr(self, f"target_{self.target_discriminator}")
+
+    def render_message(self):
+        return f"<i class='{self.type.value.icon}'></i> {self.type.value.template(self)}"
+
+
+class HasHistory:
+    ...
+
+
+@event.listens_for(HasHistory, "mapper_configured", propagate=True)
+def setup_listener(mapper, class_):
+    discriminator = class_.__name__.lower()
+    class_.history = db.relationship(
+        HistoryItem,
+        primaryjoin=and_(
+            class_.id == foreign(remote(HistoryItem.target_id)),
+            HistoryItem.target_discriminator == discriminator,
+        ),
+        backref=backref(
+            f"target_{discriminator}",
+            primaryjoin=remote(class_.id) == foreign(HistoryItem.target_id),
+        ),
+    )
+
+    @event.listens_for(class_.history, "append")
+    def append_history(self, history_item, event):
+        history_item.target_discriminator = discriminator
+
+
 class User(UserMixin, db.Model):
-    __versioned__ = {}
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -51,7 +119,6 @@ class User(UserMixin, db.Model):
 
 
 class Subscription(db.Model):
-    __versioned__ = {}
     id = db.Column(db.Integer, primary_key=True)
     collection_id = db.Column(db.Integer, db.ForeignKey('collection.id'))
     collection = db.relationship('Collection', backref=db.backref('subscriptions'))
@@ -78,8 +145,7 @@ def load_user(id):
 login.anonymous_user = AnonymousUser
 
 
-class Talk(db.Model):
-    __versioned__ = {}
+class Talk(HasHistory, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     description = db.Column(db.Text, info={'widget': PageDown})
@@ -94,7 +160,7 @@ class Talk(db.Model):
         return ' '.join(tag.render() for tag in self.tags)
 
 
-class Collection(db.Model):
+class Collection(HasHistory, db.Model):
     __versioned__ = {}
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
@@ -152,6 +218,3 @@ talk_tags = db.Table('talk_tags',
     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True),
     db.Column('talk_id', db.Integer, db.ForeignKey('talk.id'), primary_key=True),
 )
-
-orm.configure_mappers()
-Activity = db_activity.activity_cls

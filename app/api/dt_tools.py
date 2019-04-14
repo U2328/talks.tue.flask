@@ -96,20 +96,6 @@ class DataTable:
         }});
         """)
 
-    @classmethod
-    def get_coldef(cls, idx, field):
-        coldefs = [
-            col
-            for col in cls.cols
-            if col[field] == idx
-        ]
-        if len(coldefs) > 1:
-            raise RuntimeError(f"Too many columns with the value {repr(idx)} in {repr(field)}.")
-        elif len(coldefs) == 0:
-            raise RuntimeError(f"No columns with the value {repr(idx)} in {repr(field)}.")
-        else:
-            return coldefs[0]
-
     def _parse_filter_value(self):
         value = request.args.get("search[value]", None)
         return value.split(self.search_delimiter) if self.search_delimiter else value

@@ -6,8 +6,8 @@ from . import bp
 from .forms import TalkForm, TagForm, CollectionForm
 from app import db
 from app.utils import is_safe_url, copy_row
-from app.api.routes import TalkTable, TagTable, CollectionTable
-from app.models import Talk, Tag, Collection, Activity
+from app.api.routes import TalkTable, CollectionTable
+from app.models import Talk, Tag, Collection
 
 
 __all__ = (
@@ -59,13 +59,6 @@ def talk(id=None):
         form.populate_obj(talk)
         if is_new:
             db.session.add(talk)
-        db.session.flush()
-
-        activity = Activity(
-            verb='create' if is_new else 'edit',
-            object=talk
-        )
-        db.session.add(activity)
         db.session.commit()
         return redirect(next)
 
@@ -120,13 +113,6 @@ def collection(id=None):
         form.populate_obj(collection)
         if is_new:
             db.session.add(collection)
-        db.session.flush()
-
-        activity = Activity(
-            verb='create' if is_new else 'edit',
-            object=collection
-        )
-        db.session.add(activity)
         db.session.commit()
         return redirect(next)
 

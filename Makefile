@@ -38,6 +38,10 @@ babel_compile: ## compile all language files
 lint: ## run linters on project files (dev only)
 	pipenv run flake8
 
+db_migrate: ## reset database
+	$(MAKE) clean_db
+	$(MAKE) db_deploy
+
 db_migrate: ## generate database-migration
 	pipenv run flask db migrate
 

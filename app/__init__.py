@@ -1,14 +1,13 @@
 from flask import Flask, request, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager
 from flask_pagedown import PageDown
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l, get_locale
 from flaskext.markdown import Markdown
 import sqlalchemy
-from sqlalchemy_continuum import make_versioned
-from sqlalchemy_continuum.plugins import ActivityPlugin, FlaskPlugin
+from logging.config import dictConfig
 
 from app.config import Config
 
@@ -28,18 +27,11 @@ login.login_view = 'auth.login'
 login.login_message = _l('Please log in to access this page.')
 pagedown = PageDown()
 
-db_activity = ActivityPlugin()
-make_versioned(plugins=[db_activity, FlaskPlugin()])
-
 from app.core import bp as core_bp  # noqa: E402
 from app.auth import bp as auth_bp  # noqa: E402
 from app.api import bp as api_bp  # noqa: E402
 from app.errors import bp as errors_bp  # noqa: E402
 from app.admin import bp as admin_bp  # noqa: E402
-
-
-def before_request():
-    g.locale = str(get_locale())
 
 
 def create_app(config_class=Config):
@@ -80,10 +72,36 @@ def create_app(config_class=Config):
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(api_bp, url_prefix='/api')
 
+
     @babel.localeselector
     def get_locale():
         return request.accept_languages.best_match(app.config['LANGUAGES'])
 
+    def before_request():
+        g.locale = str(get_locale())
+
     app.before_request(before_request)
+
+    dictConfig({
+        'version': 1,
+        'formatters': {
+            'default': {
+                'format': '[%(asctime)s %(levelname)8s] %(message)s | %(name)s:%(lineno)d'
+            }
+        },
+        'handlers': {
+            'wsgi': {
+                'class': 'logging.StreamHandler',
+                'stream': 'ext://flask.logging.wsgi_errors_stream',
+                'formatter': 'default'
+            },
+        },
+        'loggers': {
+            'flask.app': {
+                'handlers': ['wsgi'],
+                'level': 'DEBUG' if app.debug else 'INFO'
+            },
+        }
+    })
 
     return app
