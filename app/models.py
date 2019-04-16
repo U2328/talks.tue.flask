@@ -1,16 +1,19 @@
 from collections import namedtuple
 from datetime import datetime
-from enum import Enum, unique
+from enum import IntEnum, unique, auto
 
-from sqlalchemy import and_, false, event
+from sqlalchemy import and_, or_, event, inspect
+from sqlalchemy.types import TypeDecorator, BINARY
 from sqlalchemy.orm import foreign, backref, remote
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, AnonymousUserMixin
+from flask_login import UserMixin, AnonymousUserMixin, current_user
 from flask_pagedown.widgets import PageDown
 from flask_babel import lazy_gettext as _l
+import dill
 
 from app import db, login
 
+from flask import current_app
 
 __all__ = (
     'Collection',
@@ -19,72 +22,157 @@ __all__ = (
     'User',
     'AnonymousUser',
     'HistoryItem',
+    'HISTORY_DISCRIMINATOR_MAP'
 )
 
 
-HistoryItemType = namedtuple('HistoryItemType', ('icon', 'template'))
+class DillField(TypeDecorator):
+    impl = BINARY
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            value = dill.dumps(value)
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            value = dill.loads(value)
+        return value
+
+
+HistoryItemType = namedtuple('HistoryItemType', ('append_to_obj', 'icon', 'template'))
+
+
+@unique
+class HistoryStates(IntEnum):
+    CREATE = auto()
+    EDIT   = auto()  # noqa: E221
+    DELETE = auto()
+
+    @classmethod
+    def get_type(cls, state):
+        return {
+            cls.CREATE: HistoryItemType(
+                True, 'fas fa-plus-circle text-success',
+                lambda history_item: _l('%(user)s created %(name)s', user=history_item.user, name=repr(history_item.target_name))
+            ),
+            cls.EDIT: HistoryItemType(
+                True, 'fa fa-edit text-warning',
+                lambda history_item: _l('%(user)s edited %(name)s', user=history_item.user, name=repr(history_item.target_name))
+            ),
+            cls.DELETE: HistoryItemType(
+                False, 'far fa-trash-alt text-danger',
+                lambda history_item: _l('%(user)s deleted %(name)s', user=history_item.user, name=repr(history_item.target_name))
+            ),
+        }.get(state)
 
 
 class HistoryItem(db.Model):
-    @unique
-    class Types(Enum):
-        MISC   = HistoryItemType(  # noqa: E221
-            'fas fa-feather-alt text-info',
-            lambda obj: _l('%(message)s', message=obj.message)
-        )
-        CREATE = HistoryItemType(
-            'fas fa-plus-circle text-success',
-            lambda obj: _l('%(user)s created %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
-        )
-        EDIT   = HistoryItemType(  # noqa: E221
-            'fa fa-edit text-warning',
-            lambda obj: _l('%(user)s edited %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
-        )
-        DELETE = HistoryItemType(
-            'far fa-trash-alt text-danger',
-            lambda obj: _l('%(user)s deleted %(desc)s #%(id)d', user=obj.user, desc=obj.target_discriminator, id=int(obj.target_id))
-        )
-
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.Enum(Types))
+    _type = db.Column(db.Enum(HistoryStates))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User", backref='history')
-    message = db.Column(db.String(128))
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
+    diff = db.Column(DillField())
 
     target_discriminator = db.Column(db.String())
     target_id = db.Column(db.Integer())
+    target_name = db.Column(db.String())
 
     @property
     def target(self):
         return getattr(self, f"target_{self.target_discriminator}")
 
-    def render_message(self):
-        return f"<i class='{self.type.value.icon}'></i> {self.type.value.template(self)}"
+    @property
+    def type(self):
+        return HistoryStates.get_type(self._type)
+
+    @property
+    def message(self):
+        return self.type.template(self)
+
+    @classmethod
+    def get_discriminated_model(cls, discriminator):
+        return cls.discriminator_map.get(discriminator)
+
+    @classmethod
+    def build_for(cls, obj, user=None):
+        assert isinstance(obj, HasHistory), "Can only build historyitems for models that have a history."
+
+        user = user or (current_user if current_user.is_authenticated else None)
+        target_discriminator = obj.__class__.history_discriminator
+
+        inspection = inspect(obj)
+        diff = dict()
+        for attr in inspection.attrs:
+            field = attr.key
+            if attr.history.has_changes():
+                added, unchanged, deleted = attr.history
+                diff[field] = {
+                    "to": [
+                        obj if not isinstance(obj, db.Model) else inspect(obj).identity[0]
+                        for obj in added
+                    ] or None,
+                    "from": [
+                        obj if not isinstance(obj, db.Model) else inspect(obj).identity[0]
+                        for obj in deleted
+                    ] or None,
+                    "unchanged": [
+                        obj if not isinstance(obj, db.Model) else inspect(obj).identity[0]
+                        for obj in unchanged
+                    ] or None,
+                }
+
+        if not inspection.has_identity:
+            state = HistoryStates.CREATE
+        elif not diff:
+            state = HistoryStates.DELETE
+        else:
+            state = HistoryStates.EDIT
+        hi_type = HistoryStates.get_type(state)
+
+        hi = HistoryItem(
+            user=user,
+            _type=state,
+            diff=diff,
+            target_discriminator=target_discriminator,
+            target_name=str(obj)
+        )
+        if hi_type.append_to_obj:
+            obj.history.append(hi)
+        else:
+            db.session.add(hi)
+        return hi
+
+
+HISTORY_DISCRIMINATOR_MAP = dict()
 
 
 class HasHistory:
-    ...
+    def __init_subclass__(cls, *args, **kwargs):
+        super().__init_subclass__(*args, **kwargs)
+        discriminator = cls.__name__.lower()
+        setattr(cls, 'history_discriminator', discriminator)
+        HISTORY_DISCRIMINATOR_MAP[discriminator] = cls
+
+    @classmethod
+    def complete_history(cls, *args, **kwargs):
+        return HistoryItem.query.filter(HistoryItem.target_discriminator == cls.history_discriminator)
 
 
 @event.listens_for(HasHistory, "mapper_configured", propagate=True)
-def setup_listener(mapper, class_):
-    discriminator = class_.__name__.lower()
-    class_.history = db.relationship(
+def setup_listener(mapper, cls):
+    cls.history = db.relationship(
         HistoryItem,
         primaryjoin=and_(
-            class_.id == foreign(remote(HistoryItem.target_id)),
-            HistoryItem.target_discriminator == discriminator,
+            cls.id == foreign(remote(HistoryItem.target_id)),
+            HistoryItem.target_discriminator == cls.history_discriminator,
         ),
         backref=backref(
-            f"target_{discriminator}",
-            primaryjoin=remote(class_.id) == foreign(HistoryItem.target_id),
+            f"target_{cls.history_discriminator}",
+            primaryjoin=remote(cls.id) == foreign(HistoryItem.target_id),
         ),
     )
-
-    @event.listens_for(class_.history, "append")
-    def append_history(self, history_item, event):
-        history_item.target_discriminator = discriminator
 
 
 class User(UserMixin, db.Model):
@@ -110,13 +198,6 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "username": self.username,
-            "email": self.email,
-        }
-
 
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -128,13 +209,8 @@ class Subscription(db.Model):
 
 
 class AnonymousUser(AnonymousUserMixin):
-    def get_related(self, model):
-        return model.query.filter(false())
-
-    def get_related_with_perms(self, model, *perms, any_=False):
-        return model.query.filter(false())
-
     is_admin = False
+    is_organizer = False
 
 
 @login.user_loader
@@ -155,9 +231,33 @@ class Talk(HasHistory, db.Model):
     tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=db.backref('talks'))
     collections = db.relationship("Collection", secondary=lambda: talk_collections, backref=db.backref('talks'))
 
+    def __str__(self):
+        return self.title
+
     @property
     def rendered_tags(self):
         return ' '.join(tag.render() for tag in self.tags)
+
+    @classmethod
+    def complete_history(cls, user=None):
+        if user is None or user.is_admin:
+            return super().complete_history()
+        else:
+            return super().complete_history()\
+                .join(Talk, and_(
+                    HistoryItem.target_discriminator == Talk.history_discriminator,
+                    HistoryItem.target_id == Talk.id
+                ))\
+                .filter(
+                    Talk.collections.any(or_(
+                        HistoryItem.user == user,
+                        Collection.organizer == user,
+                        Collection.editors.contains(user),
+                    ))
+                )
+
+    def can_edit(self, user):
+        return user.is_admin or any(user == collection.organizer or user in collection.editors for collection in self.collections)
 
 
 class Collection(HasHistory, db.Model):
@@ -179,6 +279,24 @@ class Collection(HasHistory, db.Model):
 
     def __str__(self):
         return self.title
+
+    @classmethod
+    def complete_history(cls, user=None):
+        if user is None: #  or user.is_admin:
+            return super().complete_history()
+        else:
+            x = super().complete_history()\
+                .join(Collection, HistoryItem.target_id == Collection.id)\
+                .filter(or_(
+                    HistoryItem.user == user,
+                    Collection.organizer == user,
+                    Collection.editors.contains(user),
+                ))
+            current_app.logger.debug(x)
+            return x
+
+    def can_edit(self, user):
+        return user.is_admin or user == self.organizer or user in self.editors
 
 
 meta_collection_connections = db.Table('meta_collection_connections',

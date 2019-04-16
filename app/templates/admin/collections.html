@@ -1,10 +1,41 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="container-fluid pt-2 bg-light">
-    <div class="row">
-        <div class="col-sm-10 mx-auto">
-            {% include 'admin/cards/collection_table.html' %}
+<div class="container-fluid">
+    <div class="row pt-3">
+        <div class="col-xs-12 col-md-11 col-lg-10 mx-auto">
+            <div class="navbar border-bottom">
+                <h2><i class="fas fa-calendar-day"></i> {{ _('Collections') }}</h2>
+                <div class="float-right">
+                    <a href="{{ url_for('admin.collection') }}" class="btn btn-primary btn-sm">{{ _("Add new collection") }}</a>
+                    <a href="{{ url_for('admin.historyitems', discriminator="collection") }}" class="btn btn-secondary btn-sm">{{ _("View related history") }}</a>
+                </div>
+            </div>
+            <div class="row pt-3">
+                {{ collection_table.generate_html() | safe }}
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
+{% block script %}
+<script type="text/javascript">
+    {{ collection_table.generate_js(url_for('api.collection_table')) | safe }}
+    $('#collectionTable').on('click', '.collection-row', function () {window.open("{{ url_for('core.collection') }}/" + $(this).attr('id'), "_self");});
+    $('#collectionTable').contextMenu({
+        selector: '.collection-row',
+        callback: function(key, options) {
+            var id = $(this).attr('id');
+            if (key == "view") {window.open("{{ url_for('core.collection') }}/" + id, "_self");}
+            if (key == "edit") {window.open("{{ url_for('admin.collection') }}/" + id, "_self");}
+            if (key == "copy") {window.open("{{ url_for('admin.collection') }}/" + id + "?copy=1", "_self");}
+            if (key == "delete") {window.open("{{ url_for('admin.collection') }}/" + id + "/delete", "_self");}
+        },
+        items: {
+            "view": {name: "{{ _("View") }}", icon: "far fa-eye"},
+            "edit": {name: "{{ _("Edit") }}", icon: "fa-edit"},
+            "copy": {name: "{{ _("Copy") }}", icon: "fa-copy"},
+            "delete": {name: "{{ _("Delete") }}", icon: "far fa-trash-alt"},
+        }
+    });
+</script>
+{% endblock script %}

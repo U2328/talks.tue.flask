@@ -6,7 +6,12 @@
         <div class="col-xs-11 col-md-10 col-lg-9 mx-auto">
             <div class="navbar border-bottom">
                 <h2>{{ collection.title }}</h2>
-                <a class="btn btn-primary btn-sm float-right{% if not can_subscribe %} disabled{% endif %}" href="#" role="button" {% if not can_subscribe %}aria-disabled="true"{% endif %}>{{ _('Subscribe') }}</a>
+                <div class="float-right">
+                    {% if can_edit %}
+                        <a class="btn btn-primary btn-sm" href="{{ url_for('admin.collection', id=collection.id) }}?next={{ request.path }}" role="button">{{ _('Edit') }}</a>
+                    {% endif %}
+                    <a class="btn btn-primary btn-sm {% if not can_subscribe %} disabled{% endif %}" href="#" role="button" {% if not can_subscribe %}aria-disabled="true"{% endif %}>{{ _('Subscribe') }}</a>
+                </div>
             </div>
             <div class="row">
                 <div class="col-lg-5 col-xl-4 pt-3">

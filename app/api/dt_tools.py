@@ -2,7 +2,7 @@ from collections import defaultdict
 import operator
 
 from sqlalchemy import or_, cast, Text
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 
 
 __all__ = (
@@ -107,14 +107,11 @@ class DataTable:
         def f(obj):
             return all(
                 any(
-                    col.get(
-                        'custom_filter',
-                        lambda obj, value: (
-                            as_callable(col['value'])(obj)
-                            if 'value' in col else
-                            value in getattr(obj, col['field'])
-                        )
-                    )(obj, value)
+                    (
+                        'custom_filter' in col and col['custom_filter'](obj, value) or
+                        'value' in col and value in as_callable(col['value'])(obj) or
+                        value in str(getattr(obj, col['field']))
+                    )
                     for col in self.cols
                 )
                 for value in filter_values
@@ -209,17 +206,27 @@ class ModelDataTable(DataTable, new_base=True):
         if not hasattr(cls, "table_id"):
             setattr(cls, 'table_id', f"{cls.model.__name__.lower()}Table")
         super().__init_subclass__(**kwargs)
-        setattr(cls, 'get_data', staticmethod(as_callable(getattr(cls, 'query', None) or (lambda: cls.model.query))))
         setattr(cls, 'db_cols', {
             column.name: column
             for column in cls.model.__table__.c
         })
+
+    def __init__(self, *args, query=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if query is not None:
+            self.query = query
+        elif not hasattr(self, 'query'):
+            self.query = self.model.query
+
+    def get_data(self):
+        return self.query() if callable(self.query) else self.query
 
     @classmethod
     def generate_js(cls, *args, createdRow=None, **kwargs):
         return super().generate_js(*args, createdRow=(createdRow or "") + 'if( data.hasOwnProperty("id") ) {row.id = data.id}', **kwargs)
 
     def filter_func(self, data, filter_values):
+        current_app.logger.debug(list(data))
         if not filter_values:
             return data
         db_filters = [
@@ -232,7 +239,7 @@ class ModelDataTable(DataTable, new_base=True):
         ]
         externally_filtered_ids = (
             [obj.id for obj in super().filter_func(data, filter_values)]
-            if any(hasattr(col, 'custom_filter') or hasattr(col, 'value') for col in self.cols) else
+            if any('custom_filter' in col or 'value' in col for col in self.cols) else
             []
         )
         if externally_filtered_ids:

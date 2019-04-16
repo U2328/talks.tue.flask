@@ -16,6 +16,14 @@ init_dev: ## init the whole env for dev
 	pipenv install --dev --pre
 	$(MAKE) db_deploy
 
+re_init: ## reinitialize the whole env
+	$(MAKE) clean_env;
+	$(MAKE) init;
+
+re_init_dev: ## reinitialize the whole dev env
+	$(MAKE) clean_env;
+	$(MAKE) init_dev;
+
 run: ## run the webserver
 	pipenv run flask run
 
@@ -38,7 +46,7 @@ babel_compile: ## compile all language files
 lint: ## run linters on project files (dev only)
 	pipenv run flake8
 
-db_migrate: ## reset database
+db_reset: ## reset database
 	$(MAKE) clean_db
 	$(MAKE) db_deploy
 
@@ -60,11 +68,14 @@ db_deploy: ## init server setup
 clean_db: ## remove db files
 	find . -type f -name '*.db' -exec rm {} \;
 
+clean_env: ## remove python env
+	pipenv --rm;
+
 clean_cache: ## remove cached files
 	find $(root_dir) -type f -name '*.pyc' -exec rm {} \;
 	find $(root_dir) -type d -name '__pycache__' -exec rmdir {} \;
 
-full_clean: ## cleanup everythin
-	$(MAKE) clean_cache
-	$(MAKE) clean_db
-	pipenv --rm
+full_clean: ## cleanup everything
+	$(MAKE) clean_cache;
+	$(MAKE) clean_db;
+	$(MAKE) clean_env;

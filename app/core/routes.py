@@ -35,7 +35,7 @@ def talk(id=None):
     talk = Talk.query.get(id)
     if talk is None:
         return abort(404)
-    return render_template('core/talk.html', title=talk.title, talk=talk)
+    return render_template('core/talk.html', title=talk.title, talk=talk, can_edit=talk.can_edit(current_user))
 
 
 @bp.route('/collection')
@@ -47,4 +47,4 @@ def collection(id=None):
     collection = Collection.query.get(id)
     if collection is None:
         return abort(404)
-    return render_template('core/collection.html', title=collection.title, collection=collection)
+    return render_template('core/collection.html', title=collection.title, collection=collection, can_edit=collection.can_edit(current_user))

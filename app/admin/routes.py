@@ -1,13 +1,14 @@
 from flask import render_template, request, redirect,\
                   url_for, abort, current_app
 from flask_login import current_user
+from sqlalchemy import and_
 
 from . import bp
 from .forms import TalkForm, TagForm, CollectionForm
 from app import db
 from app.utils import is_safe_url, copy_row
-from app.api.routes import TalkTable, CollectionTable
-from app.models import Talk, Tag, Collection
+from app.api.routes import TalkTable, CollectionTable, HistoryItemTable
+from app.models import Talk, Tag, Collection, HistoryItem, HISTORY_DISCRIMINATOR_MAP
 
 
 __all__ = (
@@ -59,6 +60,7 @@ def talk(id=None):
         form.populate_obj(talk)
         if is_new:
             db.session.add(talk)
+        HistoryItem.build_for(talk)
         db.session.commit()
         return redirect(next)
 
@@ -74,9 +76,16 @@ def delete_talk(id):
     if not current_user.is_admin:
         return abort(403)
 
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    else:
+        next = next or url_for('admin.talks')
+
     db.session.delete(talk)
+    HistoryItem.build_for(talk)
     db.session.commit()
-    return redirect(url_for('admin.index'))
+    return redirect(next)
 
 
 @bp.route('/talks', methods=['GET'])
@@ -84,7 +93,7 @@ def talks():
     return render_template(
         'admin/talks.html',
         title="Talks - Admin",
-        talk_table=TalkTable(),
+        talk_table=TalkTable()
     )
 
 
@@ -113,6 +122,7 @@ def collection(id=None):
         form.populate_obj(collection)
         if is_new:
             db.session.add(collection)
+        HistoryItem.build_for(collection)
         db.session.commit()
         return redirect(next)
 
@@ -128,9 +138,16 @@ def delete_collection(id):
     if not current_user.is_admin:
         return abort(403)
 
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    else:
+        next = next or url_for('admin.collections')
+
     db.session.delete(collection)
+    HistoryItem.build_for(collection)
     db.session.commit()
-    return redirect(url_for('admin.index'))
+    return redirect(next)
 
 
 @bp.route('/collections', methods=['GET'])
@@ -138,5 +155,18 @@ def collections():
     return render_template(
         'admin/collections.html',
         title="Collections - Admin",
-        collection_table=CollectionTable(),
+        collection_table=CollectionTable()
+    )
+
+
+@bp.route('/historyitems', methods=['GET'])
+@bp.route('/historyitems/<discriminator>', methods=['GET'])
+def historyitems(discriminator=None):
+    if discriminator is not None and discriminator not in HISTORY_DISCRIMINATOR_MAP:
+        return abort(404)
+    return render_template(
+        'admin/historyitems.html',
+        title="History - Admin",
+        historyitem_table=HistoryItemTable(),
+        discriminator=discriminator
     )

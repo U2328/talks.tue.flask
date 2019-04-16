@@ -36,6 +36,7 @@ class CollectionForm(FlaskForm):
     is_meta = BooleanField(_l('Is meta?'), default=False)
     meta_collections = QuerySelectMultipleField(_l('Meta Collections'), query_factory=lambda: Collection.query.filter(Collection.is_meta == True))
     organizer = QuerySelectField(_l('Organizer'), query_factory=lambda: User.query.filter(or_(User.is_organizer == True, User.is_admin == True)))
+    editors = QuerySelectMultipleField(_l('Editors'), query_factory=lambda: User.query.all())
     submit = SubmitField(_l('Save'))
 
 
