@@ -38,10 +38,10 @@ def tag():
 def talk(id=None):
     talk = Talk() if id is None else Talk.query.get(id)
 
-    if id is not None and not current_user.is_admin:
-        return abort(403)
     if talk is None and id is not None:
         return abort(404)
+    if id is not None and not talk.can_edit(current_user):
+        return abort(403)
     if request.args.get('copy', False):
         talk = copy_row(talk, ['id'])
 
@@ -52,9 +52,7 @@ def talk(id=None):
         next = next or url_for('admin.talks')
 
     is_new = talk.id is None
-    current_app.logger.debug(f">>> {talk.timestamp}")
     form = TalkForm(obj=talk)
-    current_app.logger.debug(f">>> {form.timestamp()}")
 
     if form.validate_on_submit():
         form.populate_obj(talk)
@@ -73,7 +71,7 @@ def delete_talk(id):
 
     if talk is None:
         return abort(404)
-    if not current_user.is_admin:
+    if not talk.can_edit(current_user):
         return abort(403)
 
     next = request.args.get('next')
@@ -102,10 +100,10 @@ def talks():
 def collection(id=None):
     collection = Collection() if id is None else Collection.query.get(id)
 
-    if id is not None and not current_user.is_admin:
-        return abort(403)
     if collection is None and id is not None:
         return abort(404)
+    if id is not None and not collection.can_edit(current_user):
+        return abort(403)
     if request.args.get('copy', False):
         collection = copy_row(collection, ['id'])
 
@@ -135,7 +133,7 @@ def delete_collection(id):
 
     if collection is None:
         return abort(404)
-    if not current_user.is_admin:
+    if not collection.can_edit(current_user):
         return abort(403)
 
     next = request.args.get('next')

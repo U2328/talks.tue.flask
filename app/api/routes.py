@@ -135,12 +135,12 @@ class HistoryItemTable(ModelDataTable):
     model = HistoryItem
     cols = [
         {
+            'field': 'timestamp',
+            'name': _l('Timestamp')
+        }, {
             'field': '_type',
             'name': _l('Action'),
             'value': lambda historyitem: f'<span class="badge badge-pill badge-dark"><i class="{historyitem.type.icon}"></i>&nbsp;{historyitem.type.name}</span>'
-        }, {
-            'field': 'timestamp',
-            'name': _l('Timestamp')
         }, {
             'field': 'target_discriminator',
             'name': _l('Target type')
