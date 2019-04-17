@@ -33,12 +33,40 @@
                     </div>
                 </div>
                 <div class="col-lg-7 col-xl-8 pt-3">
-                    <div class="card border-dark">
-                        <div class="card-header h-50 p-2 pl-3">
-                            <h4 class="mb-0"><i class="fab fa-readme"></i>&nbsp;{{ _("Description") }}</h4>
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">
+                                        <i class="fab fa-readme"></i>
+                                        {{ _("Description") }}
+                                    </a>
+                                </li>
+                                {% if collection.can_edit(current_user) %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">
+                                            <i class="fas fa-history"></i>
+                                            {{ _("History") }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
                         </div>
-                        <div class="card-body">
-                            <p class="md">{{ collection.description | markdown }}</p>
+                        <div class="card-body tab-content pt-2">
+                            <div class="tab-pane active show" id="description" role="tabpanel" aria-labelledby="description-tab">
+                                <p class="md">{{ collection.description | markdown }}</p>
+                            </div>
+                            {% if collection.can_edit(current_user) %}
+                                <div class="tab-pane" id="history" role="tabpanel" aria-labelledby="history-tab">
+                                    <div class="col">
+                                        {% for historyitem in collection.history %}
+                                            <div class="row">
+                                                {% include 'snippets/historyitem.html' %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

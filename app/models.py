@@ -40,7 +40,7 @@ class DillField(TypeDecorator):
         return value
 
 
-HistoryItemType = namedtuple('HistoryItemType', ('append_to_obj', 'icon', 'template'))
+HistoryItemType = namedtuple('HistoryItemType', ('append_to_obj', 'icon', 'name', 'template'))
 
 
 @unique
@@ -53,15 +53,15 @@ class HistoryStates(IntEnum):
     def get_type(cls, state):
         return {
             cls.CREATE: HistoryItemType(
-                True, 'fas fa-plus-circle text-success',
+                True, 'fas fa-plus-circle text-success', _l('create'),
                 lambda history_item: _l('%(user)s created %(name)s', user=history_item.user, name=repr(history_item.target_name))
             ),
             cls.EDIT: HistoryItemType(
-                True, 'fa fa-edit text-warning',
+                True, 'fa fa-edit text-warning', _l('edit'),
                 lambda history_item: _l('%(user)s edited %(name)s', user=history_item.user, name=repr(history_item.target_name))
             ),
             cls.DELETE: HistoryItemType(
-                False, 'far fa-trash-alt text-danger',
+                False, 'far fa-trash-alt text-danger', _l('delete'),
                 lambda history_item: _l('%(user)s deleted %(name)s', user=history_item.user, name=repr(history_item.target_name))
             ),
         }.get(state)

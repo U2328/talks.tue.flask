@@ -1,4 +1,12 @@
-<div class="history-item">
-    <div class="row"><div class="col-sm-12"><i class='{{ historyitem.type.icon }}'></i> {{ historyitem.message }}</div></div>
-    <div class="row text-muted float-right"><div class="col-sm-12"><small>{{ moment(historyitem.timestamp).calendar() }}</small></div></div>
+<div class="historyitem card card-body">
+    <div class="row">
+        <div class="col mx-auto">
+            <i class='{{ historyitem.type.icon }}'></i>&nbsp;{{ historyitem.message }}
+        </div>
+        <div class="col mx-auto">
+            <div class="text-muted float-right">
+                <small>{{ moment(historyitem.timestamp).calendar() }}</small>
+            </div>
+        </div>
+    </div>
 </div>

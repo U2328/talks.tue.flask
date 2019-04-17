@@ -1,4 +1,4 @@
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, render_template
 from flask_babel import lazy_gettext as _l
 from flask_login import current_user
 
@@ -135,6 +135,10 @@ class HistoryItemTable(ModelDataTable):
     model = HistoryItem
     cols = [
         {
+            'field': '_type',
+            'name': _l('Action'),
+            'value': lambda historyitem: f'<span class="badge badge-pill badge-dark"><i class="{historyitem.type.icon}"></i>&nbsp;{historyitem.type.name}</span>'
+        }, {
             'field': 'timestamp',
             'name': _l('Timestamp')
         }, {
@@ -146,15 +150,11 @@ class HistoryItemTable(ModelDataTable):
             'orderable': False,
             'value': lambda historyitem: historyitem.user.username,
         }, {
-            'field': 'message',
-            'name': _l('Message'),
-            'orderable': False,
-        }, {
             'field': 'diff',
             'name': _l('Changes'),
             'orderable': False,
             'value': lambda historyitem: "<br>".join(
-                f"{field}: {changeset['from']} --> {changeset['to']}"
+                f'<span class="badge badge-secondary">{field}</span> <code>{changeset["from"]}</code> <i class="fas fa-arrow-right"></i>&nbsp;<code>{changeset["to"]}</code>'
                 for field, changeset in historyitem.diff.items()
             ),
         }

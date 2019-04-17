@@ -61,6 +61,14 @@
                                         {{ _("Speaker’s about me") }}
                                     </a>
                                 </li>
+                                {% if talk.can_edit(current_user) %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">
+                                            <i class="fas fa-history"></i>
+                                            {{ _("History") }}
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                         <div class="card-body tab-content pt-2">
@@ -70,6 +78,17 @@
                             <div class="tab-pane" id="speaker" role="tabpanel" aria-labelledby="speaker-tab">
                                 <p class="md">{{ talk.speaker_aboutme | markdown }}</p>
                             </div>
+                            {% if talk.can_edit(current_user) %}
+                                <div class="tab-pane" id="history" role="tabpanel" aria-labelledby="history-tab">
+                                    <div class="col-12">
+                                        {% for historyitem in talk.history %}
+                                            <div class="row">
+                                                {% include 'snippets/historyitem.html' %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

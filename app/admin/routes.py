@@ -64,7 +64,7 @@ def talk(id=None):
         db.session.commit()
         return redirect(next)
 
-    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new, next=next)
+    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new, next=next, talk=talk)
 
 
 @bp.route('/talk/<int:id>/delete', methods=['GET', 'POST'])
@@ -126,7 +126,7 @@ def collection(id=None):
         db.session.commit()
         return redirect(next)
 
-    return render_template('admin/collection.html', title="Collection - Admin", form=form, new=is_new, next=next)
+    return render_template('admin/collection.html', title="Collection - Admin", form=form, new=is_new, next=next, collection=collection)
 
 
 @bp.route('/collection/<int:id>/delete', methods=['GET', 'POST'])

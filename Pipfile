@@ -23,6 +23,7 @@ flask-markdown = "*"
 flask-pagedown = "*"
 pygments = "*"
 pymdown-extensions = "*"
+app = {editable = true,version = "*"}
 
 [requires]
 python_version = "3.7"
