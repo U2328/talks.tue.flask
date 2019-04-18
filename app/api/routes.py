@@ -3,7 +3,7 @@ from flask_babel import lazy_gettext as _l
 from flask_login import current_user
 
 from app import db
-from app.models import Talk, Tag, Collection, HistoryItem, HISTORY_DISCRIMINATOR_MAP
+from app.models import Talk, Tag, Collection, User, HistoryItem, HISTORY_DISCRIMINATOR_MAP
 from app.auth.utils import has_perms
 from . import bp
 from .dt_tools import ModelDataTable
@@ -176,4 +176,31 @@ def historyitem_table(discriminator=None):
         HISTORY_DISCRIMINATOR_MAP[discriminator].complete_history(user=current_user)
         if discriminator is not None else None
     ))
+    return table.get_response()
+
+
+class UserTable(ModelDataTable):
+    model = User
+    cols = [
+        {
+            'field': 'username',
+            'name': _l('Username')
+        }, {
+            'field': 'email',
+            'name': _l('Email'),
+        }, {
+            'field': 'is_admin',
+            'name': _l('Is Admin?'),
+        }, {
+            'field': 'is_organizer',
+            'name': _l('Is Organizer?'),
+        },
+    ]
+
+
+@bp.route('/user_table', methods=['GET'])
+def user_table(discriminator=None):
+    if not current_user.is_admin:
+        return abort(403)
+    table = UserTable()
     return table.get_response()

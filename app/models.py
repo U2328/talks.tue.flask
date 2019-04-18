@@ -124,21 +124,18 @@ class HistoryItem(db.Model):
                 diff[field] = {
                     "to": [
                         obj if not isinstance(obj, db.Model) else inspect(obj).identity[0]
-                        for obj in added
+                        for obj in (*added, *unchanged)
                     ] or None,
                     "from": [
                         obj if not isinstance(obj, db.Model) else inspect(obj).identity[0]
-                        for obj in deleted
-                    ] or None,
-                    "unchanged": [
-                        obj if not isinstance(obj, db.Model) else inspect(obj).identity[0]
-                        for obj in unchanged
+                        for obj in (*deleted, *unchanged)
                     ] or None,
                 }
 
         if not inspection.has_identity:
             state = HistoryStates.CREATE
         elif not diff:
+            current_app.logger.debug(inspection.identity)
             state = HistoryStates.DELETE
         else:
             state = HistoryStates.EDIT

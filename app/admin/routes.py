@@ -7,7 +7,7 @@ from . import bp
 from .forms import TalkForm, TagForm, CollectionForm
 from app import db
 from app.utils import is_safe_url, copy_row
-from app.api.routes import TalkTable, CollectionTable, HistoryItemTable
+from app.api.routes import TalkTable, CollectionTable, HistoryItemTable, UserTable
 from app.models import Talk, Tag, Collection, HistoryItem, HISTORY_DISCRIMINATOR_MAP
 
 
@@ -56,9 +56,9 @@ def talk(id=None):
 
     if form.validate_on_submit():
         form.populate_obj(talk)
+        HistoryItem.build_for(talk)
         if is_new:
             db.session.add(talk)
-        HistoryItem.build_for(talk)
         db.session.commit()
         return redirect(next)
 
@@ -118,9 +118,9 @@ def collection(id=None):
 
     if form.validate_on_submit():
         form.populate_obj(collection)
+        HistoryItem.build_for(collection)
         if is_new:
             db.session.add(collection)
-        HistoryItem.build_for(collection)
         db.session.commit()
         return redirect(next)
 
@@ -167,4 +167,15 @@ def historyitems(discriminator=None):
         title="History - Admin",
         historyitem_table=HistoryItemTable(),
         discriminator=discriminator
+    )
+
+
+@bp.route('/users', methods=['GET'])
+def users(discriminator=None):
+    if not current_user.is_admin:
+        return abort(403)
+    return render_template(
+        'admin/users.html',
+        title="Users - Admin",
+        user_table=UserTable(),
     )

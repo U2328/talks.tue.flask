@@ -1,8 +1,12 @@
 <div class="diff">
-    {% for field, changeset in diff.items() %}
-        <span class="badge badge-secondary">{{ field }}</span>
-        <code>{{ changeset["from"] }}</code>
-        <i class="fas fa-arrow-right"></i>&nbsp;<code>{{ changeset["to"] }}</code>
-        {% if not loop.last %}<br>{% endif %}
-    {% endfor %}
+    {% if diff %}
+        {% for field, changeset in diff.items() %}
+            <span class="badge badge-secondary">{{ field }}</span>
+            <code>{{ changeset["from"] }}</code>
+            <i class="fas fa-arrow-right"></i>&nbsp;<code>{{ changeset["to"] }}</code>
+            {% if not loop.last %}<br>{% endif %}
+        {% endfor %}
+    {% else %}
+        <small class="text-muted">No diff</small>
+    {% endif %}
 </div>

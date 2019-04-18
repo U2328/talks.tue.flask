@@ -39,6 +39,9 @@
                                     <div class="dropdown-menu" aria-labelledby="adminDropdown">
                                         <a class="dropdown-item" href="{{ url_for('admin.talks') }}">{{ _('Talks') }}</a>
                                         <a class="dropdown-item" href="{{ url_for('admin.collections') }}">{{ _('Collections') }}</a>
+                                        {% if current_user.is_admin %}
+                                            <a class="dropdown-item" href="{{ url_for('admin.users') }}">{{ _('Users') }}</a>
+                                        {% endif %}
                                     </div>
                                 </li>
                             {% endif %}
