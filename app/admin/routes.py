@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect,\
                   url_for, abort, current_app
-from flask_login import current_user
+from flask_login import current_user, login_required
 from sqlalchemy import and_
 
 from . import bp
@@ -35,6 +35,7 @@ def tag():
 
 @bp.route('/talk', methods=['GET', 'POST'])
 @bp.route('/talk/<int:id>', methods=['GET', 'POST'])
+@login_required
 def talk(id=None):
     talk = Talk() if id is None else Talk.query.get(id)
 
@@ -66,6 +67,7 @@ def talk(id=None):
 
 
 @bp.route('/talk/<int:id>/delete', methods=['GET', 'POST'])
+@login_required
 def delete_talk(id):
     talk = Talk.query.get(id)
 
@@ -87,6 +89,7 @@ def delete_talk(id):
 
 
 @bp.route('/talks', methods=['GET'])
+@login_required
 def talks():
     return render_template(
         'admin/talks.html',
@@ -97,6 +100,7 @@ def talks():
 
 @bp.route('/collection', methods=['GET', 'POST'])
 @bp.route('/collection/<int:id>', methods=['GET', 'POST'])
+@login_required
 def collection(id=None):
     collection = Collection() if id is None else Collection.query.get(id)
 
@@ -128,6 +132,7 @@ def collection(id=None):
 
 
 @bp.route('/collection/<int:id>/delete', methods=['GET', 'POST'])
+@login_required
 def delete_collection(id):
     collection = Collection.query.get(id)
 
@@ -149,6 +154,7 @@ def delete_collection(id):
 
 
 @bp.route('/collections', methods=['GET'])
+@login_required
 def collections():
     return render_template(
         'admin/collections.html',
@@ -159,6 +165,7 @@ def collections():
 
 @bp.route('/historyitems', methods=['GET'])
 @bp.route('/historyitems/<discriminator>', methods=['GET'])
+@login_required
 def historyitems(discriminator=None):
     if discriminator is not None and discriminator not in HISTORY_DISCRIMINATOR_MAP:
         return abort(404)
@@ -171,6 +178,7 @@ def historyitems(discriminator=None):
 
 
 @bp.route('/users', methods=['GET'])
+@login_required
 def users(discriminator=None):
     if not current_user.is_admin:
         return abort(403)

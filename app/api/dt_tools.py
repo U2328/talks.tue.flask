@@ -34,7 +34,7 @@ class DataTable:
             if not hasattr(cls, "table_id"):
                 setattr(cls, 'table_id', f"{cls.__name__.lower()}Table")
 
-    dom = "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+    dom = "<'ui stackable grid'<'row'<'eight wide column'l><'right aligned eight wide column'f>><'row dt-table'<'sixteen wide column'tr>><'row'<'seven wide column'i><'right aligned nine wide column'p>>>"
     js_kwargs = None
     search_delimiter = '|'
 
@@ -63,7 +63,7 @@ class DataTable:
         return minify(f"""
         $(document).ready(function() {{
             var {cls.table_id} = $('#{cls.table_id}').DataTable({{
-                "dom": "{dom or cls.dom}",
+                "dom": "{dom or cls.dom or 'undefined'}",
                 "processing": true,
                 "serverSide": true,
                 "responsive": true,

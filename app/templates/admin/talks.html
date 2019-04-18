@@ -1,19 +1,15 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="container-fluid">
-    <div class="row pt-3">
-        <div class="col-xs-12 col-md-11 col-lg-10 mx-auto">
-            <div class="navbar border-bottom">
-                <h2><i class="fas fa-calendar-day"></i> {{ _('Talks') }}</h2>
-                <div class="float-right">
-                    <a href="{{ url_for('admin.talk') }}" class="btn btn-primary btn-sm">{{ _("Add new talk") }}</a>
-                    <a href="{{ url_for('admin.historyitems', discriminator="talk") }}" class="btn btn-secondary btn-sm">{{ _("View related history") }}</a>
-                </div>
-            </div>
-            <div class="row pt-3">
-                {{ talk_table.generate_html() | safe }}
-            </div>
+<div class="ui segments">
+    <div class="ui segment">
+        <a href="{{ url_for('admin.historyitems', discriminator="talk") }}" class="ui tiny button right floated">{{ _("View related history") }}</a>
+        <a href="{{ url_for('admin.talk') }}" class="ui tiny primary button right floated">{{ _("Add new talk") }}</a>
+        <div class="floated left">
+            <h2><i class="fas fa-calendar-day"></i>&nbsp;{{ _('Talks') }}</h2>
         </div>
+    </div>
+    <div class="ui segment">
+        {{ talk_table.generate_html() | safe }}
     </div>
 </div>
 {% endblock %}

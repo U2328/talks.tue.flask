@@ -1,12 +1,12 @@
-<div class="diff">
+<small class="diff">
     {% if diff %}
         {% for field, changeset in diff.items() %}
-            <span class="badge badge-secondary">{{ field }}</span>
+            <span class="ui small label grey">{{ field }}</span>
             <code>{{ changeset["from"] }}</code>
             <i class="fas fa-arrow-right"></i>&nbsp;<code>{{ changeset["to"] }}</code>
             {% if not loop.last %}<br>{% endif %}
         {% endfor %}
     {% else %}
-        <small class="text-muted">No diff</small>
+        No diff
     {% endif %}
-</div>
+</small>
