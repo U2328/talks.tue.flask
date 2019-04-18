@@ -1,12 +1,24 @@
-<div class="historyitem card card-body">
-    <div class="row">
-        <div class="col mx-auto">
-            <i class='{{ historyitem.type.icon }}'></i>&nbsp;{{ historyitem.message }}
-        </div>
-        <div class="col mx-auto">
-            <div class="text-muted float-right">
-                <small>{{ moment(historyitem.timestamp).calendar() }}</small>
+<div class="historyitem card">
+    <div class="card-header" id="HistoryItemHeading{{ historyitem.id}}">
+        <div class="navbar p-0">
+            <div class="nav-item">
+                <i class='{{ historyitem.type.icon }}'></i>&nbsp;{{ historyitem.message }}
+            </div>
+            <div class="float-right">
+                <small class="text-muted">{{ moment(historyitem.timestamp).calendar() }}</small>
+                {% if historyitem.diff %}
+                    <button class="btn btn-sm btn-outline-secondary" data-toggle="collapse" data-target="#collapseHistoryItem{{ historyitem.id}}" aria-expanded="false" aria-controls="collapseHistoryItem{{ historyitem.id}}">
+                        {{ _("Diff") }}
+                    </button>
+                {% endif %}
             </div>
         </div>
     </div>
+    {% if historyitem.diff %}
+        <div id="collapseHistoryItem{{ historyitem.id}}" class="collapse" aria-labelledby="HistoryItemHeading{{ historyitem.id}}" data-parent="#accordion">
+            <div class="card-body">
+                {{ historyitem.rendered_diff | safe }}
+            </div>
+        </div>
+    {% endif %}
 </div>

@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="col-lg-7 col-xl-8 pt-3">
-                    <div class="card">
+                    <div class="card border-dark">
                         <div class="card-header">
                             <ul class="nav nav-tabs card-header-tabs">
                                 <li class="nav-item">
@@ -57,12 +57,10 @@
                                 <p class="md">{{ collection.description | markdown }}</p>
                             </div>
                             {% if collection.can_edit(current_user) %}
-                                <div class="tab-pane" id="history" role="tabpanel" aria-labelledby="history-tab">
-                                    <div class="col">
+                                <div class="tab-pane p-0" id="history" role="tabpanel" aria-labelledby="history-tab">
+                                    <div class="col p-0">
                                         {% for historyitem in collection.history %}
-                                            <div class="row">
-                                                {% include 'snippets/historyitem.html' %}
-                                            </div>
+                                            {% include 'snippets/historyitem.html' %}
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -79,7 +77,7 @@
                         </div>
                         <ul class="list-group list-group-flush">
                             {% if collection.is_meta %}
-                                {% if collection.sub_collections.count(collection.sub_collections) %}
+                                {% if collection.sub_collections.count() %}
                                     {% for sub_collection in collection.sub_collections %}
                                         <li class="list-group-item" onclick="window.location='{{ url_for('core.collection', id=sub_collection.id) }}';" style="cursor: pointer;">
                                         <span>{{ sub_collection.title }}</span>
@@ -91,7 +89,7 @@
                                     </li>
                                 {% endif %}
                             {% else %}
-                                {% if collection.talks.count(collection.talks) %}
+                                {% if collection.talks %}
                                     {% for talk in collection.talks %}
                                         <li class="list-group-item" onclick="window.location='{{ url_for('core.talk', id=talk.id) }}';" style="cursor: pointer;">
                                             <span>{{ talk.title }} <small class="text-muted">{{ talk.timestamp }}</small></span>

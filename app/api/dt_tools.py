@@ -2,7 +2,7 @@ from collections import defaultdict
 import operator
 
 from sqlalchemy import or_, cast, Text
-from flask import request, jsonify, current_app
+from flask import request, jsonify  # , current_app
 
 
 __all__ = (
@@ -226,7 +226,6 @@ class ModelDataTable(DataTable, new_base=True):
         return super().generate_js(*args, createdRow=(createdRow or "") + 'if( data.hasOwnProperty("id") ) {row.id = data.id}', **kwargs)
 
     def filter_func(self, data, filter_values):
-        current_app.logger.debug(list(data))
         if not filter_values:
             return data
         db_filters = [
@@ -253,6 +252,7 @@ class ModelDataTable(DataTable, new_base=True):
                 order["dir"]
             )()
             for order in ordering
+            if order["def"]["field"] in self.db_cols
         ])
 
     def slice_func(self, data, start, length):

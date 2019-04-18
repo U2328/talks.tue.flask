@@ -6,6 +6,7 @@ from sqlalchemy import and_, or_, event, inspect
 from sqlalchemy.types import TypeDecorator, BINARY
 from sqlalchemy.orm import foreign, backref, remote
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import render_template, url_for
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from flask_pagedown.widgets import PageDown
 from flask_babel import lazy_gettext as _l
@@ -83,6 +84,10 @@ class HistoryItem(db.Model):
     def target(self):
         return getattr(self, f"target_{self.target_discriminator}")
 
+    def get_target_url(self):
+        target = self.target
+        return target and target.get_absolute_url() or "#"
+
     @property
     def type(self):
         return HistoryStates.get_type(self._type)
@@ -94,6 +99,14 @@ class HistoryItem(db.Model):
     @classmethod
     def get_discriminated_model(cls, discriminator):
         return cls.discriminator_map.get(discriminator)
+
+    @property
+    def rendered_action(self):
+        return f'<span class="badge badge-pill badge-dark"><i class="{self.type.icon}"></i>&nbsp;{self.type.name}</span>'
+
+    @property
+    def rendered_diff(self):
+        return render_template("snippets/diff.html", diff=self.diff)
 
     @classmethod
     def build_for(cls, obj, user=None):
@@ -159,6 +172,9 @@ class HasHistory:
     def complete_history(cls, *args, **kwargs):
         return HistoryItem.query.filter(HistoryItem.target_discriminator == cls.history_discriminator)
 
+    def get_absolute_url(self):
+        raise NotImplementedError()
+
 
 @event.listens_for(HasHistory, "mapper_configured", propagate=True)
 def setup_listener(mapper, cls):
@@ -198,19 +214,24 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @property
+    def can_edit(self):
+        return self.is_admin or self.is_organizer or len(self.edited_collections) > 0
+
 
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     collection_id = db.Column(db.Integer, db.ForeignKey('collection.id'))
-    collection = db.relationship('Collection', backref=db.backref('subscriptions'))
+    collection = db.relationship('Collection', backref=backref('subscriptions'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=db.backref('subscriptions'))
+    user = db.relationship('User', backref=backref('subscriptions'))
     remind_me = db.Column(db.Boolean, default=True)
 
 
 class AnonymousUser(AnonymousUserMixin):
     is_admin = False
     is_organizer = False
+    can_edit = False
 
 
 @login.user_loader
@@ -228,11 +249,14 @@ class Talk(HasHistory, db.Model):
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
     speaker_name = db.Column(db.String(64))
     speaker_aboutme = db.Column(db.Text, info={'widget': PageDown})
-    tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=db.backref('talks'))
-    collections = db.relationship("Collection", secondary=lambda: talk_collections, backref=db.backref('talks'))
+    tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=backref('talks'))
+    collections = db.relationship("Collection", secondary=lambda: talk_collections, backref=backref('talks'))
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return url_for("core.talk", id=self.id)
 
     @property
     def rendered_tags(self):
@@ -250,11 +274,20 @@ class Talk(HasHistory, db.Model):
                 ))\
                 .filter(
                     Talk.collections.any(or_(
-                        HistoryItem.user == user,
                         Collection.organizer == user,
                         Collection.editors.contains(user),
                     ))
                 )
+
+    @classmethod
+    def related_to(cls, user):
+        if user.is_admin:
+            return Talk.query
+        else:
+            return Talk.query.filter(Talk.collections.any(or_(
+                Talk.organizer == user,
+                Talk.editors.contains(user)
+            )))
 
     def can_edit(self, user):
         return user.is_admin or any(user == collection.organizer or user in collection.editors for collection in self.collections)
@@ -271,29 +304,39 @@ class Collection(HasHistory, db.Model):
         secondary=lambda: meta_collection_connections,
         primaryjoin=lambda: Collection.id == meta_collection_connections.c.sub_collection_id,
         secondaryjoin=lambda: and_(Collection.id == meta_collection_connections.c.meta_collection_id, Collection.is_meta == True),
-        backref=db.backref('sub_collections')
+        backref=backref('sub_collections')
     )
     organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     organizer = db.relationship("User", primaryjoin=lambda: and_(User.id == Collection.organizer_id, User.is_organizer == True))
-    editors = db.relationship("User", secondary=lambda: collection_editors, backref=db.backref('edited_talks'))
+    editors = db.relationship("User", secondary=lambda: collection_editors, backref=backref('edited_collections'))
 
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return url_for("core.collection", id=self.id)
+
     @classmethod
     def complete_history(cls, user=None):
-        if user is None: #  or user.is_admin:
+        if user is None or user.is_admin:
             return super().complete_history()
         else:
-            x = super().complete_history()\
+            return super().complete_history()\
                 .join(Collection, HistoryItem.target_id == Collection.id)\
                 .filter(or_(
-                    HistoryItem.user == user,
                     Collection.organizer == user,
                     Collection.editors.contains(user),
                 ))
-            current_app.logger.debug(x)
-            return x
+
+    @classmethod
+    def related_to(cls, user):
+        if user.is_admin:
+            return Collection.query
+        else:
+            return Collection.query.filter(or_(
+                Collection.organizer == user,
+                Collection.editors.contains(user)
+            ))
 
     def can_edit(self, user):
         return user.is_admin or user == self.organizer or user in self.editors

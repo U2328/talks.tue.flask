@@ -82,9 +82,7 @@
                                 <div class="tab-pane" id="history" role="tabpanel" aria-labelledby="history-tab">
                                     <div class="col-12">
                                         {% for historyitem in talk.history %}
-                                            <div class="row">
-                                                {% include 'snippets/historyitem.html' %}
-                                            </div>
+                                            {% include 'snippets/historyitem.html' %}
                                         {% endfor %}
                                     </div>
                                 </div>

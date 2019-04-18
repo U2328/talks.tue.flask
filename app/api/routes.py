@@ -36,7 +36,7 @@ def talk(id=None):
 
 @bp.route('/talks', methods=['GET'])
 def talks():
-    return jsonify([talk.serialize() for talk in Talk.query.all()])
+    return jsonify([talk.serialize() for talk in Talk.query])
 
 
 class TalkTable(ModelDataTable):
@@ -108,7 +108,7 @@ def collection(id=None):
 
 @bp.route('/collections', methods=['GET'])
 def collections():
-    return jsonify([Collection.serialize() for Collection in Collection.query.all()])
+    return jsonify([Collection.serialize() for Collection in Collection.query])
 
 
 class CollectionTable(ModelDataTable):
@@ -131,6 +131,12 @@ def collection_table():
     return table.get_response()
 
 
+@bp.route('/admin_collection_table', methods=['GET'])
+def admin_collection_table():
+    table = CollectionTable(query=Collection.related_to(current_user))
+    return table.get_response()
+
+
 class HistoryItemTable(ModelDataTable):
     model = HistoryItem
     cols = [
@@ -138,25 +144,25 @@ class HistoryItemTable(ModelDataTable):
             'field': 'timestamp',
             'name': _l('Timestamp')
         }, {
-            'field': '_type',
+            'field': 'rendered_action',
             'name': _l('Action'),
-            'value': lambda historyitem: f'<span class="badge badge-pill badge-dark"><i class="{historyitem.type.icon}"></i>&nbsp;{historyitem.type.name}</span>'
         }, {
-            'field': 'target_discriminator',
-            'name': _l('Target type')
+            'field': 'target_id',
+            'name': _l('Target'),
+            'value': lambda historyitem: (
+                f'<a href="{historyitem.get_target_url()}">{historyitem.target_discriminator} #{historyitem.target_id}</a>'
+                if historyitem.target is not None else
+                historyitem.target_discriminator
+            )
         }, {
             'field': 'user',
             'name': _l('User'),
             'orderable': False,
             'value': lambda historyitem: historyitem.user.username,
         }, {
-            'field': 'diff',
+            'field': 'rendered_diff',
             'name': _l('Changes'),
             'orderable': False,
-            'value': lambda historyitem: "<br>".join(
-                f'<span class="badge badge-secondary">{field}</span> <code>{changeset["from"]}</code> <i class="fas fa-arrow-right"></i>&nbsp;<code>{changeset["to"]}</code>'
-                for field, changeset in historyitem.diff.items()
-            ),
         }
     ]
 

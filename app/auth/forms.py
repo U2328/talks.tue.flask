@@ -44,7 +44,7 @@ class ProfileForm(FlaskForm):
     email = StringField(_l('Email'), validators=[Email()])
     password = PasswordField(_l('Password'))
     password2 = PasswordField(_l('Repeat Password'), validators=[EqualTo('password')])
-    tags = QuerySelectMultipleField(_l('Categories'), query_factory=lambda: Tag.query.all())
+    tags = QuerySelectMultipleField(_l('Categories'), query_factory=lambda: Tag.query)
     submit = SubmitField(_l('Save'))
 
     def validate_email(self, email):
