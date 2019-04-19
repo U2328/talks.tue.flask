@@ -6,7 +6,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, DateTimeField as _DateTimeField, TextAreaField
 from wtforms.validators import DataRequired, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField, QuerySelectField
-from flask_pagedown.fields import PageDownField
 from flask_babel import lazy_gettext as _l
 
 from app.models import Tag, Collection, User

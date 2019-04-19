@@ -8,7 +8,6 @@ from sqlalchemy.orm import foreign, backref, remote
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import render_template, url_for
 from flask_login import UserMixin, AnonymousUserMixin, current_user
-from flask_pagedown.widgets import PageDown
 from flask_babel import lazy_gettext as _l
 import dill
 
@@ -242,10 +241,10 @@ login.anonymous_user = AnonymousUser
 class Talk(HasHistory, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
-    description = db.Column(db.Text, info={'widget': PageDown})
+    description = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
     speaker_name = db.Column(db.String(64))
-    speaker_aboutme = db.Column(db.Text, info={'widget': PageDown})
+    speaker_aboutme = db.Column(db.Text)
     tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=backref('talks'))
     collections = db.relationship("Collection", secondary=lambda: talk_collections, backref=backref('talks'))
 
@@ -294,7 +293,7 @@ class Collection(HasHistory, db.Model):
     __versioned__ = {}
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
-    description = db.Column(db.Text, info={'widget': PageDown})
+    description = db.Column(db.Text)
     is_meta = db.Column(db.Boolean, default=False)
     meta_collections = db.relationship(
         "Collection",

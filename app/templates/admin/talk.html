@@ -41,11 +41,10 @@
                             <div class="column">
                                 <div class="field{% if form.timestamp.errors %} error{% endif %}">
                                     {{ form.timestamp.label }}
-                                        <div class="ui calendar" id="timestamp">
-                                            <div class="ui input left icon">
-                                                <i class="calendar icon"></i>
-                                                {{ form.timestamp() }}
-                                            </div>
+                                    <div class="ui calendar" id="timestamp">
+                                        <div class="ui input left icon">
+                                            <i class="calendar icon"></i>
+                                            {{ form.timestamp() }}
                                         </div>
                                     </div>
                                 </div>
@@ -86,7 +85,7 @@
 {% endblock %}
 {% block script %}
 <script>
-    var descriptionMDE = new SimpleMDE({ element: $('#description')[0] });
+    var descriptionMDE = new SimpleMDE({ element: $('#description')[0], });
     var aboutmeMDE = new SimpleMDE({ element: $('#speaker_aboutme')[0] });
     $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
     $('.ui.dropdown').dropdown();

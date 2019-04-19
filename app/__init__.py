@@ -2,10 +2,11 @@ from flask import Flask, request, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from flask_pagedown import PageDown
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l, get_locale
-from flaskext.markdown import Markdown
+# from flaskext.markdown import Markdown
+from flask import Markup
+from markdown import Markdown
 import sqlalchemy
 from logging.config import dictConfig
 
@@ -15,7 +16,7 @@ from app.config import Config
 __all__ = (
     'db', 'migrate', 'login',
     'md', 'create_app', 'babel',
-    'moment', 'pagedown'
+    'moment',
 )
 
 db = SQLAlchemy()
@@ -25,7 +26,26 @@ babel = Babel()
 moment = Moment()
 login.login_view = 'auth.login'
 login.login_message = _l('Please log in to access this page.')
-pagedown = PageDown()
+md = Markdown(
+    extensions=[
+        "markdown.extensions.sane_lists",
+        "markdown.extensions.nl2br",
+        "markdown.extensions.codehilite",
+        "pymdownx.extra",
+        "pymdownx.arithmatex",
+        "pymdownx.smartsymbols",
+    ],
+    extension_configs={
+        "pymdownx.arithmatex": {
+            "generic": True,
+        }
+    },
+)
+
+
+def markdown(text):
+    return Markup(md.convert(text))
+
 
 from app.core import bp as core_bp  # noqa: E402
 from app.auth import bp as auth_bp  # noqa: E402
@@ -43,28 +63,9 @@ def create_app(config_class=Config):
     moment.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
-    pagedown.init_app(app)
-    markdown = Markdown(  # noqa: F841
-        app,
-        extenensions=[
-            "markdown.extensions.sane_lists",
-            "markdown.extensions.nl2br",
-            "markdown.extensions.codehilite",
-            "pymdownx.extra",
-            "pymdownx.arithmatex",
-            "pymdownx.smartsymbols",
-        ],
-        extension_configs={
-            "pymdownx.arithmatex": {
-                "generic": True,
-            }
-        },
-        # safe_mode=True
-    )
+    app.jinja_env.filters.setdefault('markdown', markdown)
 
     from app import models as _  # noqa: E402, F401
-
-    sqlalchemy.orm.configure_mappers()
 
     app.register_blueprint(core_bp)
     app.register_blueprint(errors_bp)
