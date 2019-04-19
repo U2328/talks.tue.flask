@@ -1,4 +1,4 @@
 [flake8]
-ignore = D203,E501,E128,E122,E126,W504
+ignore = D203,E501,E128,E122,E126,W504,E731
 exclude = .git,__pycache__,migrations
 max-complexity = 10

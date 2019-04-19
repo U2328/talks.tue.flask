@@ -1,0 +1,22 @@
+<div class="historyitem ui styled fluid accordion">
+    {% for historyitem in history %}
+        <div class="title">
+            <i class='{{ historyitem.type.icon }}'></i>&nbsp;{{ historyitem.message }}<br>
+            <small>{{ moment(historyitem.timestamp).calendar() }}</small>
+        </div>
+        <div class="content">
+            {% if historyitem.diff %}
+                {{ historyitem.rendered_diff | safe }}
+            {% else %}
+                <small>No diff</small>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% block script %}
+<script>
+$('.ui.accordion')
+  .accordion()
+;
+</script>
+{% endblock script %}

@@ -14,7 +14,7 @@
         <div class="five wide column">
             <div class="ui segments">
                 <div class="ui segment">
-                    <h4><i class="fas fa-info-circle"></i>&nbsp;{{ _("Info") }}</h4>
+                    <h4><i class="info circle icon"></i>&nbsp;{{ _("Info") }}</h4>
                 </div>
                 <div class="ui segment">
                     <small class="text-muted">{{ _("Speaker’s name") }}</small><br>
@@ -32,7 +32,7 @@
             {% if talk.collections.count %}
                 <div class="ui segments">
                     <div class="ui segment">
-                        <h4><i class="fas fa-list"></i>&nbsp;{{ _("Collections") }}</h4>
+                        <h4><i class="list icon"></i>&nbsp;{{ _("Collections") }}</h4>
                     </div>
                     {% for collection in talk.collections %}
                         <div class="ui segment" onclick="window.location='{{ url_for('core.collection', id=collection.id) }}';" style="cursor: pointer;">
@@ -44,10 +44,10 @@
         </div>
         <div class="eleven wide column">
             <div class="ui top attached tabular menu">
-                <a class="item active" data-tab="description"><i class="fab fa-readme"></i>&nbsp;{{ _("Description") }}</a>
-                <a class="item" data-tab="aboutme"><i class="fas fa-chalkboard-teacher"></i>&nbsp;{{ _("Speaker’s about me") }}</a>
+                <a class="item active" data-tab="description"><i class="readme icon"></i>&nbsp;{{ _("Description") }}</a>
+                <a class="item" data-tab="aboutme"><i class="chalkboard teacher icon"></i>&nbsp;{{ _("Speaker’s about me") }}</a>
                 {% if talk.can_edit(current_user) %}
-                    <a class="item" data-tab="history"><i class="fas fa-history"></i>&nbsp;{{ _("History") }}</a>
+                    <a class="item" data-tab="history"><i class="history icon"></i>&nbsp;{{ _("History") }}</a>
                 {% endif %}
             </div>
             <div class="ui bottom attached tab segment active" data-tab="description">
@@ -58,9 +58,9 @@
             </div>
             {% if talk.can_edit(current_user) %}
                 <div class="ui bottom attached tab segment" data-tab="history">
-                    {% for historyitem in talk.history %}
-                        {% include 'snippets/historyitem.html' %}
-                    {% endfor %}
+                    {% with history=talk.history %}
+                        {% include 'snippets/historyitems.html' %}
+                    {% endwith %}
                 </div>
             {% endif %}
         </div>

@@ -41,20 +41,16 @@ class DataTable:
     @classmethod
     def generate_html(cls, css_class=None):
         return minify(f"""
-        <div class="{'container pt-2' if css_class is None else str(css_class)}">
-            <div class"row">
-                <table id="{cls.table_id}" class="table table-striped table-bordered responsive responsive" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            {"".join(
-                                f'<th>{col.get("name") or col["field"]}</th>'
-                                for col in cls.cols
-                            )}
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
+            <table id="{cls.table_id}" class="ui celled tablet stackable table">
+                <thead>
+                    <tr>
+                        {"".join(
+                            f'<th>{col.get("name") or col["field"]}</th>'
+                            for col in cls.cols
+                        )}
+                    </tr>
+                </thead>
+            </table>
         """)
 
     @classmethod

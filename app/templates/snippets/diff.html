@@ -1,12 +1,15 @@
-<small class="diff">
+<div class="diff ui mini relaxed list">
     {% if diff %}
         {% for field, changeset in diff.items() %}
-            <span class="ui small label grey">{{ field }}</span>
-            <code>{{ changeset["from"] }}</code>
-            <i class="fas fa-arrow-right"></i>&nbsp;<code>{{ changeset["to"] }}</code>
-            {% if not loop.last %}<br>{% endif %}
+            <div class="item">
+                <div class="content">
+                    <span class="ui tiny label grey">{{ field }}</span>
+                    <code>{{ changeset["from"] }}</code>
+                    <i class="arrow right icon"></i>&nbsp;<code>{{ changeset["to"] }}</code>
+                </div>
+            </div>
         {% endfor %}
     {% else %}
         No diff
     {% endif %}
-</small>
+</div>

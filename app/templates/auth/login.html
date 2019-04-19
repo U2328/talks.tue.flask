@@ -5,34 +5,25 @@
     <div class="column twelve wide">
         <div class="ui segments">
             <div class="ui center aligned segment">
-                <h2>Login</h2>
+                <h2>{{ _('Login') }}</h2>
             </div>
             <div class="ui segment">
-                <form id="loginForm" method="post" novalidate>
+                <form id="loginForm" method="post" class="ui form" novalidate>
                     {{ form.hidden_tag() }}
-                    <div class="form-group row">
-                        <label for="username" class="col-sm-2 col-form-label">{{ form.username.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.username(size=32, class_='form-control ' + ('' if form.username.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.username.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
-                            </div>
+                    <div class="field{% if form.username.errors %} error{% endif %}">
+                        {{ form.username.label }}
+                        {{ form.username(size=32) }}
+                    </div>
+                    <div class="field{% if form.password.errors %} error{% endif %}">
+                        {{ form.password.label }}
+                        {{ form.password(size=32) }}
+                    </div>
+                    <div class="inline field{% if form.remember_me.errors %} error{% endif %}">
+                        <div class="ui toggle checkbox">
+                            {{ form.remember_me(class_="hidden") }}
+                            {{ form.remember_me.label }}
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label for="password" class="col-sm-2 col-form-label">{{ form.password.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.password(size=32, class_='form-control ' + ('' if form.password.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.password.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
                 </form>
             </div>
             <div class="ui segment">
@@ -43,4 +34,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block script %}
+<script>
+    $('.ui.checkbox').checkbox();
+</script>
 {% endblock %}

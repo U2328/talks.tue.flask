@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="ui one column stackable centered aligned page grid">
-    <div class="column twelve wide">
+<div class="ui one column stackable centered aligned grid">
+    <div class="sixteen wide column">
         <div class="ui segments">
             <div class="ui segment">
                 {% if not new %}
@@ -12,50 +12,39 @@
                 </div>
             </div>
             <div class="ui segment">
-                <form id="collectionForm" method="post" novalidate>
+                <form id="collectionForm" method="post" class="ui form" novalidate>
                     {{ form.hidden_tag() }}
-                    <div class="form-group row">
-                        <label for="title" class="col-sm-2 col-form-label">{{ form.title.label }}</label>
-                        <div class="col-sm-10">{{ form.title(size=32, class_='form-control') }}</div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="description" class="col-sm-2 col-form-label">{{ form.description.label }}</label>
-                        <div class="col-sm-10">{{ form.description(size=32, class_='form-control') }}</div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="is_meta" class="col-sm-2 col-form-label">{{ form.is_meta.label }}</label>
-                        <div class="col-sm-10">{{ form.is_meta(size=32, class_='form-control') }}</div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="meta_collections" class="col-sm-2 col-form-label">{{ form.meta_collections.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.meta_collections(class_='form-control ' + ('' if form.meta_collections.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.meta_collections.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
+                    <div class="ui stackable grid">
+                        <div class="two column row">
+                            <div class="twelve wide column">
+                                <div class="field{% if form.title.errors %} error{% endif %}">
+                                    {{ form.title.label }}
+                                    {{ form.title(size=32) }}
+                                </div>
+                                <div class="field{% if form.description.errors %} error{% endif %}">
+                                    {{ form.description.label }}
+                                    {{ form.description() }}
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="organizer" class="col-sm-2 col-form-label">{{ form.organizer.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.organizer(class_='form-control ' + ('' if form.organizer.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.organizer.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="editors" class="col-sm-2 col-form-label">{{ form.editors.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.editors(class_='form-control ' + ('' if form.editors.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.editors.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
+                            <div class="four wide column">
+                                <div class="inline field{% if form.is_meta.errors %} error{% endif %}">
+                                    <div class="ui toggle checkbox">
+                                        {{ form.is_meta(class_="hidden") }}
+                                        {{ form.is_meta.label }}
+                                    </div>
+                                </div>
+                                <div class="field{% if form.meta_collections.errors %} error{% endif %}">
+                                    {{ form.meta_collections.label }}
+                                    {{ form.meta_collections(class_='ui dropdown') }}
+                                </div>
+                                <div class="field{% if form.organizer.errors %} error{% endif %}">
+                                    {{ form.organizer.label }}
+                                    {{ form.organizer(class_='ui dropdown') }}
+                                </div>
+                                <div class="field{% if form.editors.errors %} error{% endif %}">
+                                    {{ form.editors.label }}
+                                    {{ form.editors(class_='ui dropdown') }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -72,15 +61,17 @@
     <div id="historyModal" class="ui tiny longer modal">
         <div class="header">{{ _("History") }}</div>
         <div class="content">
-            {% for historyitem in collection.history %}
-                {% include 'snippets/historyitem.html' %}
-            {% endfor %}
+            {% with history=collection.history %}
+                {% include 'snippets/historyitems.html' %}
+            {% endwith %}
         </div>
     </div>
 {% endif %}
 {% endblock %}
 {% block script %}
 <script>
+    var descriptionMDE = new SimpleMDE({ element: $('#description')[0] });
     $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
+    $('.ui.dropdown').dropdown();
 </script>
 {% endblock script %}

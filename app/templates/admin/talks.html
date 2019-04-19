@@ -5,7 +5,7 @@
         <a href="{{ url_for('admin.historyitems', discriminator="talk") }}" class="ui tiny button right floated">{{ _("View related history") }}</a>
         <a href="{{ url_for('admin.talk') }}" class="ui tiny primary button right floated">{{ _("Add new talk") }}</a>
         <div class="floated left">
-            <h2><i class="fas fa-calendar-day"></i>&nbsp;{{ _('Talks') }}</h2>
+            <h2><i class="calendar icon"></i>&nbsp;{{ _('Talks') }}</h2>
         </div>
     </div>
     <div class="ui segment">
@@ -27,10 +27,10 @@
             if (key == "delete") {window.open("{{ url_for('admin.talk') }}/" + id + "/delete", "_self");}
         },
         items: {
-            "view": {name: "{{ _("View") }}", icon: "far fa-eye"},
-            "edit": {name: "{{ _("Edit") }}", icon: "fa-edit"},
-            "copy": {name: "{{ _("Copy") }}", icon: "fa-copy"},
-            "delete": {name: "{{ _("Delete") }}", icon: "far fa-trash-alt"},
+            "view": {name: "{{ _("View") }}", icon: "add"},
+            "edit": {name: "{{ _("Edit") }}", icon: "edit"},
+            "copy": {name: "{{ _("Copy") }}", icon: "copy"},
+            "delete": {name: "{{ _("Delete") }}", icon: "delete"},
         }
     });
 </script>

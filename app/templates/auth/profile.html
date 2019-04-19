@@ -5,60 +5,30 @@
     <div class="column twelve wide">
         <div class="ui segments">
             <div class="ui segment">
-                <h5>Your Profile</h5>
+                <h2>{{ _("Profile") }}</h2>
             </div>
             <div class="ui segment">
-                <form id="loginForm" method="post" novalidate>
+                <form id="loginForm" method="post" class="ui form" novalidate>
                     {{ form.hidden_tag() }}
-                    <div class="form-group row">
-                        <label for="email" class="col-sm-2 col-form-label">Username</label>
-                        <div class="col-sm-10">
-                            <input class="form-control" type="text" placeholder="{{ user.username }}" readonly>
-                        </div>
+                    <div class="field">
+                        {{ user.username.label }}
+                        <input type="text" placeholder="{{ user.username }}" readonly>
                     </div>
-                    <div class="form-group row">
-                        <label for="email" class="col-sm-2 col-form-label">{{ form.email.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.email(size=32, class_='form-control ' + ('' if form.email.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.email.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
-                            </div>
-                        </div>
+                    <div class="field">
+                        {{ form.email.label }}
+                        {{ form.email(size=32) }}
                     </div>
-                    <div class="form-group row">
-                        <label for="password" class="col-sm-2 col-form-label">{{ form.password.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.password(size=32, class_='form-control ' + ('' if form.password.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.password.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
-                            </div>
-                        </div>
+                    <div class="field">
+                        {{ form.password.label }}
+                        {{ form.password(size=32) }}
                     </div>
-                    <div class="form-group row">
-                        <label for="password2" class="col-sm-2 col-form-label">{{ form.password2.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.password2(size=32, class_='form-control ' + ('' if form.password2.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.password2.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
-                            </div>
-                        </div>
+                    <div class="field">
+                        {{ form.password2.label }}
+                        {{ form.password2(size=32) }}
                     </div>
-                    <div class="form-group row">
-                        <label for="tags" class="col-sm-2 col-form-label">{{ form.tags.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.tags(class_='form-control ' + ('' if form.tags.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.tags.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
-                            </div>
-                        </div>
+                    <div class="field">
+                        {{ form.tags.label }}
+                        {{ form.tags(class_="ui dropdown") }}
                     </div>
                 </form>
             </div>
@@ -69,4 +39,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block script %}
+<script>
+    $('.ui.dropdown').dropdown();
+</script>
 {% endblock %}

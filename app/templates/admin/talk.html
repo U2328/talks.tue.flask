@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="ui one column stackable centered aligned page grid">
-    <div class="column twelve wide">
+<div class="ui one column stackable centered aligned grid">
+    <div class="sixteen wide column">
         <div class="ui segments">
             <div class="ui segment">
                 {% if not new %}
@@ -12,71 +12,55 @@
                 </div>
             </div>
             <div class="ui segment">
-                <form id="talkForm" method="post" novalidate>
+                <form id="talkForm" method="post" class="ui form" novalidate>
                     {{ form.hidden_tag() }}
-                    <div class="form-group row">
-                        <label for="title" class="col-sm-2 col-form-label">{{ form.title.label }}</label>
-                        <div class="col-sm-10">{{ form.title(size=32, class_='form-control') }}</div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="description" class="col-sm-2 col-form-label">{{ form.description.label }}</label>
-                        <div class="col-sm-10">{{ form.description(size=32, class_='form-control') }}</div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="timestamp" class="col-sm-2 col-form-label">{{ form.timestamp.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.timestamp(data_target="#timestamp", data_toggle="datetimepicker", class_='form-control datetimepicker-input ' + ('' if form.timestamp.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.timestamp.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
+                    <div class="ui stackable grid">
+                        <div class="two column row">
+                            <div class="eight wide column">
+                                <div class="field{% if form.title.errors %} error{% endif %}">
+                                    {{ form.title.label }}
+                                    {{ form.title(size=32) }}
+                                </div>
+                                <div class="field{% if form.description.errors %} error{% endif %}">
+                                    {{ form.description.label }}
+                                    {{ form.description() }}
+                                </div>
                             </div>
-                            <script type="text/javascript">
-                                $(document).ready(function() {$('#timestamp').datetimepicker({format: "YYYY.MM.DD HH:mm", locale: "{{ g.locale }}"});});
-                            </script>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="speaker_name" class="col-sm-2 col-form-label">{{ form.speaker_name.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.speaker_name(class_='form-control ' + ('' if form.speaker_name.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.speaker_name.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
+                            <div class="eight wide column">
+                                <div class="field{% if form.speaker_name.errors %} error{% endif %}">
+                                    {{ form.speaker_name.label }}
+                                    {{ form.speaker_name(size=32) }}
+                                </div>
+                                <div class="field{% if form.speaker_aboutme.errors %} error{% endif %}">
+                                    {{ form.speaker_aboutme.label }}
+                                    {{ form.speaker_aboutme() }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="speaker_aboutme" class="col-sm-2 col-form-label">{{ form.speaker_aboutme.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.speaker_aboutme(class_='form-control ' + ('' if form.speaker_aboutme.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.speaker_aboutme.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
+                        <div class="three column row">
+                            <div class="column">
+                                <div class="field{% if form.timestamp.errors %} error{% endif %}">
+                                    {{ form.timestamp.label }}
+                                        <div class="ui calendar" id="timestamp">
+                                            <div class="ui input left icon">
+                                                <i class="calendar icon"></i>
+                                                {{ form.timestamp() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="collections" class="col-sm-2 col-form-label">{{ form.collections.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.collections(class_='form-control ' + ('' if form.collections.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.collections.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
+                            <div class="column">
+                                <div class="field{% if form.collections.errors %} error{% endif %}">
+                                    {{ form.collections.label }}
+                                    {{ form.collections(class_='ui dropdown') }}
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="tags" class="col-sm-2 col-form-label">{{ form.tags.label }}</label>
-                        <div class="col-sm-10">
-                            {{ form.tags(class_='form-control ' + ('' if form.tags.errors|length == 0 else 'is-invalid')) }}
-                            <div class="invalid-feedback">
-                                {% for error in form.tags.errors %}
-                                    {{ _(error) }}
-                                {% endfor %}
+                            <div class="column">
+                                <div class="field{% if form.tags.errors %} error{% endif %}">
+                                    {{ form.tags.label }}
+                                    {{ form.tags(class_='ui dropdown') }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -93,15 +77,19 @@
     <div id="historyModal" class="ui tiny longer modal">
         <div class="header">{{ _("History") }}</div>
         <div class="content">
-            {% for historyitem in talk.history %}
-                {% include 'snippets/historyitem.html' %}
-            {% endfor %}
+            {% with history=talk.history %}
+                {% include 'snippets/historyitems.html' %}
+            {% endwith %}
         </div>
     </div>
 {% endif %}
 {% endblock %}
 {% block script %}
 <script>
+    var descriptionMDE = new SimpleMDE({ element: $('#description')[0] });
+    var aboutmeMDE = new SimpleMDE({ element: $('#speaker_aboutme')[0] });
     $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
+    $('.ui.dropdown').dropdown();
+    $('#timestamp').calendar({ ampm: false });
 </script>
 {% endblock script %}
