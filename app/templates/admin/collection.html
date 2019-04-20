@@ -1,61 +1,57 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="ui one column stackable centered aligned grid">
-    <div class="sixteen wide column">
-        <div class="ui segments">
-            <div class="ui segment">
-                {% if not new %}
-                    <div id="historyModalTrigger" class="ui button tiny right floated">{{ _("History") }}</div>
-                {% endif %}
-                <div class="left floated">
-                    <h2>{% if new %}{{ _("Create Collection") }}{% else %}{{ _("Edit Collection") }}{% endif %}</h2>
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3>{% if new %}{{ _("Create Collection") }}{% else %}{{ _("Edit Collection") }}{% endif %}</h3>
+    </div>
+    <div class="right menu">
+        {% if not new %}
+            <a id="historyModalTrigger" class="ui small button item">{{ _("History") }}</a>
+        {% endif %}
+    </div>
+</div>
+<div class="ui attached segment">
+    <form id="collectionForm" method="post" class="ui form" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="ui stackable grid">
+            <div class="two column row">
+                <div class="twelve wide column">
+                    <div class="field{% if form.title.errors %} error{% endif %}">
+                        {{ form.title.label }}
+                        {{ form.title(size=32) }}
+                    </div>
+                    <div class="field{% if form.description.errors %} error{% endif %}">
+                        {{ form.description.label }}
+                        {{ form.description() }}
+                    </div>
                 </div>
-            </div>
-            <div class="ui segment">
-                <form id="collectionForm" method="post" class="ui form" novalidate>
-                    {{ form.hidden_tag() }}
-                    <div class="ui stackable grid">
-                        <div class="two column row">
-                            <div class="twelve wide column">
-                                <div class="field{% if form.title.errors %} error{% endif %}">
-                                    {{ form.title.label }}
-                                    {{ form.title(size=32) }}
-                                </div>
-                                <div class="field{% if form.description.errors %} error{% endif %}">
-                                    {{ form.description.label }}
-                                    {{ form.description() }}
-                                </div>
-                            </div>
-                            <div class="four wide column">
-                                <div class="inline field{% if form.is_meta.errors %} error{% endif %}">
-                                    <div class="ui toggle checkbox">
-                                        {{ form.is_meta(class_="hidden") }}
-                                        {{ form.is_meta.label }}
-                                    </div>
-                                </div>
-                                <div class="field{% if form.meta_collections.errors %} error{% endif %}">
-                                    {{ form.meta_collections.label }}
-                                    {{ form.meta_collections(class_='ui dropdown') }}
-                                </div>
-                                <div class="field{% if form.organizer.errors %} error{% endif %}">
-                                    {{ form.organizer.label }}
-                                    {{ form.organizer(class_='ui dropdown') }}
-                                </div>
-                                <div class="field{% if form.editors.errors %} error{% endif %}">
-                                    {{ form.editors.label }}
-                                    {{ form.editors(class_='ui dropdown') }}
-                                </div>
-                            </div>
+                <div class="four wide column">
+                    <div class="inline field{% if form.is_meta.errors %} error{% endif %}">
+                        <div class="ui toggle checkbox">
+                            {{ form.is_meta(class_="hidden") }}
+                            {{ form.is_meta.label }}
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="ui segment">
-                {{ form.submit(form='collectionForm', class="ui button positive") }}
-                <a class="ui button negative"href="{{ next }}">{{ _('Cancel') }}</a>
+                    <div class="field{% if form.meta_collections.errors %} error{% endif %}">
+                        {{ form.meta_collections.label }}
+                        {{ form.meta_collections(class_='ui dropdown') }}
+                    </div>
+                    <div class="field{% if form.organizer.errors %} error{% endif %}">
+                        {{ form.organizer.label }}
+                        {{ form.organizer(class_='ui dropdown') }}
+                    </div>
+                    <div class="field{% if form.editors.errors %} error{% endif %}">
+                        {{ form.editors.label }}
+                        {{ form.editors(class_='ui dropdown') }}
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+</div>
+<div class="ui bottom attached segment">
+    {{ form.submit(form='collectionForm', class="ui button positive") }}
+    <a class="ui button negative"href="{{ next }}">{{ _('Cancel') }}</a>
 </div>
 {% if not new %}
     <div id="historyModal" class="ui tiny longer modal">

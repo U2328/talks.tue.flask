@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui one column stackable centered aligned page grid">
+    <div class="column twelve wide">
+        <div class="ui top attached secondary menu">
+            <div class="item">
+                <h3>{{ _("Subscription to '%(collection)s'", collection=subscription.collection.title) }}</h3>
+            </div>
+        </div>
+        <div class="ui attached segment">
+            <form id="subscriptionForm" method="post" class="ui form" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="field">
+                    <label>{{ _("Collection") }}</label>
+                    <input type="text" placeholder="{{ subscription.collection.title }}" readonly>
+                </div>
+                <div class="inline field{% if form.remind_me.errors %} error{% endif %}">
+                    <div class="ui toggle checkbox">
+                        {{ form.remind_me(class_="hidden") }}
+                        {{ form.remind_me.label }}
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="ui bottom attached segment">
+            {{ form.submit(form='subscriptionForm', class="ui button positive") }}
+            <a class="ui button negative" href="{{ next }}">{{ _('Cancel') }}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

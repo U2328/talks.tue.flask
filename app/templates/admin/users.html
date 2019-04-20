@@ -1,15 +1,12 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="ui segments">
-    <div class="ui segment">
-        <a href="#" class="ui tiny primary button right floated">{{ _("Add new collection") }}</a>
-        <div class="floated left">
-            <h2><i class="users icon"></i>&nbsp;{{ _('Users') }}</h2>
-        </div>
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3><i class="users icon"></i>&nbsp;{{ _('Users') }}</h3>
     </div>
-    <div class="ui segment">
-        {{ user_table.generate_html() | safe }}
-    </div>
+</div>
+<div class="ui bottom attached segment">
+    {{ user_table.generate_html() | safe }}
 </div>
 {% endblock %}
 {% block script %}
@@ -21,13 +18,11 @@
             var id = $(this).attr('id');
             if (key == "view") {}
             if (key == "edit") {}
-            if (key == "copy") {}
             if (key == "delete") {}
         },
         items: {
             "view": {name: "{{ _("View") }}", icon: "add"},
             "edit": {name: "{{ _("Edit") }}", icon: "edit"},
-            "copy": {name: "{{ _("Copy") }}", icon: "copy"},
             "delete": {name: "{{ _("Delete") }}", icon: "delete"},
         }
     });

@@ -1,12 +1,12 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="ui segments">
-    <div class="ui segment">
-        <h2><i class="history icon"></i>&nbsp;{{ _('History') }}</h2>
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3><i class="history icon"></i>&nbsp;{{ _('History') }}</h3>
     </div>
-    <div class="ui segment">
-        {{ historyitem_table.generate_html() | safe }}
-    </div>
+</div>
+<div class="ui bottom attached segment">
+    {{ historyitem_table.generate_html() | safe }}
 </div>
 {% endblock %}
 {% block script %}

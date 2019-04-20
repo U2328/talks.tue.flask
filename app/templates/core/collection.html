@@ -1,105 +1,109 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="ui segments">
-    <div class="ui segment">
-        {% if can_edit %}
-            <a class="ui tiny button right floated" href="{{ url_for('admin.collection', id=collection.id) }}?next={{ request.path }}">{{ _('Edit') }}</a>
-        {% endif %}
-        <a class="ui tiny primary button right floated {% if not can_subscribe %} disabled{% endif %}" href="#">{{ _('Subscribe') }}</a>
-        <div class="left floated">
-            <h2>{{ collection.title }}</h2>
-        </div>
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3>{{ collection.title }}</h3>
     </div>
-    <div class="ui segment two column stackable grid">
-        <div class="row">
-            <div class="five wide column">
-                <div class="ui segments">
-                    <div class="ui segment">
-                        <h4><i class="info circle icon"></i>&nbsp;{{ _("Info") }}</h4>
-                    </div>
-                    <div class="ui segment">
-                        <small>{{ _("Organizers’s username") }}</small><br>
-                        <span class="h6">{{ collection.organizer.username }}</span>
-                    </div>
-                    <div class="ui segment">
-                        <small>{{ _("Tags") }}</small><br>
-                        <span class="h6">{% for tag in collection.tags %}{% include 'snippets/tag.html' %} {% endfor %}</span>
-                    </div>
-                    <div class="ui segment">
-                        <small>{{ _("Subscribers") }}</small>&nbsp;<span class="h6">{{ collection.subscriptions.count(collection.subscriptions) }}</span>
-                    </div>
+    <div class="right menu">
+        {% if can_edit %}
+            <a class="ui small button item" href="{{ url_for('admin.collection', id=collection.id) }}?next={{ request.path }}">{{ _('Edit') }}</a>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.is_subscribed_to(collection) %}
+            <a class="ui small primary button item" href="{{ url_for("auth.subscription", id=collection.id) }}?next={{ request.path }}">{{ _('Edit Subscription') }}</a>
+        {% else %}
+            <a class="ui small primary button item" href="{{ url_for("auth.subscribe", id=collection.id) }}">{{ _('Subscribe') }}</a>
+        {% endif %}
+    </div>
+</div>
+<div class="ui bottom attached segment two column stackable grid">
+    <div class="row">
+        <div class="five wide column">
+            <div class="ui segments">
+                <div class="ui segment">
+                    <h4><i class="info circle icon"></i>&nbsp;{{ _("Info") }}</h4>
+                </div>
+                <div class="ui segment">
+                    <small>{{ _("Organizers’s username") }}</small><br>
+                    <span class="h6">{{ collection.organizer.username }}</span>
+                </div>
+                <div class="ui segment">
+                    <small>{{ _("Tags") }}</small><br>
+                    <span class="h6">{% for tag in collection.tags %}{% include 'snippets/tag.html' %} {% endfor %}</span>
+                </div>
+                <div class="ui segment">
+                    <small>{{ _("Subscribers") }}</small>&nbsp;<span class="h6">{{ collection.subscriptions.count(collection.subscriptions) }}</span>
                 </div>
             </div>
-            <div class="eleven wide column">
-                <div class="ui top attached tabular menu">
-                    <a class="item active" data-tab="description"><i class="readme icon"></i>&nbsp;{{ _("Description") }}</a>
-                    {% if collection.can_edit(current_user) %}
-                        <a class="item" data-tab="history"><i class="history icon"></i>&nbsp;{{ _("History") }}</a>
-                    {% endif %}
-                </div>
-                <div class="ui bottom attached tab segment active" data-tab="description">
-                    <p class="md">{{ collection.description | markdown }}</p>
-                </div>
+        </div>
+        <div class="eleven wide column">
+            <div class="ui top attached tabular menu">
+                <a class="item active" data-tab="description"><i class="readme icon"></i>&nbsp;{{ _("Description") }}</a>
                 {% if collection.can_edit(current_user) %}
-                    <div class="ui bottom attached tab segment" data-tab="history">
-                        {% with history=collection.history %}
-                            {% include 'snippets/historyitems.html' %}
-                        {% endwith %}
-                    </div>
+                    <a class="item" data-tab="history"><i class="history icon"></i>&nbsp;{{ _("History") }}</a>
                 {% endif %}
             </div>
-        </div>
-        <div class="row">
-            <div class="eight wide column">
-                <div class="ui segments">
-                    <div class="ui segment">
-                        <h4><i class="list icon"></i>&nbsp;{% if collection.is_meta %}{{ _("Child Collections") }}{% else %}{{ _("Talks") }}{% endif %}</h4>
-                    </div>
-                    {% if collection.is_meta %}
-                        {% if collection.sub_collections %}
-                            {% for sub_collection in collection.sub_collections %}
-                                <div class="ui segment" onclick="window.location='{{ url_for('core.collection', id=sub_collection.id) }}';" style="cursor: pointer;">
-                                    <span>{{ sub_collection.title }}</span>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="ui segment">
-                                <span class="text-muted">{{ _("This collection has no child collections.") }}</span>
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        {% if collection.talks %}
-                            {% for talk in collection.talks %}
-                                <div class="ui segment" onclick="window.location='{{ url_for('core.talk', id=talk.id) }}';" style="cursor: pointer;">
-                                    <span>{{ talk.title }}<br><small>{{ talk.timestamp }}</small></span>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="ui segment">
-                                <span class="text-muted">{{ _("This collection contains no talks.") }}</span>
-                            </div>
-                        {% endif %}
-                    {% endif %}
-                </div>
+            <div class="ui bottom attached tab segment active" data-tab="description">
+                <p class="md">{{ collection.description | markdown }}</p>
             </div>
-            <div class="eight wide column">
-                <div class="ui segments">
-                    <div class="ui segment">
-                        <h4><i class="list icon"></i>&nbsp;{{ _("Parent Collections") }}</h4>
-                    </div>
-                    {% if collection.meta_collections %}
-                        {% for meta_collection in collection.meta_collections %}
-                            <div class="ui segment" onclick="window.location='{{ url_for('core.collection', id=meta_collection.id) }}';" style="cursor: pointer;">
-                                <span>{{ meta_collection.title }}</span>
+            {% if collection.can_edit(current_user) %}
+                <div class="ui bottom attached tab segment" data-tab="history">
+                    {% with history=collection.history %}
+                        {% include 'snippets/historyitems.html' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="eight wide column">
+            <div class="ui segments">
+                <div class="ui segment">
+                    <h4><i class="list icon"></i>&nbsp;{% if collection.is_meta %}{{ _("Child Collections") }}{% else %}{{ _("Talks") }}{% endif %}</h4>
+                </div>
+                {% if collection.is_meta %}
+                    {% if collection.sub_collections %}
+                        {% for sub_collection in collection.sub_collections %}
+                            <div class="ui segment" onclick="window.location='{{ url_for('core.collection', id=sub_collection.id) }}';" style="cursor: pointer;">
+                                <span>{{ sub_collection.title }}</span>
                             </div>
                         {% endfor %}
                     {% else %}
                         <div class="ui segment">
-                            <span class="text-muted">{{ _("This collection has no parent collections.") }}</span>
+                            <span class="text-muted">{{ _("This collection has no child collections.") }}</span>
                         </div>
                     {% endif %}
+                {% else %}
+                    {% if collection.talks %}
+                        {% for talk in collection.talks %}
+                            <div class="ui segment" onclick="window.location='{{ url_for('core.talk', id=talk.id) }}';" style="cursor: pointer;">
+                                <span>{{ talk.title }}<br><small>{{ talk.timestamp }}</small></span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="ui segment">
+                            <span class="text-muted">{{ _("This collection contains no talks.") }}</span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="eight wide column">
+            <div class="ui segments">
+                <div class="ui segment">
+                    <h4><i class="list icon"></i>&nbsp;{{ _("Parent Collections") }}</h4>
                 </div>
+                {% if collection.meta_collections %}
+                    {% for meta_collection in collection.meta_collections %}
+                        <div class="ui segment" onclick="window.location='{{ url_for('core.collection', id=meta_collection.id) }}';" style="cursor: pointer;">
+                            <span>{{ meta_collection.title }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="ui segment">
+                        <span class="text-muted">{{ _("This collection has no parent collections.") }}</span>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -47,4 +47,9 @@ def collection(id=None):
     collection = Collection.query.get(id)
     if collection is None:
         return abort(404)
-    return render_template('core/collection.html', title=collection.title, collection=collection, can_edit=collection.can_edit(current_user))
+    return render_template(
+        'core/collection.html',
+        title=collection.title,
+        collection=collection,
+        can_edit=collection.can_edit(current_user)
+    )

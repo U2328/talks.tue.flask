@@ -12,6 +12,7 @@ __all__ = (
     'LoginForm',
     'RegistrationForm',
     'ProfileForm',
+    'SubscriptionForm',
 )
 
 
@@ -51,3 +52,8 @@ class ProfileForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None and user.id != current_user.id:
             raise ValidationError(_('Please use a different email address.'))
+
+
+class SubscriptionForm(FlaskForm):
+    remind_me = BooleanField(_l('Remind me'))
+    submit = SubmitField(_l('Save'))

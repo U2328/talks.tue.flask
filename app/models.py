@@ -214,6 +214,9 @@ class User(UserMixin, db.Model):
     def can_edit(self):
         return self.is_admin or self.is_organizer or len(self.edited_collections) > 0
 
+    def is_subscribed_to(self, collection):
+        return len([subscription for subscription in self.subscriptions if subscription.collection == collection]) > 0
+
 
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)

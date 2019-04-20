@@ -1,76 +1,72 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="ui one column stackable centered aligned grid">
-    <div class="sixteen wide column">
-        <div class="ui segments">
-            <div class="ui segment">
-                {% if not new %}
-                    <div id="historyModalTrigger" class="ui button tiny right floated">{{ _("History") }}</div>
-                {% endif %}
-                <div class="left floated">
-                    <h2>{% if new %}{{ _("Create Talk") }}{% else %}{{ _("Edit Talk") }}{% endif %}</h2>
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3>{% if new %}{{ _("Create Talk") }}{% else %}{{ _("Edit Talk") }}{% endif %}</h3>
+    </div>
+    <div class="right menu">
+        {% if not new %}
+            <a id="historyModalTrigger" class="ui small button item">{{ _("History") }}</a>
+        {% endif %}
+    </div>
+</div>
+<div class="ui attached segment">
+    <form id="talkForm" method="post" class="ui form" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="ui stackable grid">
+            <div class="two column row">
+                <div class="eight wide column">
+                    <div class="field{% if form.title.errors %} error{% endif %}">
+                        {{ form.title.label }}
+                        {{ form.title(size=32) }}
+                    </div>
+                    <div class="field{% if form.description.errors %} error{% endif %}">
+                        {{ form.description.label }}
+                        {{ form.description() }}
+                    </div>
+                </div>
+                <div class="eight wide column">
+                    <div class="field{% if form.speaker_name.errors %} error{% endif %}">
+                        {{ form.speaker_name.label }}
+                        {{ form.speaker_name(size=32) }}
+                    </div>
+                    <div class="field{% if form.speaker_aboutme.errors %} error{% endif %}">
+                        {{ form.speaker_aboutme.label }}
+                        {{ form.speaker_aboutme() }}
+                    </div>
                 </div>
             </div>
-            <div class="ui segment">
-                <form id="talkForm" method="post" class="ui form" novalidate>
-                    {{ form.hidden_tag() }}
-                    <div class="ui stackable grid">
-                        <div class="two column row">
-                            <div class="eight wide column">
-                                <div class="field{% if form.title.errors %} error{% endif %}">
-                                    {{ form.title.label }}
-                                    {{ form.title(size=32) }}
-                                </div>
-                                <div class="field{% if form.description.errors %} error{% endif %}">
-                                    {{ form.description.label }}
-                                    {{ form.description() }}
-                                </div>
-                            </div>
-                            <div class="eight wide column">
-                                <div class="field{% if form.speaker_name.errors %} error{% endif %}">
-                                    {{ form.speaker_name.label }}
-                                    {{ form.speaker_name(size=32) }}
-                                </div>
-                                <div class="field{% if form.speaker_aboutme.errors %} error{% endif %}">
-                                    {{ form.speaker_aboutme.label }}
-                                    {{ form.speaker_aboutme() }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="three column row">
-                            <div class="column">
-                                <div class="field{% if form.timestamp.errors %} error{% endif %}">
-                                    {{ form.timestamp.label }}
-                                    <div class="ui calendar" id="timestamp">
-                                        <div class="ui input left icon">
-                                            <i class="calendar icon"></i>
-                                            {{ form.timestamp() }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column">
-                                <div class="field{% if form.collections.errors %} error{% endif %}">
-                                    {{ form.collections.label }}
-                                    {{ form.collections(class_='ui dropdown') }}
-                                </div>
-                            </div>
-                            <div class="column">
-                                <div class="field{% if form.tags.errors %} error{% endif %}">
-                                    {{ form.tags.label }}
-                                    {{ form.tags(class_='ui dropdown') }}
-                                </div>
+            <div class="three column row">
+                <div class="column">
+                    <div class="field{% if form.timestamp.errors %} error{% endif %}">
+                        {{ form.timestamp.label }}
+                        <div class="ui calendar" id="timestamp">
+                            <div class="ui input left icon">
+                                <i class="calendar icon"></i>
+                                {{ form.timestamp() }}
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="ui segment">
-                {{ form.submit(form='talkForm', class="ui button positive") }}
-                <a class="ui button negative"href="{{ next }}">{{ _('Cancel') }}</a>
+                </div>
+                <div class="column">
+                    <div class="field{% if form.collections.errors %} error{% endif %}">
+                        {{ form.collections.label }}
+                        {{ form.collections(class_='ui dropdown') }}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field{% if form.tags.errors %} error{% endif %}">
+                        {{ form.tags.label }}
+                        {{ form.tags(class_='ui dropdown') }}
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+</div>
+<div class="ui bottom attached segment">
+    {{ form.submit(form='talkForm', class="ui button positive") }}
+    <a class="ui button negative"href="{{ next }}">{{ _('Cancel') }}</a>
 </div>
 {% if not new %}
     <div id="historyModal" class="ui tiny longer modal">

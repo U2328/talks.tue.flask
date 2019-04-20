@@ -1,16 +1,16 @@
 {% extends "admin/base.html" %}
 {% block content %}
-<div class="ui segments">
-    <div class="ui segment">
-        <a href="{{ url_for('admin.historyitems', discriminator="collection") }}" class="ui tiny button right floated">{{ _("View related history") }}</a>
-        <a href="{{ url_for('admin.collection') }}" class="ui tiny primary button right floated">{{ _("Add new collection") }}</a>
-        <div class="floated left">
-            <h2><i class="list icon"></i>&nbsp;{{ _('Collections') }}</h2>
-        </div>
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3><i class="list icon"></i>&nbsp;{{ _('Collections') }}</h3>
     </div>
-    <div class="ui segment">
-        {{ collection_table.generate_html() | safe }}
+    <div class="right menu">
+        <a href="{{ url_for('admin.historyitems', discriminator="collection") }}" class="ui small button item">{{ _("View related history") }}</a>
+        <a href="{{ url_for('admin.collection') }}" class="ui small button item">{{ _("Add new collection") }}</a>
     </div>
+</div>
+<div class="ui bottom attached segment">
+    {{ collection_table.generate_html() | safe }}
 </div>
 {% endblock %}
 {% block script %}

@@ -8,7 +8,7 @@
             {% if historyitem.diff %}
                 {{ historyitem.rendered_diff | safe }}
             {% else %}
-                <small>No diff</small>
+                <small>{{ _("No diff") }}</small>
             {% endif %}
         </div>
     {% endfor %}

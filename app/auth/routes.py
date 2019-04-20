@@ -4,9 +4,9 @@ from flask_babel import _
 
 from app import db
 from app.utils import is_safe_url
-from app.models import User
+from app.models import User, Subscription, Collection
 from . import bp
-from .forms import LoginForm, RegistrationForm, ProfileForm
+from .forms import LoginForm, RegistrationForm, ProfileForm, SubscriptionForm
 
 
 __all__ = (
@@ -14,6 +14,8 @@ __all__ = (
     'logout',
     'register',
     'profile',
+    'subscribe',
+    'subscription',
 )
 
 
@@ -77,4 +79,76 @@ def profile():
         flash(_('Your profile has been updated.'), 'success')
         current_app.logger.info(f"Updated user: {user}")
         return redirect(url_for('auth.login'))
-    return render_template('auth/profile.html', title="Profile", form=form, user=user)
+    return render_template('auth/profile.html', title="Profile", form=form, user=user, subscriptions=current_user.subscriptions)
+
+
+@bp.route('/subscribe/<int:id>')
+@login_required
+def subscribe(id):
+    subscription = Subscription(
+        collection=Collection.query.get(id),
+        user=current_user
+    )
+    db.session.add(subscription)
+    db.session.commit()
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    if next is not None:
+        return redirect(url_for('auth.subscription', id=id) + f"?next={next}")
+    else:
+        return redirect(url_for('auth.subscription', id=id))
+
+
+@bp.route('/subscription/<int:id>', methods=['GET', 'POST'])
+@login_required
+def subscription(id):
+    subscription = Subscription.query.filter(
+        Subscription.collection_id == id,
+        Subscription.user == current_user
+    )
+    if not subscription:
+        return abort(404)
+    else:
+        subscription = subscription[0]
+
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    else:
+        next = next or url_for('auth.profile')
+
+    form = SubscriptionForm(obj=subscription)
+    if form.validate_on_submit():
+        form.populate_obj(subscription)
+        db.session.commit()
+        return redirect(next)
+    return render_template(
+        'auth/subscription.html',
+        title=f"Subscription to {subscription.collection.title}",
+        subscription=subscription,
+        form=form, next=next
+    )
+
+
+@bp.route('/subscription/<int:id>/delete')
+@login_required
+def subscription_delete(id):
+    subscription = Subscription.query.filter(
+        Subscription.collection_id == id,
+        Subscription.user == current_user
+    )
+    if not subscription:
+        return abort(404)
+    else:
+        subscription = subscription[0]
+
+    next = request.args.get('next')
+    if not is_safe_url(next):
+        return abort(400)
+    else:
+        next = next or url_for('auth.profile')
+
+    db.session.delete(subscription)
+    db.session.commit()
+    return redirect(next)

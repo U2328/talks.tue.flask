@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
-{% block content %}<div class="ui segments">
-    <div class="ui segment">
-        <h2><i class="calendar icon"></i>&nbsp;{{ _('Talks') }}</h2>
+
+{% block content %}
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3><i class="calendar icon"></i>&nbsp;{{ _('Talks') }}</h3>
     </div>
-    <div class="ui segment">
-        {{ table.generate_html() | safe }}
-    </div>
+</div>
+<div class="ui bottom attached segment">
+    {{ table.generate_html() | safe }}
 </div>
 {% endblock content %}
 {% block script %}
 <script type="text/javascript">
     {{ table.generate_js(url_for('api.talk_table')) | safe }}
-    $('#talkTable').on('click', '.talk-row', function () {window.open("{{ url_for('core.talk') }}/" + id, "_self");});
+    $('#talkTable').on('click', '.talk-row', function () {window.open("{{ url_for('core.talk') }}/" + $(this).attr('id'), "_self");});
 </script>
 {% endblock script %}
