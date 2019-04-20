@@ -3,11 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_moment import Moment
-from flask_babel import Babel, lazy_gettext as _l, get_locale
-# from flaskext.markdown import Markdown
+from flask_babel import Babel, lazy_gettext as _l
+from flask_caching import Cache
 from flask import Markup
 from markdown import Markdown
-import sqlalchemy
 from logging.config import dictConfig
 
 from app.config import Config
@@ -26,6 +25,9 @@ babel = Babel()
 moment = Moment()
 login.login_view = 'auth.login'
 login.login_message = _l('Please log in to access this page.')
+cache = Cache(config={
+    "CACHE_TYPE": "simple"
+})
 md = Markdown(
     extensions=[
         "markdown.extensions.sane_lists",
@@ -63,6 +65,7 @@ def create_app(config_class=Config):
     moment.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
+    cache.init_app(app)
     app.jinja_env.filters.setdefault('markdown', markdown)
 
     from app import models as _  # noqa: E402, F401

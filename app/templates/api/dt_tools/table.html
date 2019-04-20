@@ -1,0 +1,9 @@
+<table id="{{ table_id }}" class="ui celled tablet stackable table {{ css_class }}">
+    <thead>
+        <tr>
+            {% for col in cols %}
+                <th>{{ col.get("name") or col["field"] }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+</table>

@@ -14,11 +14,11 @@
 </div>
 {% endblock %}
 {% block script %}
+{{ collection_table.generate_js(url_for('api.admin_collection_table')) | safe }}
 <script type="text/javascript">
-    {{ collection_table.generate_js(url_for('api.admin_collection_table')) | safe }}
-    $('#collectionTable').on('click', '.collection-row', function () {window.open("{{ url_for('core.collection') }}/" + $(this).attr('id'), "_self");});
-    $('#collectionTable').contextMenu({
-        selector: '.collection-row',
+    $('#{{ collection_table.table_id }}').on('click', '.{{ collection_table.table_id }}-row', function () {window.open("{{ url_for('core.collection') }}/" + $(this).attr('id'), "_self");});
+    $('#{{ collection_table.table_id }}').contextMenu({
+        selector: '.{{ collection_table.table_id }}-row',
         callback: function(key, options) {
             var id = $(this).attr('id');
             if (key == "view") {window.open("{{ url_for('core.collection') }}/" + id, "_self");}

@@ -4,7 +4,8 @@ from flask_babel import _
 
 from app import db
 from app.utils import is_safe_url
-from app.models import User, Subscription, Collection
+from app.models import User, Subscription, Collection, Talk
+from app.api.routes import TalkTable
 from . import bp
 from .forms import LoginForm, RegistrationForm, ProfileForm, SubscriptionForm
 
@@ -152,3 +153,13 @@ def subscription_delete(id):
     db.session.delete(subscription)
     db.session.commit()
     return redirect(next)
+
+
+@bp.route('/subscriptions')
+@login_required
+def subscriptions():
+    table = TalkTable(query=Talk.query.filter(Talk.id.in_([talk.id for talk in current_user.upcoming_talks])))
+    return render_template(
+        'auth/subscriptions.html',
+        table=table
+    )

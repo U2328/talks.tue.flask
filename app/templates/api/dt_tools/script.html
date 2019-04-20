@@ -1,0 +1,40 @@
+<script>
+    $(document).ready(function() {
+        var {{ table_id }} = $('#{{ table_id }}').DataTable({
+            "dom": "{% if dom %}{{ dom | safe }}{% else %}<'ui stackable grid'<'row'<'eight wide column'l><'right aligned eight wide column'f>><'row dt-table'<'sixteen wide column'tr>><'row'<'seven wide column'i><'right aligned nine wide column'p>>>{% endif %}",
+            "processing": true,
+            "serverSide": true,
+            "responsive": true,
+            "ajax": {
+                "dataType": 'json',
+                "contentType": "application/json; charset=utf-8",
+                "type": "GET",
+                "url":"{{ table_url }}",
+                "dataSrc": function(json) { return json.data; }
+            },
+            "deferRender": true,
+            "columns": [
+                {% for col in cols %}
+                    {
+                        "data": "{{ col["field"] }}",
+                        "orderable": {% if "orderable" in col %}{{ col.get("orderable", True) | lower }}{% else %}true{% endif %},
+                        "render": {{ col.get("render", "undefined") }}
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            "createdRow": function( row, data, index ) {
+                $(row).addClass("{{ table_id }}-row {{ row_class }}");
+                {{ kwargs.pop('createdRow', '') | safe }}
+            },
+            {% for name, value in kwargs.items() %}
+                "{{ name }}": {{ value | safe }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        });
+        $('#{{ table_id }}_filter input').unbind();
+        $('#{{ table_id }}_filter input').bind('keyup', function(e) {
+            if (e.keyCode == 13) {
+                {{ table_id }}.search($(this).val()).draw();
+            }
+        });
+    });
+</script>

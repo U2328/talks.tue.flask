@@ -10,7 +10,5 @@
 </div>
 {% endblock %}
 {% block script %}
-<script type="text/javascript">
-    {{ historyitem_table.generate_js(url_for('api.historyitem_table', discriminator=discriminator)) | safe }}
-</script>
+{{ historyitem_table.generate_js(url_for('api.historyitem_table', discriminator=discriminator)) | safe }}
 {% endblock %}

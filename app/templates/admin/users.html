@@ -10,10 +10,10 @@
 </div>
 {% endblock %}
 {% block script %}
+{{ user_table.generate_js(url_for('api.user_table')) | safe }}
 <script type="text/javascript">
-    {{ user_table.generate_js(url_for('api.user_table')) | safe }}
-    $('#userTable').contextMenu({
-        selector: '.user-row',
+    $('#{{ user_table.table_is }}').contextMenu({
+        selector: '.{{ user_table.table_id }}-row',
         callback: function(key, options) {
             var id = $(this).attr('id');
             if (key == "view") {}

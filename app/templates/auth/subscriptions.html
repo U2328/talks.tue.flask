@@ -3,7 +3,7 @@
 {% block content %}
 <div class="ui top attached secondary menu">
     <div class="item">
-        <h3><i class="calendar icon"></i>&nbsp;{{ _('Talks') }}</h3>
+        <h3><i class="calendar icon"></i>&nbsp;{{ _('Upcoming Talks') }}</h3>
     </div>
 </div>
 <div class="ui bottom attached segment">
@@ -11,7 +11,7 @@
 </div>
 {% endblock content %}
 {% block script %}
-{{ table.generate_js(url_for('api.talk_table')) | safe }}
+{{ table.generate_js(url_for('api.user_talk_table')) | safe }}
 <script type="text/javascript">
     $('#{{ table.table_id }}').on('click', '.{{ table.table_id }}-row', function () {window.open("{{ url_for('core.talk') }}/" + $(this).attr('id'), "_self");});
 </script>

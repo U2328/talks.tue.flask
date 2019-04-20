@@ -2,7 +2,7 @@ from collections import defaultdict
 import operator
 
 from sqlalchemy import or_, cast, Text
-from flask import request, jsonify  # , current_app
+from flask import request, jsonify, render_template  # , current_app
 
 
 __all__ = (
@@ -34,63 +34,28 @@ class DataTable:
             if not hasattr(cls, "table_id"):
                 setattr(cls, 'table_id', f"{cls.__name__.lower()}Table")
 
-    dom = "<'ui stackable grid'<'row'<'eight wide column'l><'right aligned eight wide column'f>><'row dt-table'<'sixteen wide column'tr>><'row'<'seven wide column'i><'right aligned nine wide column'p>>>"
     js_kwargs = None
     search_delimiter = '|'
 
     @classmethod
     def generate_html(cls, css_class=None):
-        return minify(f"""
-            <table id="{cls.table_id}" class="ui celled tablet stackable table">
-                <thead>
-                    <tr>
-                        {"".join(
-                            f'<th>{col.get("name") or col["field"]}</th>'
-                            for col in cls.cols
-                        )}
-                    </tr>
-                </thead>
-            </table>
-        """)
+        return minify(render_template(
+            'api/dt_tools/table.html',
+            table_id=cls.table_id,
+            cols=cls.cols,
+            css_class=css_class or ""
+        ))
 
     @classmethod
     def generate_js(cls, table_url, row_class="", dom=None, **kwargs):
-        kwargs = {**(cls.js_kwargs or {}), **kwargs}
-        return minify(f"""
-        $(document).ready(function() {{
-            var {cls.table_id} = $('#{cls.table_id}').DataTable({{
-                "dom": "{dom or cls.dom or 'undefined'}",
-                "processing": true,
-                "serverSide": true,
-                "responsive": true,
-                "ajax": {{
-                    "dataType": 'json',
-                    "contentType": "application/json; charset=utf-8",
-                    "type": "GET",
-                    "url":"{table_url}",
-                    "dataSrc": function(json) {{return json.data;}}
-                }},
-                "deferRender": true,
-                "columns": [{
-                    ', '.join(
-                        f'{{ "data": "{col["field"]}", "orderable": {str(col.get("orderable", True)).lower()}, "render": {col.get("render", "undefined")}}}'
-                        for col in cls.cols
-                    )
-                }],
-                "createdRow" : function( row, data, index ) {{
-                    $(row).addClass("{cls.model.__name__.lower()}-row {row_class}");
-                    {kwargs.pop('createdRow', '')}
-                }},
-                {",".join(f'"{name}": {value}' for name, value in kwargs.items())}
-            }});
-            $('#{cls.table_id}_filter input').unbind();
-            $('#{cls.table_id}_filter input').bind('keyup', function(e) {{
-                if (e.keyCode == 13) {{
-                    {cls.table_id}.search($(this).val()).draw();
-                }}
-            }});
-        }});
-        """)
+        return minify(render_template(
+            'api/dt_tools/script.html',
+            dom=dom,
+            cols=cls.cols,
+            table_id=cls.table_id,
+            table_url=table_url,
+            kwargs={**(cls.js_kwargs or {}), **kwargs}
+        ))
 
     def _parse_filter_value(self):
         value = request.args.get("search[value]", None)

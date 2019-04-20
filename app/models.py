@@ -11,7 +11,7 @@ from flask_login import UserMixin, AnonymousUserMixin, current_user
 from flask_babel import lazy_gettext as _l
 import dill
 
-from app import db, login
+from app import db, login, cache
 
 from flask import current_app
 
@@ -211,6 +211,17 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     @property
+    @cache.memoize(60)
+    def upcoming_talks(self):
+        now = datetime.now()
+        return list(set(
+            talk
+            for subscription in self.subscriptions
+            for talk in subscription.collection.related_talks
+            if talk.timestamp >= now
+        ))
+
+    @property
     def can_edit(self):
         return self.is_admin or self.is_organizer or len(self.edited_collections) > 0
 
@@ -314,6 +325,17 @@ class Collection(HasHistory, db.Model):
 
     def get_absolute_url(self):
         return url_for("core.collection", id=self.id)
+
+    @cache.memoize(60)
+    def related_talks(self):
+        if not self.is_meta:
+            return self.talks
+        else:
+            return list(set(
+                talk
+                for collection in self.sub_collections
+                for talk in collection.related_talks
+            ))
 
     @classmethod
     def complete_history(cls, user=None):
