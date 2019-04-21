@@ -27,7 +27,14 @@
                 {% block navbar %}
                     <a class="item" href="{{ url_for('core.index') }}"><h3><i class="university icon"></i>&nbsp;Talks.Tue</h3></a>
                     {% if not current_user.is_anonymous %}
-                        <a class="item" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
+                        <div class="ui simple dropdown item">
+                            {{ _("Personal") }}
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <a class="item" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
+                                <a class="item" href="{{ url_for('auth.subscriptions') }}">{{ _('Upcoming talks') }}</a>
+                            </div>
+                        </div>
                     {% endif %}
                     {% if current_user.can_edit %}
                         <div class="ui simple dropdown item">

@@ -9,7 +9,7 @@ from . import bp
 
 
 __all__ = (
-    'talk_table', 'user_talk_table',
+    'talk_table', 'user_talk_table', 'admin_talk_table',
     'collection_table', 'admin_collection_table',
     'tag_table',
     'historyitem_table',
@@ -20,6 +20,12 @@ __all__ = (
 @bp.route('/talk_table', methods=['GET'])
 def talk_table():
     table = TalkTable()
+    return table.get_response()
+
+
+@bp.route('/admin_talk_table', methods=['GET'])
+def admin_talk_table():
+    table = TalkTable(query=Talk.related_to(current_user))
     return table.get_response()
 
 

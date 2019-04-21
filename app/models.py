@@ -3,17 +3,15 @@ from datetime import datetime
 from enum import IntEnum, unique, auto
 
 from sqlalchemy import and_, or_, event, inspect
-from sqlalchemy.types import TypeDecorator, BINARY
 from sqlalchemy.orm import foreign, backref, remote
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import render_template, url_for
+from flask import render_template, url_for, current_app
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from flask_babel import lazy_gettext as _l
-import dill
 
-from app import db, login, cache
+from . import db, login, cache
+from .utils import DillField
 
-from flask import current_app
 
 __all__ = (
     'Collection',
@@ -24,20 +22,6 @@ __all__ = (
     'HistoryItem',
     'HISTORY_DISCRIMINATOR_MAP'
 )
-
-
-class DillField(TypeDecorator):
-    impl = BINARY
-
-    def process_bind_param(self, value, dialect):
-        if value is not None:
-            value = dill.dumps(value)
-        return value
-
-    def process_result_value(self, value, dialect):
-        if value is not None:
-            value = dill.loads(value)
-        return value
 
 
 HistoryItemType = namedtuple('HistoryItemType', ('append_to_obj', 'icon', 'name', 'template'))
@@ -121,14 +105,8 @@ class HistoryItem(db.Model):
             if attr.history.has_changes():
                 added, unchanged, deleted = attr.history
                 diff[field] = {
-                    "to": [
-                        obj if not isinstance(obj, db.Model) else inspect(obj).identity[0]
-                        for obj in (*added, *unchanged)
-                    ] or None,
-                    "from": [
-                        obj if not isinstance(obj, db.Model) else inspect(obj).identity[0]
-                        for obj in (*deleted, *unchanged)
-                    ] or None,
+                    "from": [*deleted, *unchanged] or None,
+                    "to": [*added, *unchanged] or None,
                 }
 
         if not inspection.has_identity:
@@ -295,8 +273,8 @@ class Talk(HasHistory, db.Model):
             return Talk.query
         else:
             return Talk.query.filter(Talk.collections.any(or_(
-                Talk.organizer == user,
-                Talk.editors.contains(user)
+                Collection.organizer == user,
+                Collection.editors.contains(user)
             )))
 
     def can_edit(self, user):
@@ -326,7 +304,8 @@ class Collection(HasHistory, db.Model):
     def get_absolute_url(self):
         return url_for("core.collection", id=self.id)
 
-    @cache.memoize(60)
+    @property
+    @cache.memoize(10)
     def related_talks(self):
         if not self.is_meta:
             return self.talks
@@ -360,7 +339,7 @@ class Collection(HasHistory, db.Model):
             ))
 
     def can_edit(self, user):
-        return user.is_admin or user == self.organizer or user in self.editors
+        return user.is_admin or user == self.organizer or user in self.editors or any(meta.can_edit(user) for meta in self.meta_collections)
 
 
 meta_collection_connections = db.Table('meta_collection_connections',

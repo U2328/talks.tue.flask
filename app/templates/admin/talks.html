@@ -14,7 +14,7 @@
 </div>
 {% endblock %}
 {% block script %}
-{{ talk_table.generate_js(url_for('api.talk_table')) | safe }}
+{{ talk_table.generate_js(url_for('api.admin_talk_table')) | safe }}
 <script type="text/javascript">
     $('#{{ talk_table.table_id }}').on('click', '.{{ talk_table.table_id }}-row', function () {window.open("{{ url_for('core.talk') }}/" + $(this).attr('id'), "_self");});
     $('#{{ talk_table.table_id }}').contextMenu({

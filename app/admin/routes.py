@@ -7,7 +7,7 @@ from . import bp
 from .forms import TalkForm, TagForm, CollectionForm
 from app import db
 from app.utils import is_safe_url, copy_row
-from app.api.routes import TalkTable, CollectionTable, HistoryItemTable, UserTable
+from app.api.tables import TalkTable, CollectionTable, HistoryItemTable, UserTable
 from app.models import Talk, Tag, Collection, HistoryItem, HISTORY_DISCRIMINATOR_MAP
 
 
@@ -91,6 +91,8 @@ def delete_talk(id):
 @bp.route('/talks', methods=['GET'])
 @login_required
 def talks():
+    if not current_user.can_edit:
+        return abort(403)
     return render_template(
         'admin/talks.html',
         title="Talks - Admin",
@@ -156,6 +158,8 @@ def delete_collection(id):
 @bp.route('/collections', methods=['GET'])
 @login_required
 def collections():
+    if not current_user.can_edit:
+        return abort(403)
     return render_template(
         'admin/collections.html',
         title="Collections - Admin",
