@@ -4,24 +4,19 @@ from typing import Any, NamedTuple, Type
 import dill
 from flask import request
 from sqlalchemy import inspect
-from sqlalchemy.types import TypeDecorator, BINARY
+from sqlalchemy.types import TypeDecorator, LargeBinary
 
 
 from app import db, cache
 
 
-__all__ = (
-    'is_safe_url',
-    'copy_row',
-    'DillField',
-    'ModelProxy'
-)
+__all__ = ("is_safe_url", "copy_row", "DillField", "ModelProxy")
 
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+    return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
 
 def copy_row(row, ignored_columns=[]):
@@ -36,6 +31,7 @@ class ModelProxy(NamedTuple):
     """
     A simple class to easily store and retrieve model instances.
     """
+
     model: Type[db.Model]
     identifier: Any
 
@@ -58,7 +54,8 @@ class DillField(TypeDecorator):
     """
     Allows the storage of almost anything in the DB.
     """
-    impl = BINARY
+
+    impl = LargeBinary
 
     def process_bind_param(self, value, dialect):
         if value is not None:
@@ -72,30 +69,24 @@ class DillField(TypeDecorator):
 
     @staticmethod
     def make_serializable(data):
-        _ = DillField.make_serializable
-        if isinstance(data, dict):
-            return {
-                _(key): _(value)
-                for key, value in data.items()
-            }
-        elif isinstance(data, (list, set, tuple)):
-            return type(data)(_(value) for value in data)
-        elif isinstance(data, db.Model):
+        f = DillField.make_serializable
+        if isinstance(data, db.Model):
             return ModelProxy.from_instance(data)
+        elif isinstance(data, dict):
+            return {f(key): f(value) for key, value in data.items()}
+        elif isinstance(data, (list, set, tuple)):
+            return type(data)(f(value) for value in data)
         else:
             return data
 
     @staticmethod
     def make_readable(data):
-        _ = DillField.make_readable
+        f = DillField.make_readable
         if isinstance(data, ModelProxy):
             return data.instance
         elif isinstance(data, dict):
-            return {
-                _(key): _(value)
-                for key, value in data.items()
-            }
+            return {f(key): f(value) for key, value in data.items()}
         elif isinstance(data, (list, set, tuple)):
-            return type(data)(_(value) for value in data)
+            return type(data)(f(value) for value in data)
         else:
             return data

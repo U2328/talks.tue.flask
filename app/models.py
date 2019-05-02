@@ -7,7 +7,7 @@ from sqlalchemy.orm import foreign, backref, remote
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import render_template, url_for, current_app
 from flask_login import UserMixin, AnonymousUserMixin, current_user
-from flask_babel import lazy_gettext as _l
+from flask_babel import lazy_gettext as _l, gettext as _
 
 from . import db, login, cache
 from .utils import DillField
@@ -208,12 +208,30 @@ class User(UserMixin, db.Model):
 
 
 class Subscription(db.Model):
+    @unique
+    class Modes(IntEnum):
+        DAILY = auto()
+        WEEKLY = auto()
+        DAILY_AND_WEEKLY = auto()
+
+        @classmethod
+        def coerce(cls, item):
+            return item if type(item) == cls else cls(int(item))
+
+        @classmethod
+        def choices(cls):
+            return [(choice.value, str(choice)) for choice in cls]
+
+        def __str__(self):
+            return [_("daily"), _("weekly"), _("daily and weekly")][self.value - 1]
+
     id = db.Column(db.Integer, primary_key=True)
     collection_id = db.Column(db.Integer, db.ForeignKey('collection.id'))
     collection = db.relationship('Collection', backref=backref('subscriptions'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=backref('subscriptions'))
     remind_me = db.Column(db.Boolean, default=True)
+    mode = db.Column(db.Enum(Modes), default=Modes.DAILY_AND_WEEKLY)
 
 
 class AnonymousUser(AnonymousUserMixin):

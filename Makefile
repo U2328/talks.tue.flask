@@ -8,27 +8,18 @@ help: ## view this help text
 	@echo '  \-----------/'
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-init: ## init the whole env
-	pipenv install --skip-lock
-	$(MAKE) db_deploy
+build: ## build docker images
+	docker-compose build
 
 init_dev: ## init the whole env for dev
+	$(MAKE) build
 	pipenv install --dev --pre
-	$(MAKE) db_deploy
-
-re_init: ## reinitialize the whole env
-	$(MAKE) clean_env;
-	$(MAKE) init;
-
-re_init_dev: ## reinitialize the whole dev env
-	$(MAKE) clean_env;
-	$(MAKE) init_dev;
 
 run: ## run the webserver
-	pipenv run flask run
+	docker-compose up
 
 auth_createsuperuser: ## create a superuser
-	pipenv run flask auth createsuperuser
+	docker-compose exec app flask auth createsuperuser
 
 babel_init: ## intialize new language
 	pipenv run pybabel extract -F babel.cfg -k _l -o messages.pot .
@@ -43,39 +34,31 @@ babel_update: ## update all language files
 babel_compile: ## compile all language files
 	pipenv run pybabel compile -d app/translations
 
-lint: ## run linters on project files (dev only)
-	pipenv run flake8
-
-db_reset: ## reset database
-	$(MAKE) clean_db
-	$(MAKE) db_deploy
-
 db_migrate: ## generate database-migration
-	pipenv run flask db migrate
+	docker-compose exec app flask db migrate
 
-db_upgrade: ## upgrade database
-	pipenv run flask db upgrade
+db_apply: ## apply database-migration
+	docker-compose exec app flask db apply
 
 db_migration: ## find out what the current db revision is
-	pipenv run flask db show
+	docker-compose exec app flask db show
 
 db_migrations: ## list all known migrations
-	pipenv run flask db history
+	docker-compose exec app flask db history
 
 db_deploy: ## init server setup
-	pipenv run flask deploy
-
-clean_db: ## remove db files
-	find . -type f -name '*.db' -exec rm {} \;
-
-clean_env: ## remove python env
-	pipenv --rm;
+	docker-compose exec app flask deploy
 
 clean_cache: ## remove cached files
 	find $(root_dir) -type f -name '*.pyc' -exec rm {} \;
 	find $(root_dir) -type d -name '__pycache__' -exec rmdir {} \;
 
-full_clean: ## cleanup everything
-	$(MAKE) clean_cache;
-	$(MAKE) clean_db;
-	$(MAKE) clean_env;
+clean_env: ## remove pipenv env
+	pipenv --rm;
+
+clean_docker: ## remove docker containers
+	docker-compose kill;
+	docker-compose rm;
+
+full_clean: ## apply all other cleans
+	$(MAKE) clean_cache clean_env clean_docker

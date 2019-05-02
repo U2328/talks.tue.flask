@@ -1,2 +1,1 @@
 FLASK_APP=talkstue.py
-FLASK_ENV=development

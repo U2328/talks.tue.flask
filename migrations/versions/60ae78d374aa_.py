@@ -91,6 +91,7 @@ def upgrade():
     sa.Column('collection_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('remind_me', sa.Boolean(), nullable=True),
+    sa.Column('mode', sa.Enum('DAILY', 'WEEKLY', 'DAILY_AND_WEEKLY', name='modes'), nullable=True),
     sa.ForeignKeyConstraint(['collection_id'], ['collection.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')

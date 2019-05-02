@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 from flask_babel import _, lazy_gettext as _l
 
-from app.models import Tag, User
+from app.models import Tag, User, Subscription
 
 
 __all__ = (
@@ -56,4 +56,5 @@ class ProfileForm(FlaskForm):
 
 class SubscriptionForm(FlaskForm):
     remind_me = BooleanField(_l('Remind me'))
+    mode = SelectField(_('Mode'), choices=Subscription.Modes.choices(), coerce=Subscription.Modes.coerce)
     submit = SubmitField(_l('Save'))

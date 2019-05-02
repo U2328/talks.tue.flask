@@ -1,6 +1,8 @@
 from datetime import datetime
 from dateutil.parser import parse as parse_datetime
 
+from flask import current_app
+
 from sqlalchemy import or_
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, DateTimeField as _DateTimeField, TextAreaField

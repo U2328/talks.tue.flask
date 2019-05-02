@@ -15,6 +15,10 @@
                     <label>{{ _("Collection") }}</label>
                     <input type="text" placeholder="{{ subscription.collection.title }}" readonly>
                 </div>
+                <div class="field{% if form.mode.errors %} error{% endif %}">
+                    {{ form.mode.label }}
+                    {{ form.mode(class_='ui dropdown') }}
+                </div>
                 <div class="inline field{% if form.remind_me.errors %} error{% endif %}">
                     <div class="ui toggle checkbox">
                         {{ form.remind_me(class_="hidden") }}
@@ -29,4 +33,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block script %}
+<script>
+    $('.ui.dropdown').dropdown();
+</script>
 {% endblock %}

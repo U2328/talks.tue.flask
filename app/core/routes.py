@@ -15,7 +15,6 @@ __all__ = (
 @bp.route('/')
 @bp.route('/index')
 def index():
-    current_app.logger.info(current_user)
     talks = Talk.query[:9]
     return render_template('core/index.html', up_next=talks)
 

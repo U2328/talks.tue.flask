@@ -1,13 +1,18 @@
 # talks.tue
 A webapp to manage talks and more at the Eberhard Karls University of Tübingen.
 
-## Inital setup
-1. install [pipenv](https://pypi.org/project/pipenv/) and make sure you can reach an installation of Python 3.7
-2. run `make init`
-3. run `make run`
+## Dependecies
+1. [docker](https://www.docker.com/) for containerization
+2. [docker-compose](https://github.com/docker/compose) for container orchastration
 
-## Dev Setup
-Same as normal, just be sure to use `make init_dev` to install all the development dependecies.
+## Usage
+1. run `make build` (this will take some time)
+2. run `make run`
+
+## Development
+1. install [pipenv](https://pypi.org/project/pipenv/) and python 3.7.
+2. run `make init_dev` (this will take some time)
+3. run `make run`
 
 ## Creating a superuser
 Simply run `make auth_createsuperuser` and fill out the prompts.

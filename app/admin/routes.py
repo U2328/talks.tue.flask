@@ -128,6 +128,7 @@ def collection(id=None):
         if is_new:
             db.session.add(collection)
         db.session.commit()
+        current_app.logger.debug(collection.organizer)
         return redirect(next)
 
     return render_template('admin/collection.html', title="Collection - Admin", form=form, new=is_new, next=next, collection=collection)

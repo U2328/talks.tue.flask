@@ -1,5 +1,8 @@
 {
     "python.pythonPath": "/home/timfi/.local/share/virtualenvs/talks.tue-C_kfZ3Pb/bin/python",
+    "python.linting.mypyEnabled": true,
     "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black"
 }

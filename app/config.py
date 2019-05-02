@@ -1,17 +1,32 @@
 import os
-from dotenv import load_dotenv
 
 
-__all__ = (
-    "Config"
-)
+__all__ = ("Config", "ProductionConfig", "DevelopmentConfig", "TestingConfig")
 
-load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'ultra-secret-key'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db')
+    # Base
+    DEBUG = False
+    TESTING = False
+    SECRET_KEY = os.getenv("SECRET_KEY") or "ultra-secret-key"
+    # SQLAlchemy
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") or "sqlite:///" + os.path.join(
+        basedir, "app.db"
+    )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    LANGUAGES = list(os.environ.get('LANGUAGES', 'en,de').split(','))
+    # Babel
+    LANGUAGES = list(os.getenv("LANGUAGES", "en,de").split(","))
+
+
+class ProductionConfig(Config):
+    ...
+
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+
+
+class TestingConfig(Config):
+    TESTING = True

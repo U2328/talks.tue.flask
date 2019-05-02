@@ -1,0 +1,25 @@
+version: '3.5'
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: docker/app/Dockerfile
+    environment:
+      - FLASK_APP=talkstue.py
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/dev
+      - CONFIG=Development
+      - PYTHONUNBUFFERED=0
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+  db:
+    build:
+      context: ./docker/db
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
