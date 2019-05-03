@@ -6,13 +6,14 @@ A webapp to manage talks and more at the Eberhard Karls University of Tübingen.
 2. [docker-compose](https://github.com/docker/compose) for container orchastration
 
 ## Usage
-1. run `make build` (this will take some time)
-2. run `make run`
+1. run `docker-compose build` (this will take some time)
+2. run `docker-compose up`
 
 ## Development
 1. install [pipenv](https://pypi.org/project/pipenv/) and python 3.7.
-2. run `make init_dev` (this will take some time)
-3. run `make run`
+2. run `pipenv install --dev` (this can take some time)
+2. run `docker-compose build` (this will take some time)
+3. run `docker-compose up`
 
 ## Creating a superuser
 Simply run `make auth_createsuperuser` and fill out the prompts.

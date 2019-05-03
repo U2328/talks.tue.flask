@@ -8,7 +8,7 @@ WORKDIR /code
 RUN apk update && apk upgrade
 RUN apk add --update --no-cache g++ gcc libxslt-dev netcat-openbsd &&\
     apk add postgresql-dev python3-dev musl-dev
-RUN pip install pipenv psycopg2
+RUN pip install pipenv psycopg2 gunicorn
 RUN pipenv install --system --deploy --ignore-pipfile
 
 CMD [ "sh", "docker/app/entrypoint.sh" ]
