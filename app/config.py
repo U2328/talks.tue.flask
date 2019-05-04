@@ -1,9 +1,13 @@
 import os
 
 
-__all__ = ("Config", "ProductionConfig", "DevelopmentConfig", "TestingConfig")
+__all__ = ("get_config", "ProductionConfig", "DevelopmentConfig", "TestingConfig")
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+
+def get_config():
+    return f"app.config.{os.environ.get('CONFIG', 'Production')}Config"
 
 
 class Config:
@@ -18,6 +22,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Babel
     LANGUAGES = list(os.getenv("LANGUAGES", "en,de").split(","))
+    # Celery
+    CELERY_BROKER_URL = os.getenv("CELERY_BORKER_URL")
 
 
 class ProductionConfig(Config):

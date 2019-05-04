@@ -27,6 +27,8 @@ markdown = "*"
 pygments = "*"
 pymdown-extensions = "*"
 app = {version = "*",editable = true}
+celery = "*"
+redis = "*"
 
 [requires]
 python_version = "3.7"

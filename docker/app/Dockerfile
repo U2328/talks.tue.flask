@@ -11,4 +11,4 @@ RUN apk add --update --no-cache g++ gcc libxslt-dev netcat-openbsd &&\
 RUN pip install pipenv psycopg2 gunicorn
 RUN pipenv install --system --deploy --ignore-pipfile
 
-CMD [ "sh", "docker/app/entrypoint.sh" ]
+# CMD [ "sh", "docker/app/entrypoint.sh" ]

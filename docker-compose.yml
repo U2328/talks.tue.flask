@@ -1,19 +1,17 @@
-version: '3.5'
+version: '3'
 services:
-  app:
+  app: &app
     build:
-      context: ./
+      context: .
       dockerfile: docker/app/Dockerfile
-    environment:
-      - FLASK_APP=talkstue.py
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/dev
-      - CONFIG=Development
-      - PYTHONUNBUFFERED=0
+    command: docker/app/start.sh
+    env_file: docker/.env
     restart: always
     ports:
       - "5000:5000"
     depends_on:
       - db
+
   db:
     build:
       context: ./docker/db
@@ -23,3 +21,22 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+  redis:
+    image: redis:3.2
+
+  celery_worker:
+    <<: *app
+    command: docker/celery/start_worker.sh
+    ports: []
+    depends_on:
+      - db
+      - redis
+
+  celery_beat:
+    <<: *app
+    command: docker/celery/start_beat.sh
+    ports: []
+    depends_on:
+      - db
+      - redis
