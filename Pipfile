@@ -29,6 +29,7 @@ pymdown-extensions = "*"
 app = {version = "*",editable = true}
 celery = "*"
 redis = "*"
+watchdog = "*"
 
 [requires]
 python_version = "3.7"

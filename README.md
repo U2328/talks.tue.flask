@@ -21,10 +21,5 @@ Simply run `make auth_createsuperuser` and fill out the prompts.
 ## Applying migrations
 Run `make db_upgrade` and you should be golden.
 
-## I messed up how can I fix this?
-1. Don't panic
-2. `make full_clean`
-3. start over
-
 ## What else can `make` do for me?
 Just run `make` and it will tell you. ;)

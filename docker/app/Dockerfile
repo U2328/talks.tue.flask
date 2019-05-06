@@ -11,4 +11,7 @@ RUN apk add --update --no-cache g++ gcc libxslt-dev netcat-openbsd &&\
 RUN pip install pipenv psycopg2 gunicorn
 RUN pipenv install --system --deploy --ignore-pipfile
 
-# CMD [ "sh", "docker/app/entrypoint.sh" ]
+# Add non-su user
+RUN adduser -D -g '' -u 1000 talks_tue
+
+# command set in docker-compose

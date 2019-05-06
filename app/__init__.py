@@ -16,6 +16,7 @@ from .config import get_config
 
 __all__ = ("create_app", "db", "migrate", "login", "babel", "moment", "celery", "md")
 
+config = get_config()
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -26,6 +27,7 @@ login.login_view = "auth.login"
 login.login_message = _l("Please log in to access this page.")
 cache = Cache(config={"CACHE_TYPE": "simple"})
 celery = Celery(__name__)
+celery.config_from_object(config)
 md = Markdown(
     extensions=[
         "markdown.extensions.sane_lists",
@@ -51,8 +53,9 @@ from app.admin import bp as admin_bp  # noqa: E402
 
 
 def create_app():
+    config = get_config()
     app = Flask(__name__)
-    app.config.from_object(get_config())
+    app.config.from_object(config)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -60,10 +63,9 @@ def create_app():
     moment.init_app(app)
     login.init_app(app)
     cache.init_app(app)
-    celery.conf.update(app.config)
     app.jinja_env.filters.setdefault("markdown", markdown)
 
-    from app import models  # noqa: F402, F401
+    from app import models, tasks  # noqa: F402, F401
 
     app.register_blueprint(core_bp)
     app.register_blueprint(errors_bp)

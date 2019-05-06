@@ -1,33 +1,18 @@
 from flask_emails import Message
-from flask import render_template
+
+# from flask import render_template
 
 
 from . import celery
-from .models import Subscription, User
+from .models import User
 
 
-def email_job(target):
+@celery.task()
+def send_subscription_emails(target):
     try:
-        grouped_subscriptions = (
-            (
-                user,
-                Subscription.query.filter(
-                    Subscription.mode == target, Subscription.user == user
-                ),
-            )
-            for user in User.query.filter(
-                User.subscriptions.any(Subscription.mode == target)
-            )
-        )
         print(f"START EMAIL: <{target.name}>")
-        for user, subscriptions in grouped_subscriptions:
-            talks = list(
-                set(
-                    talk
-                    for subscription in subscriptions
-                    for talk in subscription.collection.related_talks
-                )
-            )
+        for user in User.query.all():
+            talks = [talk for talk in user.related_talks]
             print(f">> '{user.email}' {talks}")
             response = Message(
                 subject=f"Talks.Tue -- {target} reminder",
@@ -42,9 +27,6 @@ def email_job(target):
         raise e
 
 
-def daily_email():
-    email_job(target=Subscription.Modes.DAILY)
-
-
-def weekly_email():
-    email_job(target=Subscription.Modes.WEEKLY)
+@celery.task(name="heart_beat")
+def heart_beat():
+    print("--- HEART BEAT ---")

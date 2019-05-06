@@ -6,7 +6,7 @@ help: ## view this help text
 	@printf "\033[33m  ┏━━━━━━━━━━━┓\033[0m\n"
 	@printf "\033[33m  ┃ talks.tue ┃\033[0m\n"
 	@printf "\033[33m  ┗━━━━━━━━━━━┛\033[0m\n"
-	@printf "\033[31mNote: all commands require running docker containers!\033[0m\n"
+	@printf "\033[41mNote\033[0m\033[31m All commands require running docker containers!\033[0m\n"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 auth_createsuperuser: ## create a superuser

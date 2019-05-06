@@ -1,13 +1,23 @@
 import os
 
+from celery.schedules import crontab
 
 __all__ = ("get_config", "ProductionConfig", "DevelopmentConfig", "TestingConfig")
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
+_config_registry = {}
+
+
+def _register_config(cls):
+    _config_registry[cls.__name__] = cls
+    return cls
+
+
 def get_config():
-    return f"app.config.{os.environ.get('CONFIG', 'Production')}Config"
+    default = "Development" if os.getenv("DEBUG", None) else "Production"
+    return _config_registry[f"{os.environ.get('CONFIG', default)}Config"]
 
 
 class Config:
@@ -15,24 +25,37 @@ class Config:
     DEBUG = False
     TESTING = False
     SECRET_KEY = os.getenv("SECRET_KEY") or "ultra-secret-key"
+
     # SQLAlchemy
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") or "sqlite:///" + os.path.join(
-        basedir, "app.db"
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "DATABASE_URL", "postgres://postgres:@db:5432/talks_tue"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
     # Babel
     LANGUAGES = list(os.getenv("LANGUAGES", "en,de").split(","))
+
     # Celery
-    CELERY_BROKER_URL = os.getenv("CELERY_BORKER_URL")
+    BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://talks_tue@rabbit:5672//")
+    CELERY_RESULT_BACKEND = os.getenv(
+        "CELERY_BACKEND_URL", "rpc://talks_tue@rabbit:5672//"
+    )
+    CELERY_IMPORTS = ("app.tasks",)
+    CELERYBEAT_SCHEDULE = {
+        "every-minute": {"task": "heart_beat", "schedule": crontab(minute="*/1")}
+    }
 
 
+@_register_config
 class ProductionConfig(Config):
     ...
 
 
+@_register_config
 class DevelopmentConfig(Config):
     DEBUG = True
 
 
+@_register_config
 class TestingConfig(Config):
     TESTING = True

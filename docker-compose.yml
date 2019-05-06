@@ -4,9 +4,11 @@ services:
     build:
       context: .
       dockerfile: docker/app/Dockerfile
-    command: docker/app/start.sh
+    command: docker/app/start_flask.sh
     env_file: docker/.env
     restart: always
+    volumes:
+      - ".:/code"
     ports:
       - "5000:5000"
     depends_on:
@@ -18,25 +20,27 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
 
-  redis:
-    image: redis:3.2
+  rabbit:
+    image: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=talks_tue
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   celery_worker:
     <<: *app
-    command: docker/celery/start_worker.sh
+    command: docker/app/start_worker.sh
     ports: []
     depends_on:
       - db
-      - redis
+      - rabbit
 
   celery_beat:
     <<: *app
-    command: docker/celery/start_beat.sh
+    command: docker/app/start_beat.sh
     ports: []
     depends_on:
       - db
-      - redis
+      - rabbit
