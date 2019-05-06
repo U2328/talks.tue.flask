@@ -10,4 +10,4 @@ echo "Deploying DB"
 flask deploy
 
 echo "Starting server"
-gunicorn -w 4 -b "0.0.0.0:5000" "app:create_app()"
+gunicorn -w 4 -u 1000 -b "0.0.0.0:5000" "app:create_app()"
