@@ -7,11 +7,12 @@ A webapp to manage talks and more at the Eberhard Karls University of Tübingen.
 
 ## Usage
 1. run `docker-compose build` (this will take some time)
-2. run `docker-compose up`
+2. run `docker-compose up` (this will open HTTP and HTTPS ports to your network)
 
 ## Development
 1. install [pipenv](https://pypi.org/project/pipenv/) and python 3.7.
 2. run `pipenv install --dev` (this can take some time)
+3. set `COMPOSE_FILE` in `.env` to `dev.yml`
 2. run `docker-compose build` (this will take some time)
 3. run `docker-compose up`
 
