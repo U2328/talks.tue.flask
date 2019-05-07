@@ -4,6 +4,11 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+echo "Waiting for rabbitmq..."
+while ! nc -z rabbit 5672; do
+  sleep 0.5
+done
+
 echo "Starting celery worker"
 if [[ -z ${DEBUG-0} ]]; then
     celery -A app.celery worker --uid 1000
