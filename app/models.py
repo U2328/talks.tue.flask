@@ -14,39 +14,59 @@ from .utils import DillField
 
 
 __all__ = (
-    'Collection',
-    'Talk',
-    'Tag',
-    'User',
-    'AnonymousUser',
-    'HistoryItem',
-    'HISTORY_DISCRIMINATOR_MAP'
+    "Collection",
+    "Talk",
+    "Tag",
+    "User",
+    "AnonymousUser",
+    "HistoryItem",
+    "HISTORY_DISCRIMINATOR_MAP",
 )
 
 
-HistoryItemType = namedtuple('HistoryItemType', ('append_to_obj', 'icon', 'name', 'template'))
+HistoryItemType = namedtuple(
+    "HistoryItemType", ("append_to_obj", "icon", "name", "template")
+)
 
 
 @unique
 class HistoryStates(IntEnum):
     CREATE = auto()
-    EDIT   = auto()  # noqa: E221
+    EDIT = auto()  # noqa: E221
     DELETE = auto()
 
     @classmethod
     def get_type(cls, state):
         return {
             cls.CREATE: HistoryItemType(
-                True, 'green plus circle icon', _l('create'),
-                lambda history_item: _l('%(user)s created %(name)s', user=history_item.user, name=repr(history_item.target_name))
+                True,
+                "green plus circle icon",
+                _l("create"),
+                lambda history_item: _l(
+                    "%(user)s created %(name)s",
+                    user=history_item.user,
+                    name=repr(history_item.target_name),
+                ),
             ),
             cls.EDIT: HistoryItemType(
-                True, 'yellow edit icon', _l('edit'),
-                lambda history_item: _l('%(user)s edited %(name)s', user=history_item.user, name=repr(history_item.target_name))
+                True,
+                "yellow edit icon",
+                _l("edit"),
+                lambda history_item: _l(
+                    "%(user)s edited %(name)s",
+                    user=history_item.user,
+                    name=repr(history_item.target_name),
+                ),
             ),
             cls.DELETE: HistoryItemType(
-                False, 'red trash alternate icon', _l('delete'),
-                lambda history_item: _l('%(user)s deleted %(name)s', user=history_item.user, name=repr(history_item.target_name))
+                False,
+                "red trash alternate icon",
+                _l("delete"),
+                lambda history_item: _l(
+                    "%(user)s deleted %(name)s",
+                    user=history_item.user,
+                    name=repr(history_item.target_name),
+                ),
             ),
         }.get(state)
 
@@ -54,8 +74,8 @@ class HistoryStates(IntEnum):
 class HistoryItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     _type = db.Column(db.Enum(HistoryStates))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship("User", backref='history')
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user = db.relationship("User", backref="history")
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
     diff = db.Column(DillField())
 
@@ -93,7 +113,9 @@ class HistoryItem(db.Model):
 
     @classmethod
     def build_for(cls, obj, user=None):
-        assert isinstance(obj, HasHistory), "Can only build historyitems for models that have a history."
+        assert isinstance(
+            obj, HasHistory
+        ), "Can only build historyitems for models that have a history."
 
         user = user or (current_user if current_user.is_authenticated else None)
         target_discriminator = obj.__class__.history_discriminator
@@ -123,7 +145,7 @@ class HistoryItem(db.Model):
             _type=state,
             diff=diff,
             target_discriminator=target_discriminator,
-            target_name=str(obj)
+            target_name=str(obj),
         )
         if hi_type.append_to_obj:
             obj.history.append(hi)
@@ -139,12 +161,14 @@ class HasHistory:
     def __init_subclass__(cls, *args, **kwargs):
         super().__init_subclass__(*args, **kwargs)
         discriminator = cls.__name__.lower()
-        setattr(cls, 'history_discriminator', discriminator)
+        setattr(cls, "history_discriminator", discriminator)
         HISTORY_DISCRIMINATOR_MAP[discriminator] = cls
 
     @classmethod
     def complete_history(cls, *args, **kwargs):
-        return HistoryItem.query.filter(HistoryItem.target_discriminator == cls.history_discriminator)
+        return HistoryItem.query.filter(
+            HistoryItem.target_discriminator == cls.history_discriminator
+        )
 
     def get_absolute_url(self):
         raise NotImplementedError()
@@ -177,7 +201,7 @@ class User(UserMixin, db.Model):
         super().__init__(*args, **kwargs)
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return "<User {}>".format(self.username)
 
     def __str__(self):
         return self.username
@@ -192,19 +216,30 @@ class User(UserMixin, db.Model):
     @cache.memoize(60)
     def upcoming_talks(self):
         now = datetime.now()
-        return list(set(
-            talk
-            for subscription in self.subscriptions
-            for talk in subscription.collection.related_talks
-            if talk.timestamp >= now
-        ))
+        return list(
+            set(
+                talk
+                for subscription in self.subscriptions
+                for talk in subscription.collection.related_talks
+                if talk.timestamp >= now
+            )
+        )
 
     @property
     def can_edit(self):
         return self.is_admin or self.is_organizer or len(self.edited_collections) > 0
 
     def is_subscribed_to(self, collection):
-        return len([subscription for subscription in self.subscriptions if subscription.collection == collection]) > 0
+        return (
+            len(
+                [
+                    subscription
+                    for subscription in self.subscriptions
+                    if subscription.collection == collection
+                ]
+            )
+            > 0
+        )
 
 
 class Subscription(db.Model):
@@ -226,10 +261,10 @@ class Subscription(db.Model):
             return [_("daily"), _("weekly"), _("daily and weekly")][self.value - 1]
 
     id = db.Column(db.Integer, primary_key=True)
-    collection_id = db.Column(db.Integer, db.ForeignKey('collection.id'))
-    collection = db.relationship('Collection', backref=backref('subscriptions'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=backref('subscriptions'))
+    collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"))
+    collection = db.relationship("Collection", backref=backref("subscriptions"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user = db.relationship("User", backref=backref("subscriptions"))
     remind_me = db.Column(db.Boolean, default=True)
     mode = db.Column(db.Enum(Modes), default=Modes.DAILY_AND_WEEKLY)
 
@@ -255,8 +290,10 @@ class Talk(HasHistory, db.Model):
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
     speaker_name = db.Column(db.String(64))
     speaker_aboutme = db.Column(db.Text)
-    tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=backref('talks'))
-    collections = db.relationship("Collection", secondary=lambda: talk_collections, backref=backref('talks'))
+    tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=backref("talks"))
+    collections = db.relationship(
+        "Collection", secondary=lambda: talk_collections, backref=backref("talks")
+    )
 
     def __str__(self):
         return self.title
@@ -266,37 +303,49 @@ class Talk(HasHistory, db.Model):
 
     @property
     def rendered_tags(self):
-        return ' '.join(tag.render() for tag in self.tags)
+        return " ".join(tag.render() for tag in self.tags)
 
     @classmethod
     def complete_history(cls, user=None):
         if user is None or user.is_admin:
             return super().complete_history()
         else:
-            return super().complete_history()\
-                .join(Talk, and_(
-                    HistoryItem.target_discriminator == Talk.history_discriminator,
-                    HistoryItem.target_id == Talk.id
-                ))\
-                .filter(
-                    Talk.collections.any(or_(
-                        Collection.organizer == user,
-                        Collection.editors.contains(user),
-                    ))
+            return (
+                super()
+                .complete_history()
+                .join(
+                    Talk,
+                    and_(
+                        HistoryItem.target_discriminator == Talk.history_discriminator,
+                        HistoryItem.target_id == Talk.id,
+                    ),
                 )
+                .filter(
+                    Talk.collections.any(
+                        or_(
+                            Collection.organizer == user,
+                            Collection.editors.contains(user),
+                        )
+                    )
+                )
+            )
 
     @classmethod
     def related_to(cls, user):
         if user.is_admin:
             return Talk.query
         else:
-            return Talk.query.filter(Talk.collections.any(or_(
-                Collection.organizer == user,
-                Collection.editors.contains(user)
-            )))
+            return Talk.query.filter(
+                Talk.collections.any(
+                    or_(Collection.organizer == user, Collection.editors.contains(user))
+                )
+            )
 
     def can_edit(self, user):
-        return user.is_admin or any(user == collection.organizer or user in collection.editors for collection in self.collections)
+        return user.is_admin or any(
+            user == collection.organizer or user in collection.editors
+            for collection in self.collections
+        )
 
 
 class Collection(HasHistory, db.Model):
@@ -308,13 +357,26 @@ class Collection(HasHistory, db.Model):
     meta_collections = db.relationship(
         "Collection",
         secondary=lambda: meta_collection_connections,
-        primaryjoin=lambda: Collection.id == meta_collection_connections.c.sub_collection_id,
-        secondaryjoin=lambda: and_(Collection.id == meta_collection_connections.c.meta_collection_id, Collection.is_meta == True),
-        backref=backref('sub_collections')
+        primaryjoin=lambda: Collection.id
+        == meta_collection_connections.c.sub_collection_id,
+        secondaryjoin=lambda: and_(
+            Collection.id == meta_collection_connections.c.meta_collection_id,
+            Collection.is_meta == True,
+        ),
+        backref=backref("sub_collections"),
     )
-    organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    organizer = db.relationship("User", primaryjoin=lambda: and_(User.id == Collection.organizer_id, User.is_organizer == True))
-    editors = db.relationship("User", secondary=lambda: collection_editors, backref=backref('edited_collections'))
+    organizer_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    organizer = db.relationship(
+        "User",
+        primaryjoin=lambda: and_(
+            User.id == Collection.organizer_id, User.is_organizer == True
+        ),
+    )
+    editors = db.relationship(
+        "User",
+        secondary=lambda: collection_editors,
+        backref=backref("edited_collections"),
+    )
 
     def __str__(self):
         return self.title
@@ -328,53 +390,78 @@ class Collection(HasHistory, db.Model):
         if not self.is_meta:
             return self.talks
         else:
-            return list(set(
-                talk
-                for collection in self.sub_collections
-                for talk in collection.related_talks
-            ))
+            return list(
+                set(
+                    talk
+                    for collection in self.sub_collections
+                    for talk in collection.related_talks
+                )
+            )
 
     @classmethod
     def complete_history(cls, user=None):
         if user is None or user.is_admin:
             return super().complete_history()
         else:
-            return super().complete_history()\
-                .join(Collection, HistoryItem.target_id == Collection.id)\
-                .filter(or_(
-                    Collection.organizer == user,
-                    Collection.editors.contains(user),
-                ))
+            return (
+                super()
+                .complete_history()
+                .join(Collection, HistoryItem.target_id == Collection.id)
+                .filter(
+                    or_(Collection.organizer == user, Collection.editors.contains(user))
+                )
+            )
 
     @classmethod
     def related_to(cls, user):
         if user.is_admin:
             return Collection.query
         else:
-            return Collection.query.filter(or_(
-                Collection.organizer == user,
-                Collection.editors.contains(user)
-            ))
+            return Collection.query.filter(
+                or_(Collection.organizer == user, Collection.editors.contains(user))
+            )
 
     def can_edit(self, user):
-        return user.is_admin or user == self.organizer or user in self.editors or any(meta.can_edit(user) for meta in self.meta_collections)
+        return (
+            user.is_admin
+            or user == self.organizer
+            or user in self.editors
+            or any(meta.can_edit(user) for meta in self.meta_collections)
+        )
 
 
-meta_collection_connections = db.Table('meta_collection_connections',
-    db.Column('sub_collection_id', db.Integer, db.ForeignKey('collection.id'), primary_key=True),
-    db.Column('meta_collection_id', db.Integer, db.ForeignKey('collection.id'), primary_key=True),
+meta_collection_connections = db.Table(
+    "meta_collection_connections",
+    db.Column(
+        "sub_collection_id",
+        db.Integer,
+        db.ForeignKey("collection.id"),
+        primary_key=True,
+    ),
+    db.Column(
+        "meta_collection_id",
+        db.Integer,
+        db.ForeignKey("collection.id"),
+        primary_key=True,
+    ),
 )
 
 
-talk_collections = db.Table('talk_collections',
-    db.Column('talk_id', db.Integer, db.ForeignKey('talk.id'), primary_key=True),
-    db.Column('collection_id', db.Integer, db.ForeignKey('collection.id'), primary_key=True),
+talk_collections = db.Table(
+    "talk_collections",
+    db.Column("talk_id", db.Integer, db.ForeignKey("talk.id"), primary_key=True),
+    db.Column(
+        "collection_id", db.Integer, db.ForeignKey("collection.id"), primary_key=True
+    ),
 )
 
 
-collection_editors = db.Table('collection_editors',
-    db.Column('collection_id', db.Integer, db.ForeignKey('collection.id'), primary_key=True),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+collection_editors = db.Table(
+    "collection_editors",
+    db.Column(
+        "collection_id", db.Integer, db.ForeignKey("collection.id"), primary_key=True
+    ),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
 )
 
 
@@ -393,7 +480,8 @@ class Tag(db.Model):
         return self.name
 
 
-talk_tags = db.Table('talk_tags',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True),
-    db.Column('talk_id', db.Integer, db.ForeignKey('talk.id'), primary_key=True),
+talk_tags = db.Table(
+    "talk_tags",
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
+    db.Column("talk_id", db.Integer, db.ForeignKey("talk.id"), primary_key=True),
 )

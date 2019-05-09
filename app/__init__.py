@@ -7,6 +7,7 @@ from flask_login import LoginManager
 from flask_babel import Babel, lazy_gettext as _l
 from flask_moment import Moment
 from flask_caching import Cache
+from flaskext.mail import Mail
 from celery import Celery
 from markdown import Markdown
 
@@ -26,6 +27,7 @@ moment = Moment()
 login.login_view = "auth.login"
 login.login_message = _l("Please log in to access this page.")
 cache = Cache(config={"CACHE_TYPE": "simple"})
+mail = Mail()
 celery = Celery(__name__)
 celery.config_from_object(config)
 md = Markdown(
@@ -63,6 +65,7 @@ def create_app():
     moment.init_app(app)
     login.init_app(app)
     cache.init_app(app)
+    mail.init_app(app)
     app.jinja_env.filters.setdefault("markdown", markdown)
 
     from app import models, tasks  # noqa: F402, F401
