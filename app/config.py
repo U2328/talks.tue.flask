@@ -45,6 +45,14 @@ class Config:
         "every-minute": {"task": "heart_beat", "schedule": crontab(minute="*/1")}
     }
 
+    # Mail
+    MAIL_SERVER = None
+    MAIL_PORT = None
+    MAIL_USERNAME = None
+    MAIL_PASSWORD = None
+    MAIL_USE_TLS = None
+    MAIL_USE_SSL = None
+
 
 @_register_config
 class ProductionConfig(Config):
