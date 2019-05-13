@@ -209,3 +209,4 @@ dmypy.json
 
 *.db
 celerybeat.pid
+postgres-data/

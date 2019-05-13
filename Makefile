@@ -39,3 +39,12 @@ db_migrations: ## list all known migrations
 
 db_deploy: ## init server setup
 	docker-compose exec app flask deploy
+
+logs: ## view docker logs
+	docker-compose logs | less +F -r
+
+build: ## build docker containers
+	docker-compose build
+
+run: ## run app (wil be deamonized)
+	docker-compose up -d
