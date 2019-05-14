@@ -1,0 +1,72 @@
+import os
+
+from celery.schedules import crontab
+
+__all__ = ("get_config", "ProductionConfig", "DevelopmentConfig", "TestingConfig")
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+
+_config_registry = {}
+
+
+def _register_config(cls):
+    _config_registry[cls.__name__] = cls
+    return cls
+
+
+def get_config():
+    default = "Development" if os.getenv("DEBUG", None) else "Production"
+    return _config_registry[f"{os.environ.get('CONFIG', default)}Config"]
+
+
+class Config:
+    # Base
+    DEBUG = False
+    TESTING = False
+    SECRET_KEY = os.getenv("SECRET_KEY") or "ultra-secret-key"
+
+    # SQLAlchemy
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "DATABASE_URL", "postgres://postgres:@db:5432/talks_tue"
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Babel
+    LANGUAGES = list(os.getenv("LANGUAGES", "en,de").split(","))
+
+    # Celery
+    BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://talks_tue@rabbit:5672//")
+    CELERY_RESULT_BACKEND = os.getenv(
+        "CELERY_BACKEND_URL", "rpc://talks_tue@rabbit:5672//"
+    )
+    CELERY_IMPORTS = ("app.tasks",)
+    CELERYBEAT_SCHEDULE = {
+        "every-minute": {"task": "heart_beat", "schedule": crontab(minute="*/1")}
+    }
+
+
+@_register_config
+class ProductionConfig(Config):
+    ...
+
+
+@_register_config
+class DevelopmentConfig(Config):
+    DEBUG = True
+
+    # Mail
+    MAIL_SERVER = "smtp.mailtrap.io"
+    MAIL_PORT = 2525
+    MAIL_USERNAME = "03fdcd845fee1c"
+    MAIL_PASSWORD = "3f1736fad0ce50"
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
+
+
+@_register_config
+class TestingConfig(Config):
+    TESTING = True
+
+    # Mail
+    MAIL_SUPPRESS_SEND = True
