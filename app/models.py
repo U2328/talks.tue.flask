@@ -21,6 +21,7 @@ __all__ = (
     "AnonymousUser",
     "HistoryItem",
     "HISTORY_DISCRIMINATOR_MAP",
+    "Subscription",
 )
 
 
@@ -71,11 +72,11 @@ class HistoryStates(IntEnum):
         }.get(state)
 
 
-class HistoryItem(db.Model):
+class HistoryItem(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     _type = db.Column(db.Enum(HistoryStates))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    user = db.relationship("User", backref="history")
+    user = db.relationship("User", backref=backref("history"))
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
     diff = db.Column(DillField())
 
@@ -189,7 +190,7 @@ def setup_listener(mapper, cls):
     )
 
 
-class User(UserMixin, db.Model):
+class User(UserMixin, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -212,7 +213,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    @property
+    @property  # type: ignore
     @cache.memoize(60)
     def upcoming_talks(self):
         now = datetime.now()
@@ -242,7 +243,7 @@ class User(UserMixin, db.Model):
         )
 
 
-class Subscription(db.Model):
+class Subscription(db.Model):  # type: ignore
     @unique
     class Modes(IntEnum):
         DAILY = auto()
@@ -283,7 +284,23 @@ def load_user(id):
 login.anonymous_user = AnonymousUser
 
 
-class Talk(HasHistory, db.Model):
+talk_collections = db.Table(
+    "talk_collections",
+    db.Column("talk_id", db.Integer, db.ForeignKey("talk.id"), primary_key=True),
+    db.Column(
+        "collection_id", db.Integer, db.ForeignKey("collection.id"), primary_key=True
+    ),
+)
+
+
+talk_tags = db.Table(
+    "talk_tags",
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
+    db.Column("talk_id", db.Integer, db.ForeignKey("talk.id"), primary_key=True),
+)
+
+
+class Talk(HasHistory, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     description = db.Column(db.Text)
@@ -348,8 +365,33 @@ class Talk(HasHistory, db.Model):
         )
 
 
-class Collection(HasHistory, db.Model):
-    __versioned__ = {}
+meta_collection_connections = db.Table(
+    "meta_collection_connections",
+    db.Column(
+        "sub_collection_id",
+        db.Integer,
+        db.ForeignKey("collection.id"),
+        primary_key=True,
+    ),
+    db.Column(
+        "meta_collection_id",
+        db.Integer,
+        db.ForeignKey("collection.id"),
+        primary_key=True,
+    ),
+)
+
+
+collection_editors = db.Table(
+    "collection_editors",
+    db.Column(
+        "collection_id", db.Integer, db.ForeignKey("collection.id"), primary_key=True
+    ),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
+)
+
+
+class Collection(HasHistory, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     description = db.Column(db.Text)
@@ -384,7 +426,7 @@ class Collection(HasHistory, db.Model):
     def get_absolute_url(self):
         return url_for("core.collection", id=self.id)
 
-    @property
+    @property  # type: ignore
     @cache.memoize(10)
     def related_talks(self):
         if not self.is_meta:
@@ -430,43 +472,7 @@ class Collection(HasHistory, db.Model):
         )
 
 
-meta_collection_connections = db.Table(
-    "meta_collection_connections",
-    db.Column(
-        "sub_collection_id",
-        db.Integer,
-        db.ForeignKey("collection.id"),
-        primary_key=True,
-    ),
-    db.Column(
-        "meta_collection_id",
-        db.Integer,
-        db.ForeignKey("collection.id"),
-        primary_key=True,
-    ),
-)
-
-
-talk_collections = db.Table(
-    "talk_collections",
-    db.Column("talk_id", db.Integer, db.ForeignKey("talk.id"), primary_key=True),
-    db.Column(
-        "collection_id", db.Integer, db.ForeignKey("collection.id"), primary_key=True
-    ),
-)
-
-
-collection_editors = db.Table(
-    "collection_editors",
-    db.Column(
-        "collection_id", db.Integer, db.ForeignKey("collection.id"), primary_key=True
-    ),
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
-)
-
-
-class Tag(db.Model):
-    __versioned__ = {}
+class Tag(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
 
@@ -478,10 +484,3 @@ class Tag(db.Model):
 
     def render(self):
         return self.name
-
-
-talk_tags = db.Table(
-    "talk_tags",
-    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
-    db.Column("talk_id", db.Integer, db.ForeignKey("talk.id"), primary_key=True),
-)

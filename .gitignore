@@ -210,3 +210,4 @@ dmypy.json
 *.db
 celerybeat.pid
 postgres-data/
+postgres-backups/

@@ -1,23 +1,31 @@
 from datetime import datetime
 from dateutil.parser import parse as parse_datetime
 
-from flask import current_app
-
 from sqlalchemy import or_
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, DateTimeField as _DateTimeField, TextAreaField
-from wtforms.validators import DataRequired, Length
+from wtforms import (
+    StringField,
+    SubmitField,
+    BooleanField,
+    DateTimeField as _DateTimeField,
+    TextAreaField,
+    PasswordField,
+)
+
+
+from wtforms.validators import DataRequired, Length, ValidationError, Email, EqualTo
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_babel import lazy_gettext as _l
 
 from app.models import Tag, Collection, User
 
 
-__all__ = (
-    'TalkForm',
-    'CollectionForm',
-    'TagForm',
-)
+__all__ = ("TagForm", "TalkForm", "CollectionForm", "UserForm")
+
+
+class TagForm(FlaskForm):
+    name = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
+    submit = SubmitField(_l("Add"))
 
 
 class DateTimeField(_DateTimeField):
@@ -31,27 +39,62 @@ class DateTimeField(_DateTimeField):
                 raise ValueError(self.gettext("Not a valid datetime value"))
 
 
-class CollectionForm(FlaskForm):
-    title = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
-    description = TextAreaField(_l('Description'))
-    is_meta = BooleanField(_l('Is meta?'), default=False)
-    meta_collections = QuerySelectMultipleField(_l('Meta Collections'), query_factory=lambda: Collection.query.filter(Collection.is_meta == True))
-    organizer = QuerySelectField(_l('Organizer'), query_factory=lambda: User.query.filter(or_(User.is_organizer == True, User.is_admin == True)))
-    editors = QuerySelectMultipleField(_l('Editors'), query_factory=lambda: User.query)
-    submit = SubmitField(_l('Save'))
-
-
-class TagForm(FlaskForm):
-    name = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
-    submit = SubmitField(_l('Add'))
-
-
 class TalkForm(FlaskForm):
-    title = StringField(_l('Name'), validators=[DataRequired(), Length(max=64)])
-    description = TextAreaField(_l('Description'))
-    timestamp = DateTimeField(_l('Date/Time'), format="%Y.%m.%d %H:%M", default=datetime.now, validators=[DataRequired()])
-    speaker_name = StringField(_l('Speaker\'s Name'), validators=[DataRequired(), Length(max=64)])
-    speaker_aboutme = TextAreaField(_l('Speaker\'s About me'))
-    collections = QuerySelectMultipleField(_l('Collections'), query_factory=lambda: Collection.query.filter(Collection.is_meta == False))
-    tags = QuerySelectMultipleField(_l('Categories'), query_factory=lambda: Tag.query)
-    submit = SubmitField(_l('Save'))
+    title = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
+    description = TextAreaField(_l("Description"))
+    timestamp = DateTimeField(
+        _l("Date/Time"),
+        format="%Y.%m.%d %H:%M",
+        default=datetime.now,
+        validators=[DataRequired()],
+    )
+    speaker_name = StringField(
+        _l("Speaker's Name"), validators=[DataRequired(), Length(max=64)]
+    )
+    speaker_aboutme = TextAreaField(_l("Speaker's About me"))
+    collections = QuerySelectMultipleField(
+        _l("Collections"),
+        query_factory=lambda: Collection.query.filter(Collection.is_meta == False),
+    )
+    tags = QuerySelectMultipleField(_l("Categories"), query_factory=lambda: Tag.query)
+    submit = SubmitField(_l("Save"))
+
+
+class CollectionForm(FlaskForm):
+    title = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
+    description = TextAreaField(_l("Description"))
+    is_meta = BooleanField(_l("Is meta?"), default=False)
+    meta_collections = QuerySelectMultipleField(
+        _l("Meta Collections"),
+        query_factory=lambda: Collection.query.filter(Collection.is_meta == True),
+    )
+    organizer = QuerySelectField(
+        _l("Organizer"),
+        query_factory=lambda: User.query.filter(
+            or_(User.is_organizer == True, User.is_admin == True)
+        ),
+    )
+    editors = QuerySelectMultipleField(_l("Editors"), query_factory=lambda: User.query)
+    submit = SubmitField(_l("Save"))
+
+
+class UserForm(FlaskForm):
+    username = StringField(_l("Username"), validators=[DataRequired()])
+    email = StringField(_l("Email"), validators=[DataRequired(), Email()])
+    password = PasswordField(_l("Password"), validators=[DataRequired()])
+    password2 = PasswordField(
+        _l("Repeat Password"), validators=[DataRequired(), EqualTo("password")]
+    )
+    is_admin = BooleanField(_l("Is Admin?"))
+    is_organizer = BooleanField(_l("Is Organizer?"))
+    submit = SubmitField(_l("Save"))
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None:
+            raise ValidationError(_("Please use a different username."))
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError(_("Please use a different email address."))

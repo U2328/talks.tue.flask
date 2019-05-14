@@ -4,9 +4,9 @@
     <div class="item">
         <h3><i class="list icon"></i>&nbsp;{{ _('Collections') }}</h3>
     </div>
-    <div class="right menu">
-        <a href="{{ url_for('admin.historyitems', discriminator="collection") }}" class="ui small button item">{{ _("View related history") }}</a>
-        <a href="{{ url_for('admin.collection') }}" class="ui small button item">{{ _("Add new collection") }}</a>
+    <div class="right labeled icon menu">
+        <a href="{{ url_for('admin.historyitems', discriminator="collection") }}" class="ui small button item"><i class="history icon"></i>{{ _("View related history") }}</a>
+        <a href="{{ url_for('admin.collection') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new collection") }}</a>
     </div>
 </div>
 <div class="ui bottom attached segment">
@@ -17,21 +17,5 @@
 {{ collection_table.generate_js(url_for('api.admin_collection_table')) | safe }}
 <script type="text/javascript">
     $('#{{ collection_table.table_id }}').on('click', '.{{ collection_table.table_id }}-row', function () {window.open("{{ url_for('core.collection') }}/" + $(this).attr('id'), "_self");});
-    $('#{{ collection_table.table_id }}').contextMenu({
-        selector: '.{{ collection_table.table_id }}-row',
-        callback: function(key, options) {
-            var id = $(this).attr('id');
-            if (key == "view") {window.open("{{ url_for('core.collection') }}/" + id, "_self");}
-            if (key == "edit") {window.open("{{ url_for('admin.collection') }}/" + id, "_self");}
-            if (key == "copy") {window.open("{{ url_for('admin.collection') }}/" + id + "?copy=1", "_self");}
-            if (key == "delete") {window.open("{{ url_for('admin.collection') }}/" + id + "/delete", "_self");}
-        },
-        items: {
-            "view": {name: "{{ _("View") }}", icon: "add"},
-            "edit": {name: "{{ _("Edit") }}", icon: "edit"},
-            "copy": {name: "{{ _("Copy") }}", icon: "copy"},
-            "delete": {name: "{{ _("Delete") }}", icon: "delete"},
-        }
-    });
 </script>
 {% endblock script %}

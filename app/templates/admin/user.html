@@ -1,0 +1,81 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3>{{ _("Edit User") }}</h3>
+    </div>
+    <div class="right labeled icon menu">
+        <a id="historyModalTrigger" class="ui small button item"><i class="history icon"></i>{{ _("History") }}</a>
+    </div>
+</div>
+<div class="ui attached segment">
+    <form id="userForm" method="post" class="ui form" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="ui stackable grid">
+            <div class="two column row">
+                <div class="wide column">
+                    <div class="field{% if form.username.errors %} error{% endif %}">
+                        {{ form.username.label }}
+                        {{ form.username(size=32) }}
+                    </div>
+                </div>
+                <div class="wide column">
+                    <div class="field{% if form.email.errors %} error{% endif %}">
+                        {{ form.email.label }}
+                        {{ form.email() }}
+                    </div>
+                </div>
+            </div>
+            <div class="two column row">
+                <div class="wide column">
+                    <div class="field{% if form.password.errors %} error{% endif %}">
+                        {{ form.password.label }}
+                        {{ form.password(size=32) }}
+                    </div>
+                </div>
+                <div class="wide column">
+                    <div class="field{% if form.password2.errors %} error{% endif %}">
+                        {{ form.password2.label }}
+                        {{ form.password2() }}
+                    </div>
+                </div>
+            </div>
+            <div class="two column row">
+                <div class="column">
+                    <div class="field{% if form.is_admin.errors %} error{% endif %}">
+                        <div class="ui toggle checkbox">
+                            {{ form.is_admin(class_="hidden") }}
+                            {{ form.is_admin.label }}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field{% if form.is_organizer.errors %} error{% endif %}">
+                        <div class="ui toggle checkbox">
+                            {{ form.is_organizer(class_="hidden") }}
+                            {{ form.is_organizer.label }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="ui bottom attached segment">
+    {{ form.submit(form='userForm', class="ui button positive") }}
+    <a class="ui button negative"href="{{ next }}">{{ _('Cancel') }}</a>
+</div>
+<div id="historyModal" class="ui tiny longer modal">
+    <div class="header">{{ _("History") }}</div>
+    <div class="content">
+        {% with history=user.history %}
+            {% include 'snippets/historyitems.html' %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
+</script>
+{% endblock script %}

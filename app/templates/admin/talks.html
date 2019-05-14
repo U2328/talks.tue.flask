@@ -4,9 +4,9 @@
     <div class="item">
         <h3><i class="calendar icon"></i>&nbsp;{{ _('Talks') }}</h3>
     </div>
-    <div class="right menu">
-        <a href="{{ url_for('admin.historyitems', discriminator="talk") }}" class="ui small button item">{{ _("View related history") }}</a>
-        <a href="{{ url_for('admin.talk') }}" class="ui small button item">{{ _("Add new talk") }}</a>
+    <div class="right labeled icon menu">
+        <a href="{{ url_for('admin.historyitems', discriminator="talk") }}" class="ui small button item"><i class="history icon"></i>{{ _("View related history") }}</a>
+        <a href="{{ url_for('admin.talk') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new talk") }}</a>
     </div>
 </div>
 <div class="ui bottom attached segment">
@@ -17,21 +17,5 @@
 {{ talk_table.generate_js(url_for('api.admin_talk_table')) | safe }}
 <script type="text/javascript">
     $('#{{ talk_table.table_id }}').on('click', '.{{ talk_table.table_id }}-row', function () {window.open("{{ url_for('core.talk') }}/" + $(this).attr('id'), "_self");});
-    $('#{{ talk_table.table_id }}').contextMenu({
-        selector: '.{{ talk_table.table_id }}-row',
-        callback: function(key, options) {
-            var id = $(this).attr('id');
-            if (key == "view") {window.open("{{ url_for('core.talk') }}/" + id, "_self");}
-            if (key == "edit") {window.open("{{ url_for('admin.talk') }}/" + id, "_self");}
-            if (key == "copy") {window.open("{{ url_for('admin.talk') }}/" + id + "?copy=1", "_self");}
-            if (key == "delete") {window.open("{{ url_for('admin.talk') }}/" + id + "/delete", "_self");}
-        },
-        items: {
-            "view": {name: "{{ _("View") }}", icon: "add"},
-            "edit": {name: "{{ _("Edit") }}", icon: "edit"},
-            "copy": {name: "{{ _("Copy") }}", icon: "copy"},
-            "delete": {name: "{{ _("Delete") }}", icon: "delete"},
-        }
-    });
 </script>
 {% endblock script %}

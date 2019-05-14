@@ -40,6 +40,12 @@ db_migrations: ## list all known migrations
 db_deploy: ## init server setup
 	docker-compose exec app flask deploy
 
+db_dump: ## generate dump file
+	./docker/db/make_dump.sh
+
+db_restore: ## restore a dump file
+	./docker/db/restore_dump.sh $(DUMP)
+
 logs: ## view docker logs
 	docker-compose logs | less +F -r
 

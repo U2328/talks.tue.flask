@@ -7,7 +7,7 @@ from flask_login import LoginManager
 from flask_babel import Babel, lazy_gettext as _l
 from flask_moment import Moment
 from flask_caching import Cache
-from flaskext.mail import Mail
+from flask_mail import Mail
 from celery import Celery
 from markdown import Markdown
 

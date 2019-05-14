@@ -1,23 +1,39 @@
-from flask import render_template, request, redirect,\
-                  url_for, abort, current_app
+from flask import render_template, request, redirect, url_for, abort, current_app
 from flask_login import current_user, login_required
-from sqlalchemy import and_
 
 from . import bp
-from .forms import TalkForm, TagForm, CollectionForm
+from .forms import TalkForm, TagForm, CollectionForm, UserForm
 from app import db
 from app.utils import is_safe_url, copy_row
 from app.api.tables import TalkTable, CollectionTable, HistoryItemTable, UserTable
-from app.models import Talk, Tag, Collection, HistoryItem, HISTORY_DISCRIMINATOR_MAP
-
-
-__all__ = (
-    'tag',
-    'talk',
+from app.models import (
+    HistoryItem,
+    HISTORY_DISCRIMINATOR_MAP,
+    Tag,
+    Talk,
+    Collection,
+    User,
 )
 
 
-@bp.route('/tag', methods=['POST'])
+__all__ = ("tag", "talk")
+
+
+@bp.route("/historyitems", methods=["GET"])
+@bp.route("/historyitems/<discriminator>", methods=["GET"])
+@login_required
+def historyitems(discriminator=None):
+    if discriminator is not None and discriminator not in HISTORY_DISCRIMINATOR_MAP:
+        return abort(404)
+    return render_template(
+        "admin/historyitems.html",
+        title="History - Admin",
+        historyitem_table=HistoryItemTable(),
+        discriminator=discriminator,
+    )
+
+
+@bp.route("/tag", methods=["POST"])
 def tag():
     if not current_user.is_admin:
         return abort(403)
@@ -27,14 +43,14 @@ def tag():
         form.populate_obj(tag)
         db.session.add(tag)
         db.session.commit()
-    next = request.args.get('next')
+    next = request.args.get("next")
     if not is_safe_url(next):
         return abort(400)
-    return redirect(next or url_for('core.index'))
+    return redirect(next or url_for("core.index"))
 
 
-@bp.route('/talk', methods=['GET', 'POST'])
-@bp.route('/talk/<int:id>', methods=['GET', 'POST'])
+@bp.route("/talk", methods=["GET", "POST"])
+@bp.route("/talk/<int:id>", methods=["GET", "POST"])
 @login_required
 def talk(id=None):
     talk = Talk() if id is None else Talk.query.get(id)
@@ -43,14 +59,14 @@ def talk(id=None):
         return abort(404)
     if id is not None and not talk.can_edit(current_user):
         return abort(403)
-    if request.args.get('copy', False):
-        talk = copy_row(talk, ['id'])
+    if request.args.get("copy", False):
+        talk = copy_row(talk, ["id"])
 
-    next = request.args.get('next')
+    next = request.args.get("next")
     if not is_safe_url(next):
         return abort(400)
     else:
-        next = next or url_for('admin.talks')
+        next = next or url_for("admin.talks")
 
     is_new = talk.id is None
     form = TalkForm(obj=talk)
@@ -63,10 +79,17 @@ def talk(id=None):
         db.session.commit()
         return redirect(next)
 
-    return render_template('admin/talk.html', title="Talk - Admin", form=form, new=is_new, next=next, talk=talk)
+    return render_template(
+        "admin/talk.html",
+        title="Talk - Admin",
+        form=form,
+        new=is_new,
+        next=next,
+        talk=talk,
+    )
 
 
-@bp.route('/talk/<int:id>/delete', methods=['GET', 'POST'])
+@bp.route("/talk/<int:id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_talk(id):
     talk = Talk.query.get(id)
@@ -76,11 +99,11 @@ def delete_talk(id):
     if not talk.can_edit(current_user):
         return abort(403)
 
-    next = request.args.get('next')
+    next = request.args.get("next")
     if not is_safe_url(next):
         return abort(400)
     else:
-        next = next or url_for('admin.talks')
+        next = next or url_for("admin.talks")
 
     db.session.delete(talk)
     HistoryItem.build_for(talk)
@@ -88,20 +111,18 @@ def delete_talk(id):
     return redirect(next)
 
 
-@bp.route('/talks', methods=['GET'])
+@bp.route("/talks", methods=["GET"])
 @login_required
 def talks():
     if not current_user.can_edit:
         return abort(403)
     return render_template(
-        'admin/talks.html',
-        title="Talks - Admin",
-        talk_table=TalkTable()
+        "admin/talks.html", title="Talks - Admin", talk_table=TalkTable()
     )
 
 
-@bp.route('/collection', methods=['GET', 'POST'])
-@bp.route('/collection/<int:id>', methods=['GET', 'POST'])
+@bp.route("/collection", methods=["GET", "POST"])
+@bp.route("/collection/<int:id>", methods=["GET", "POST"])
 @login_required
 def collection(id=None):
     collection = Collection() if id is None else Collection.query.get(id)
@@ -110,14 +131,14 @@ def collection(id=None):
         return abort(404)
     if id is not None and not collection.can_edit(current_user):
         return abort(403)
-    if request.args.get('copy', False):
-        collection = copy_row(collection, ['id'])
+    if request.args.get("copy", False):
+        collection = copy_row(collection, ["id"])
 
-    next = request.args.get('next')
+    next = request.args.get("next")
     if not is_safe_url(next):
         return abort(400)
     else:
-        next = next or url_for('admin.collections')
+        next = next or url_for("admin.collections")
 
     is_new = collection.id is None
     form = CollectionForm(obj=collection)
@@ -131,10 +152,17 @@ def collection(id=None):
         current_app.logger.debug(collection.organizer)
         return redirect(next)
 
-    return render_template('admin/collection.html', title="Collection - Admin", form=form, new=is_new, next=next, collection=collection)
+    return render_template(
+        "admin/collection.html",
+        title="Collection - Admin",
+        form=form,
+        new=is_new,
+        next=next,
+        collection=collection,
+    )
 
 
-@bp.route('/collection/<int:id>/delete', methods=['GET', 'POST'])
+@bp.route("/collection/<int:id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_collection(id):
     collection = Collection.query.get(id)
@@ -144,11 +172,11 @@ def delete_collection(id):
     if not collection.can_edit(current_user):
         return abort(403)
 
-    next = request.args.get('next')
+    next = request.args.get("next")
     if not is_safe_url(next):
         return abort(400)
     else:
-        next = next or url_for('admin.collections')
+        next = next or url_for("admin.collections")
 
     db.session.delete(collection)
     HistoryItem.build_for(collection)
@@ -156,39 +184,55 @@ def delete_collection(id):
     return redirect(next)
 
 
-@bp.route('/collections', methods=['GET'])
+@bp.route("/collections", methods=["GET"])
 @login_required
 def collections():
     if not current_user.can_edit:
         return abort(403)
     return render_template(
-        'admin/collections.html',
+        "admin/collections.html",
         title="Collections - Admin",
-        collection_table=CollectionTable()
+        collection_table=CollectionTable(),
     )
 
 
-@bp.route('/historyitems', methods=['GET'])
-@bp.route('/historyitems/<discriminator>', methods=['GET'])
+@bp.route("/user", methods=["GET", "POST"])
+@bp.route("/user/<int:id>", methods=["GET", "POST"])
 @login_required
-def historyitems(discriminator=None):
-    if discriminator is not None and discriminator not in HISTORY_DISCRIMINATOR_MAP:
+def user(id=None):
+    if id is None:
         return abort(404)
+    if not current_user.is_admin:
+        return abort(403)
+
+    user = User.query.get(id)
+    if user is None:
+        return abort(404)
+
+    next = request.args.get("next")
+    if not is_safe_url(next):
+        return abort(400)
+    else:
+        next = next or url_for("admin.users")
+
+    form = UserForm(obj=user)
+
+    if form.validate_on_submit():
+        form.populate_obj(user)
+        HistoryItem.build_for(user)
+        db.session.commit()
+        return redirect(next)
+
     return render_template(
-        'admin/historyitems.html',
-        title="History - Admin",
-        historyitem_table=HistoryItemTable(),
-        discriminator=discriminator
+        "admin/user.html", title="User - Admin", form=form, next=next, user=user
     )
 
 
-@bp.route('/users', methods=['GET'])
+@bp.route("/users", methods=["GET"])
 @login_required
 def users(discriminator=None):
     if not current_user.is_admin:
         return abort(403)
     return render_template(
-        'admin/users.html',
-        title="Users - Admin",
-        user_table=UserTable(),
+        "admin/users.html", title="Users - Admin", user_table=UserTable()
     )

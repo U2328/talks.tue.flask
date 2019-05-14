@@ -5,14 +5,14 @@
     <div class="item">
         <h3>{{ collection.title }}</h3>
     </div>
-    <div class="right menu">
+    <div class="right labeled icon menu">
         {% if can_edit %}
-            <a class="ui small button item" href="{{ url_for('admin.collection', id=collection.id) }}?next={{ request.path }}">{{ _('Edit') }}</a>
+            <a class="ui small button item" href="{{ url_for('admin.collection', id=collection.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit') }}</a>
         {% endif %}
         {% if current_user.is_authenticated and current_user.is_subscribed_to(collection) %}
-            <a class="ui small primary button item" href="{{ url_for("auth.subscription", id=collection.id) }}?next={{ request.path }}">{{ _('Edit Subscription') }}</a>
+            <a class="ui small primary button item" href="{{ url_for("auth.subscription", id=collection.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit Subscription') }}</a>
         {% else %}
-            <a class="ui small primary button item" href="{{ url_for("auth.subscribe", id=collection.id) }}">{{ _('Subscribe') }}</a>
+            <a class="ui small primary button item" href="{{ url_for("auth.subscribe", id=collection.id) }}"><i class="edit outline icon"></i>{{ _('Subscribe') }}</a>
         {% endif %}
     </div>
 </div>

@@ -1,0 +1,18 @@
+Hello {{ user.username }}, this is you automatic {{ target }} reminder from Talks.Tue.
+
+----------------------------------------------------------------------------
+Here is a short list of upcoming talks in collections you have subscribed to.
+For a more detailed description of each talk, have a look below.
+{% for date, talks in grouped_talks.items %}
+{{ date }}:
+{% for talk in talks %}}{{ talk.timestamp.time }}: '{{ talk.name }}' by {{ talks.speaker_name }}
+{% endfor %}
+{% endfor %}
+----------------------------------------------------------------------------
+Details:
+{% for date, talks in grouped_talks.items %}
+{{ date }}:
+{% for talk in talks %}}{% include "messages/talk_detail.jinja2" %}
+{% endfor %}
+{% endfor %}
+
