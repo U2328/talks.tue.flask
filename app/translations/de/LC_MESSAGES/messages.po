@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-05-06 19:43+0000\n"
+"POT-Creation-Date: 2019-05-14 19:10+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -18,93 +18,72 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: app/__init__.py:27
+#: app/__init__.py:28
 msgid "Please log in to access this page."
 msgstr "Bitte loggen sie sich ein um diese Seite zu besuchen."
 
-#: app/models.py:40
+#: app/models.py:45
 msgid "create"
 msgstr "Erstellung"
 
-#: app/models.py:41
+#: app/models.py:49
 #, python-format
 msgid "%(user)s created %(name)s"
 msgstr "%(user)s erstellte %(name)s"
 
-#: app/models.py:44
+#: app/models.py:55
 msgid "edit"
 msgstr "Bearbeitung"
 
-#: app/models.py:45
+#: app/models.py:59
 #, python-format
 msgid "%(user)s edited %(name)s"
 msgstr "%(user)s bearbeitete %(name)s"
 
-#: app/models.py:48
+#: app/models.py:65
 msgid "delete"
 msgstr "Löschung"
 
-#: app/models.py:49
+#: app/models.py:69
 #, python-format
 msgid "%(user)s deleted %(name)s"
 msgstr "%(user)s löschte %(name)s"
 
-#: app/models.py:226
+#: app/models.py:262
 msgid "daily"
 msgstr "täglich"
 
-#: app/models.py:226
+#: app/models.py:262
 msgid "weekly"
 msgstr "wöchentlich"
 
-#: app/models.py:226
+#: app/models.py:262
 msgid "daily and weekly"
 msgstr "täglich und wöchentlich"
 
-#: app/admin/forms.py:31
-msgid "Not a valid datetime value"
-msgstr "Kein valider Termin"
-
-#: app/admin/forms.py:35 app/admin/forms.py:45 app/admin/forms.py:50
+#: app/admin/forms.py:27 app/admin/forms.py:43 app/admin/forms.py:64
 #: app/api/tables.py:21 app/api/tables.py:44 app/api/tables.py:58
 msgid "Name"
 msgstr "Name"
 
-#: app/admin/forms.py:36 app/admin/forms.py:51
+#: app/admin/forms.py:28
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: app/admin/forms.py:39
+msgid "Not a valid datetime value"
+msgstr "Kein valider Termin"
+
+#: app/admin/forms.py:44 app/admin/forms.py:65
 #: app/templates/core/collection.html:45 app/templates/core/talk.html:48
 msgid "Description"
 msgstr "Beschreibung"
 
-#: app/admin/forms.py:37
-msgid "Is meta?"
-msgstr "Ist meta?"
-
-#: app/admin/forms.py:38
-msgid "Meta Collections"
-msgstr "Meta Listen"
-
-#: app/admin/forms.py:39
-msgid "Organizer"
-msgstr "Organisator"
-
-#: app/admin/forms.py:40 app/templates/core/collection.html:31
-msgid "Editors"
-msgstr "Editoren"
-
-#: app/admin/forms.py:41 app/admin/forms.py:57 app/auth/forms.py:49
-#: app/auth/forms.py:60
-msgid "Save"
-msgstr "Speichern"
-
-#: app/admin/forms.py:46
-msgid "Add"
-msgstr "Hinzufügen"
-
-#: app/admin/forms.py:52 app/api/tables.py:24
+#: app/admin/forms.py:46 app/api/tables.py:24
 msgid "Date/Time"
 msgstr "Termin"
 
-#: app/admin/forms.py:53 app/api/tables.py:29
+#: app/admin/forms.py:52 app/api/tables.py:29
 msgid "Speaker's Name"
 msgstr "Name des Redners"
 
@@ -112,14 +91,70 @@ msgstr "Name des Redners"
 msgid "Speaker's About me"
 msgstr "Informationen über den Redner"
 
-#: app/admin/forms.py:55 app/templates/admin/collections.html:5
+#: app/admin/forms.py:56 app/templates/admin/collections.html:5
 #: app/templates/base.html:45 app/templates/core/talk.html:36
 msgid "Collections"
 msgstr "Kollektionen"
 
-#: app/admin/forms.py:56 app/auth/forms.py:48
+#: app/admin/forms.py:59 app/auth/forms.py:48
 msgid "Categories"
 msgstr "Kategorien"
+
+#: app/admin/forms.py:60 app/admin/forms.py:78 app/admin/forms.py:90
+#: app/auth/forms.py:49 app/auth/forms.py:60
+msgid "Save"
+msgstr "Speichern"
+
+#: app/admin/forms.py:66
+msgid "Is meta?"
+msgstr "Ist meta?"
+
+#: app/admin/forms.py:68
+msgid "Meta Collections"
+msgstr "Meta Listen"
+
+#: app/admin/forms.py:72
+msgid "Organizer"
+msgstr "Organisator"
+
+#: app/admin/forms.py:77 app/templates/core/collection.html:31
+msgid "Editors"
+msgstr "Editoren"
+
+#: app/admin/forms.py:82 app/api/tables.py:103 app/auth/forms.py:20
+#: app/auth/forms.py:27
+msgid "Username"
+msgstr "Benutzername"
+
+#: app/admin/forms.py:83 app/api/tables.py:106 app/auth/forms.py:28
+#: app/auth/forms.py:45
+msgid "Email"
+msgstr "E-Mail"
+
+#: app/admin/forms.py:84 app/auth/forms.py:21 app/auth/forms.py:29
+#: app/auth/forms.py:46
+msgid "Password"
+msgstr "Passwort"
+
+#: app/admin/forms.py:86 app/auth/forms.py:30 app/auth/forms.py:47
+msgid "Repeat Password"
+msgstr "Passwort widerholen"
+
+#: app/admin/forms.py:88 app/api/tables.py:109
+msgid "Is Admin?"
+msgstr "Ist Administrator?"
+
+#: app/admin/forms.py:89 app/api/tables.py:112
+msgid "Is Organizer?"
+msgstr "Ist Organisator?"
+
+#: app/admin/forms.py:95 app/auth/forms.py:36
+msgid "Please use a different username."
+msgstr "Bitte benutzen sie einen anderen Benutzernamen."
+
+#: app/admin/forms.py:100 app/auth/forms.py:41 app/auth/forms.py:54
+msgid "Please use a different email address."
+msgstr "Bitte benutzen sie eine andere E-Mail-Adresse."
 
 #: app/api/tables.py:32 app/templates/core/collection.html:35
 #: app/templates/core/talk.html:29
@@ -154,26 +189,6 @@ msgstr "Nutzer"
 msgid "Changes"
 msgstr "Änderungen"
 
-#: app/api/tables.py:103 app/auth/forms.py:20 app/auth/forms.py:27
-msgid "Username"
-msgstr "Benutzername"
-
-#: app/api/tables.py:106 app/auth/forms.py:28 app/auth/forms.py:45
-msgid "Email"
-msgstr "E-Mail"
-
-#: app/api/tables.py:109
-msgid "Is Admin?"
-msgstr "Ist Administrator?"
-
-#: app/api/tables.py:112
-msgid "Is Organizer?"
-msgstr "Ist Organisator?"
-
-#: app/auth/forms.py:21 app/auth/forms.py:29 app/auth/forms.py:46
-msgid "Password"
-msgstr "Passwort"
-
 #: app/auth/forms.py:22
 msgid "Remember Me"
 msgstr "Speichern"
@@ -183,22 +198,10 @@ msgstr "Speichern"
 msgid "Login"
 msgstr "Einloggen"
 
-#: app/auth/forms.py:30 app/auth/forms.py:47
-msgid "Repeat Password"
-msgstr "Passwort widerholen"
-
 #: app/auth/forms.py:31 app/templates/auth/login.html:32
 #: app/templates/auth/register.html:8 app/templates/base.html:55
 msgid "Register"
 msgstr "Registrieren"
-
-#: app/auth/forms.py:36
-msgid "Please use a different username."
-msgstr "Bitte benutzen sie einen anderen Benutzernamen."
-
-#: app/auth/forms.py:41 app/auth/forms.py:54
-msgid "Please use a different email address."
-msgstr "Bitte benutzen sie eine andere E-Mail-Adresse."
 
 #: app/auth/forms.py:58
 msgid "Remind me"
@@ -270,18 +273,35 @@ msgstr "Kollektion erstellen"
 msgid "Edit Collection"
 msgstr "Kollektion bearbeiten"
 
-#: app/templates/admin/collection.html:9 app/templates/admin/collection.html:58
+#: app/templates/admin/collection.html:9 app/templates/admin/collection.html:60
 #: app/templates/admin/historyitems.html:5 app/templates/admin/talk.html:9
-#: app/templates/admin/talk.html:73 app/templates/core/collection.html:47
+#: app/templates/admin/talk.html:75 app/templates/admin/user.html:8
+#: app/templates/admin/user.html:69 app/templates/core/collection.html:47
 #: app/templates/core/talk.html:51
 msgid "History"
 msgstr "Letzte Änderungen"
 
-#: app/templates/admin/collection.html:54 app/templates/admin/talk.html:69
+#: app/templates/admin/collection.html:10 app/templates/admin/talk.html:10
+msgid "Copy"
+msgstr "Kopie erstellen"
+
+#: app/templates/admin/collection.html:11
+#: app/templates/admin/collection.html:71 app/templates/admin/talk.html:11
+#: app/templates/admin/talk.html:86 app/templates/auth/profile.html:50
+msgid "Delete"
+msgstr "Löschen"
+
+#: app/templates/admin/collection.html:56
+#: app/templates/admin/collection.html:73 app/templates/admin/talk.html:71
+#: app/templates/admin/talk.html:88 app/templates/admin/user.html:66
 #: app/templates/auth/login.html:33 app/templates/auth/register.html:35
 #: app/templates/auth/subscription.html:32
 msgid "Cancel"
 msgstr "Abbrechen"
+
+#: app/templates/admin/collection.html:68
+msgid "Are you sure you want to delete this collection?"
+msgstr "Sind Sie sicher, dass Sie diese Kollektion löschen wollen?"
 
 #: app/templates/admin/collections.html:8 app/templates/admin/talks.html:8
 msgid "View related history"
@@ -291,26 +311,6 @@ msgstr "Verwandte Historie anschauen"
 msgid "Add new collection"
 msgstr "Neue Kollektion erstellen"
 
-#: app/templates/admin/collections.html:30 app/templates/admin/talks.html:30
-#: app/templates/admin/users.html:24 app/templates/core/index.html:20
-msgid "View"
-msgstr "Ansehen"
-
-#: app/templates/admin/collections.html:31 app/templates/admin/talks.html:31
-#: app/templates/admin/users.html:25 app/templates/core/collection.html:10
-#: app/templates/core/talk.html:10
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: app/templates/admin/collections.html:32 app/templates/admin/talks.html:32
-msgid "Copy"
-msgstr "Kopie erstellen"
-
-#: app/templates/admin/collections.html:33 app/templates/admin/talks.html:33
-#: app/templates/admin/users.html:26 app/templates/auth/profile.html:50
-msgid "Delete"
-msgstr "Löschen"
-
 #: app/templates/admin/talk.html:5
 msgid "Create Talk"
 msgstr "Talk erstellen"
@@ -319,9 +319,17 @@ msgstr "Talk erstellen"
 msgid "Edit Talk"
 msgstr "Talk bearbeiten"
 
+#: app/templates/admin/talk.html:83
+msgid "Are you sure you want to delete this talk?"
+msgstr "Sind Sie sicher, dass Sie diesen Talk löschen wollen?"
+
 #: app/templates/admin/talks.html:9
 msgid "Add new talk"
 msgstr "Neuen Talk anlegen"
+
+#: app/templates/admin/user.html:5
+msgid "Edit User"
+msgstr "Nutzer bearbeiten"
 
 #: app/templates/auth/profile.html:43
 msgid "Subscriptions"
@@ -347,6 +355,10 @@ msgstr "Kollektion"
 #: app/templates/auth/subscriptions.html:6
 msgid "Upcoming Talks"
 msgstr "Anstehende Talks"
+
+#: app/templates/core/collection.html:10 app/templates/core/talk.html:10
+msgid "Edit"
+msgstr "Bearbeiten"
 
 #: app/templates/core/collection.html:13
 msgid "Edit Subscription"
@@ -403,6 +415,10 @@ msgstr "Registrieren sie sich, um ein Profil zubauen"
 #: app/templates/core/index.html:12
 msgid "Your profile"
 msgstr "Ihr Pofil"
+
+#: app/templates/core/index.html:20
+msgid "View"
+msgstr "Ansehen"
 
 #: app/templates/core/talk.html:21
 msgid "Speaker’s name"
