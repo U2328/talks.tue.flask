@@ -55,14 +55,6 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
 
-    # Mail
-    MAIL_SERVER = "smtp.mailtrap.io"
-    MAIL_PORT = 2525
-    MAIL_USERNAME = "03fdcd845fee1c"
-    MAIL_PASSWORD = "3f1736fad0ce50"
-    MAIL_USE_TLS = True
-    MAIL_USE_SSL = False
-
 
 @_register_config
 class TestingConfig(Config):
