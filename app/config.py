@@ -16,7 +16,7 @@ def _register_config(cls):
 
 
 def get_config():
-    default = "Development" if os.getenv("DEBUG", None) else "Production"
+    default = "Development" if os.getenv("FLASK_DEBUG", None) else "Production"
     return _config_registry[f"{os.environ.get('CONFIG', default)}Config"]
 
 
@@ -48,7 +48,7 @@ class Config:
 
 @_register_config
 class ProductionConfig(Config):
-    ...
+    MINIFY_PAGE = True
 
 
 @_register_config

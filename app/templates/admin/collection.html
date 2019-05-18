@@ -13,11 +13,11 @@
     </div>
 </div>
 <div class="ui attached segment">
-    <form id="collectionForm" method="post" class="ui form" novalidate>
-        {{ form.hidden_tag() }}
+    <form id="collectionForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
+        {{ form.csrf_token }}
         <div class="ui stackable grid">
-            <div class="two column row">
-                <div class="twelve wide column">
+            <div class="{% if has_full_access %}two column{% endif %} row">
+                <div class="{% if has_full_access %}twelve{% else %}sixteen{% endif %} wide column">
                     <div class="field{% if form.title.errors %} error{% endif %}">
                         {{ form.title.label }}
                         {{ form.title(size=32) }}
@@ -27,26 +27,28 @@
                         {{ form.description() }}
                     </div>
                 </div>
-                <div class="four wide column">
-                    <div class="inline field{% if form.is_meta.errors %} error{% endif %}">
-                        <div class="ui toggle checkbox">
-                            {{ form.is_meta(class_="hidden") }}
-                            {{ form.is_meta.label }}
+                {% if has_full_access %}
+                    <div class="four wide column">
+                        <div class="inline field{% if form.is_meta.errors %} error{% endif %}">
+                            <div class="ui toggle checkbox">
+                                {{ form.is_meta(class_="hidden") }}
+                                {{ form.is_meta.label }}
+                            </div>
+                        </div>
+                        <div class="field{% if form.meta_collections.errors %} error{% endif %}">
+                            {{ form.meta_collections.label }}
+                            {{ form.meta_collections(class_='ui search dropdown') }}
+                        </div>
+                        <div class="field{% if form.organizer.errors %} error{% endif %}">
+                            {{ form.organizer.label }}
+                            {{ form.organizer(class_='ui search dropdown') }}
+                        </div>
+                        <div class="field{% if form.editors.errors %} error{% endif %}">
+                            {{ form.editors.label }}
+                            {{ form.editors(class_='ui search dropdown') }}
                         </div>
                     </div>
-                    <div class="field{% if form.meta_collections.errors %} error{% endif %}">
-                        {{ form.meta_collections.label }}
-                        {{ form.meta_collections(class_='ui dropdown') }}
-                    </div>
-                    <div class="field{% if form.organizer.errors %} error{% endif %}">
-                        {{ form.organizer.label }}
-                        {{ form.organizer(class_='ui dropdown') }}
-                    </div>
-                    <div class="field{% if form.editors.errors %} error{% endif %}">
-                        {{ form.editors.label }}
-                        {{ form.editors(class_='ui dropdown') }}
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </form>

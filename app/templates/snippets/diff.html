@@ -4,8 +4,8 @@
             <div class="item">
                 <div class="content">
                     <span class="ui tiny label grey">{{ field }}</span>
-                    <code>{{ changeset["from"] }}</code>
-                    <i class="arrow right icon"></i>&nbsp;<code>{{ changeset["to"] }}</code>
+                    <code>{{ changeset["from"]|json }}</code>
+                    <i class="arrow right icon"></i>&nbsp;<code>{{ changeset["to"]|json }}</code>
                 </div>
             </div>
         {% endfor %}

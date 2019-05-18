@@ -10,61 +10,54 @@ from . import bp
 from .forms import LoginForm, RegistrationForm, ProfileForm, SubscriptionForm
 
 
-__all__ = (
-    'login',
-    'logout',
-    'register',
-    'profile',
-    'subscribe',
-    'subscription',
-)
+__all__ = ("login", "logout", "register", "profile", "subscribe", "subscription")
 
 
-@bp.route('/login', methods=['GET', 'POST'])
+@bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('core.index'))
+        return redirect(url_for("core.index"))
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash(_('Invalid username or password'), 'danger')
-            return redirect(url_for('auth.login'))
+            flash(_("Invalid username or password"), "error")
+            return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
-        flash(_('Logged in as %(username)s.', username=user.username), 'info')
+        flash(_("Logged in as %(username)s.", username=user.username), "info")
         current_app.logger.info(f"User logged in: {user}")
-        next = request.args.get('next')
+        next = request.args.get("next")
         if not is_safe_url(next):
             return abort(400)
-        return redirect(next or url_for('core.index'))
-    return render_template('auth/login.html', title='Sign In', form=form)
+        return redirect(next or url_for("core.index"))
+    return render_template("auth/login.html", title="Sign In", form=form)
 
 
-@bp.route('/logout')
+@bp.route("/logout")
 def logout():
     current_app.logger.info(f"User logged out: {current_user}")
     logout_user()
-    flash(_('Logged out.'), 'info')
-    return redirect(url_for('core.index'))
+    flash(_("Logged out."), "info")
+    return redirect(url_for("core.index"))
 
 
-@bp.route('/register', methods=['GET', 'POST'])
+@bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('core.index'))
+        return redirect(url_for("core.index"))
     form = RegistrationForm(request.form)
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash(_('Congratulations, you are now a registered user!'), 'success')
+        flash(_("Congratulations, you are now a registered user!"), "success")
         current_app.logger.info(f"New user registered: {user}")
-        return redirect(url_for('auth.login'))
-    return render_template('auth/register.html', title='Register', form=form)
+        return redirect(url_for("auth.login"))
+    return render_template("auth/register.html", title="Register", form=form)
 
 
-@bp.route('/profile', methods=['GET', 'POST'])
+@bp.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
     user = current_user
@@ -77,47 +70,49 @@ def profile():
         if form.tags is not None:
             user.tags = form.tags.data
         db.session.commit()
-        flash(_('Your profile has been updated.'), 'success')
+        flash(_("Your profile has been updated."), "success")
         current_app.logger.info(f"Updated user: {user}")
-        return redirect(url_for('auth.login'))
-    return render_template('auth/profile.html', title="Profile", form=form, user=user, subscriptions=current_user.subscriptions)
+        return redirect(url_for("auth.login"))
+    return render_template(
+        "auth/profile.html",
+        title="Profile",
+        form=form,
+        user=user,
+        subscriptions=current_user.subscriptions,
+    )
 
 
-@bp.route('/subscribe/<int:id>')
+@bp.route("/subscribe/<int:id>")
 @login_required
 def subscribe(id):
-    subscription = Subscription(
-        collection=Collection.query.get(id),
-        user=current_user
-    )
+    subscription = Subscription(collection=Collection.query.get(id), user=current_user)
     db.session.add(subscription)
     db.session.commit()
-    next = request.args.get('next')
+    next = request.args.get("next")
     if not is_safe_url(next):
         return abort(400)
     if next is not None:
-        return redirect(url_for('auth.subscription', id=id) + f"?next={next}")
+        return redirect(url_for("auth.subscription", id=id) + f"?next={next}")
     else:
-        return redirect(url_for('auth.subscription', id=id))
+        return redirect(url_for("auth.subscription", id=id))
 
 
-@bp.route('/subscription/<int:id>', methods=['GET', 'POST'])
+@bp.route("/subscription/<int:id>", methods=["GET", "POST"])
 @login_required
 def subscription(id):
     subscription = Subscription.query.filter(
-        Subscription.collection_id == id,
-        Subscription.user == current_user
+        Subscription.collection_id == id, Subscription.user == current_user
     )
     if not subscription:
         return abort(404)
     else:
         subscription = subscription[0]
 
-    next = request.args.get('next')
+    next = request.args.get("next")
     if not is_safe_url(next):
         return abort(400)
     else:
-        next = next or url_for('auth.profile')
+        next = next or url_for("auth.profile")
 
     form = SubscriptionForm(obj=subscription)
     if form.validate_on_submit():
@@ -125,41 +120,42 @@ def subscription(id):
         db.session.commit()
         return redirect(next)
     return render_template(
-        'auth/subscription.html',
+        "auth/subscription.html",
         title=f"Subscription to {subscription.collection.title}",
         subscription=subscription,
-        form=form, next=next
+        form=form,
+        next=next,
     )
 
 
-@bp.route('/subscription/<int:id>/delete')
+@bp.route("/subscription/<int:id>/delete")
 @login_required
 def subscription_delete(id):
     subscription = Subscription.query.filter(
-        Subscription.collection_id == id,
-        Subscription.user == current_user
+        Subscription.collection_id == id, Subscription.user == current_user
     )
     if not subscription:
         return abort(404)
     else:
         subscription = subscription[0]
 
-    next = request.args.get('next')
+    next = request.args.get("next")
     if not is_safe_url(next):
         return abort(400)
     else:
-        next = next or url_for('auth.profile')
+        next = next or url_for("auth.profile")
 
     db.session.delete(subscription)
     db.session.commit()
     return redirect(next)
 
 
-@bp.route('/subscriptions')
+@bp.route("/subscriptions")
 @login_required
 def subscriptions():
-    table = TalkTable(query=Talk.query.filter(Talk.id.in_([talk.id for talk in current_user.upcoming_talks])))
-    return render_template(
-        'auth/subscriptions.html',
-        table=table
+    table = TalkTable(
+        query=Talk.query.filter(
+            Talk.id.in_([talk.id for talk in current_user.upcoming_talks])
+        )
     )
+    return render_template("auth/subscriptions.html", table=table)

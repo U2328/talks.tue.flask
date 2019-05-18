@@ -1,7 +1,7 @@
 from datetime import datetime
 from dateutil.parser import parse as parse_datetime
 
-from sqlalchemy import or_
+from flask import current_app, request
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -9,12 +9,11 @@ from wtforms import (
     BooleanField,
     DateTimeField as _DateTimeField,
     TextAreaField,
-    PasswordField,
 )
 
 
-from wtforms.validators import DataRequired, Length, ValidationError, Email, EqualTo
-from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField, QuerySelectField
+from wtforms.validators import DataRequired, Length, ValidationError, Email
+from wtforms_alchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_babel import lazy_gettext as _l
 
 from app.models import Tag, Collection, User
@@ -70,9 +69,7 @@ class CollectionForm(FlaskForm):
     )
     organizer = QuerySelectField(
         _l("Organizer"),
-        query_factory=lambda: User.query.filter(
-            or_(User.is_organizer == True, User.is_admin == True)
-        ),
+        query_factory=lambda: User.query.filter(User.is_organizer == True),
     )
     editors = QuerySelectMultipleField(_l("Editors"), query_factory=lambda: User.query)
     submit = SubmitField(_l("Save"))
@@ -81,20 +78,18 @@ class CollectionForm(FlaskForm):
 class UserForm(FlaskForm):
     username = StringField(_l("Username"), validators=[DataRequired()])
     email = StringField(_l("Email"), validators=[DataRequired(), Email()])
-    password = PasswordField(_l("Password"), validators=[DataRequired()])
-    password2 = PasswordField(
-        _l("Repeat Password"), validators=[DataRequired(), EqualTo("password")]
-    )
     is_admin = BooleanField(_l("Is Admin?"))
     is_organizer = BooleanField(_l("Is Organizer?"))
     submit = SubmitField(_l("Save"))
 
     def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError(_("Please use a different username."))
+        if username.data != username.object_data:
+            user = User.query.filter_by(username=username.data).first()
+            if user is not None:
+                raise ValidationError(_l("Please use a different username."))
 
     def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
-        if user is not None:
-            raise ValidationError(_("Please use a different email address."))
+        if email.data != email.object_data:
+            user = User.query.filter_by(email=email.data).first()
+            if user is not None:
+                raise ValidationError(_l("Please use a different email address."))

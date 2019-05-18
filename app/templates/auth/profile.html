@@ -8,25 +8,25 @@
                 <h3>{{ _("Profile") }}</h3>
             </div>
             <div class="ui segment">
-                <form id="loginForm" method="post" class="ui form" novalidate>
-                    {{ form.hidden_tag() }}
+                <form id="loginForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
+                    {{ form.csrf_token }}
                     <div class="field">
                         {{ user.username.label }}
                         <input type="text" placeholder="{{ user.username }}" readonly>
                     </div>
-                    <div class="field">
+                    <div class="field{% if form.email.errors %} error{% endif %}">
                         {{ form.email.label }}
                         {{ form.email(size=32) }}
                     </div>
-                    <div class="field">
+                    <div class="field{% if form.password.errors %} error{% endif %}">
                         {{ form.password.label }}
                         {{ form.password(size=32) }}
                     </div>
-                    <div class="field">
+                    <div class="field{% if form.password2.errors %} error{% endif %}">
                         {{ form.password2.label }}
                         {{ form.password2(size=32) }}
                     </div>
-                    <div class="field">
+                    <div class="field{% if form.tags.errors %} error{% endif %}">
                         {{ form.tags.label }}
                         {{ form.tags(class_="ui dropdown") }}
                     </div>

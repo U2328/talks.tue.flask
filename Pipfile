@@ -18,18 +18,20 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-caching = "*"
 flask-wtf = "*"
+WTForms-Alchemy = "*"
 flask-mail = "*"
 flask-login = "*"
 flask-permissions = "*"
 flask-babel = "*"
 flask-moment = "*"
+flask-htmlmin = "*"
 markdown = "*"
 pygments = "*"
 pymdown-extensions = "*"
-app = {version = "*",editable = true}
 celery = "*"
 redis = "*"
 watchdog = "*"
+app = {version = "*",editable = true}
 
 [requires]
 python_version = "3.7"

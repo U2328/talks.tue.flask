@@ -9,47 +9,29 @@
     </div>
 </div>
 <div class="ui attached segment">
-    <form id="userForm" method="post" class="ui form" novalidate>
-        {{ form.hidden_tag() }}
+    <form id="userForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
+        {{ form.csrf_token }}
         <div class="ui stackable grid">
-            <div class="two column row">
-                <div class="wide column">
-                    <div class="field{% if form.username.errors %} error{% endif %}">
+            <div class="three column row">
+                <div class="six wide column">
+                    <div class="inline field{% if form.username.errors %} error{% endif %}">
                         {{ form.username.label }}
                         {{ form.username(size=32) }}
                     </div>
                 </div>
-                <div class="wide column">
-                    <div class="field{% if form.email.errors %} error{% endif %}">
+                <div class="six wide column">
+                    <div class="inline field{% if form.email.errors %} error{% endif %}">
                         {{ form.email.label }}
                         {{ form.email() }}
                     </div>
                 </div>
-            </div>
-            <div class="two column row">
-                <div class="wide column">
-                    <div class="field{% if form.password.errors %} error{% endif %}">
-                        {{ form.password.label }}
-                        {{ form.password(size=32) }}
-                    </div>
-                </div>
-                <div class="wide column">
-                    <div class="field{% if form.password2.errors %} error{% endif %}">
-                        {{ form.password2.label }}
-                        {{ form.password2() }}
-                    </div>
-                </div>
-            </div>
-            <div class="two column row">
-                <div class="column">
+                <div class="four wide column">
                     <div class="field{% if form.is_admin.errors %} error{% endif %}">
                         <div class="ui toggle checkbox">
                             {{ form.is_admin(class_="hidden") }}
                             {{ form.is_admin.label }}
                         </div>
                     </div>
-                </div>
-                <div class="column">
                     <div class="field{% if form.is_organizer.errors %} error{% endif %}">
                         <div class="ui toggle checkbox">
                             {{ form.is_organizer(class_="hidden") }}

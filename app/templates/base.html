@@ -69,6 +69,17 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
+            {% if form %}
+                {% if form.errors %}
+                    <div class="ui error message">
+                        <i class="close icon"></i>
+                        <div class="header">{{ _("Errors") }}</div>
+                        <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
+                            <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endif %}
             {% block content %}{% endblock content%}
             <div class="ui menu secondary">
                 <a class="ui button right item" href="#">{{ _('Back to top') }}</a>

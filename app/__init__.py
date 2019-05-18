@@ -1,6 +1,7 @@
 from logging.config import dictConfig
 
 from flask import Flask, request, g, Markup
+from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -8,6 +9,8 @@ from flask_babel import Babel, lazy_gettext as _l
 from flask_moment import Moment
 from flask_caching import Cache
 from flask_mail import Mail
+from flask_htmlmin import HTMLMIN
+
 from celery import Celery
 from markdown import Markdown
 
@@ -19,6 +22,7 @@ __all__ = ("create_app", "db", "migrate", "login", "babel", "moment", "celery", 
 
 config = get_config()
 
+csrf = CSRFProtect()
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
@@ -28,6 +32,7 @@ login.login_view = "auth.login"
 login.login_message = _l("Please log in to access this page.")
 cache = Cache(config={"CACHE_TYPE": "simple"})
 mail = Mail()
+htmlmin = HTMLMIN()
 celery = Celery(__name__)
 celery.config_from_object(config)
 md = Markdown(
@@ -59,6 +64,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
 
+    csrf.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
     babel.init_app(app)
@@ -66,9 +72,13 @@ def create_app():
     login.init_app(app)
     cache.init_app(app)
     mail.init_app(app)
+    htmlmin.init_app(app)
     app.jinja_env.filters.setdefault("markdown", markdown)
 
-    from app import models, tasks  # noqa: F402, F401
+    from app import models, tasks, filters  # noqa: F402, F401
+
+    _filters = {name: getattr(filters, name) for name in filters.__all__}
+    app.jinja_env.filters.update(_filters)
 
     app.register_blueprint(core_bp)
     app.register_blueprint(errors_bp)

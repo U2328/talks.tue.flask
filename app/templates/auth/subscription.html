@@ -9,8 +9,8 @@
             </div>
         </div>
         <div class="ui attached segment">
-            <form id="subscriptionForm" method="post" class="ui form" novalidate>
-                {{ form.hidden_tag() }}
+            <form id="subscriptionForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
+                {{ form.csrf_token }}
                 <div class="field">
                     <label>{{ _("Collection") }}</label>
                     <input type="text" placeholder="{{ subscription.collection.title }}" readonly>

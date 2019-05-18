@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, abort, current_app
 from flask_login import current_user, login_required
+from sqlalchemy import or_
 
 from . import bp
 from .forms import TalkForm, TagForm, CollectionForm, UserForm
@@ -55,9 +56,13 @@ def tag():
 def talk(id=None):
     talk = Talk() if id is None else Talk.query.get(id)
 
-    if talk is None and id is not None:
+    if id is not None and talk is None:
         return abort(404)
-    if id is not None and not talk.can_edit(current_user):
+    if not current_user.is_admin and (
+        id is not None
+        and not talk.can_edit(current_user)
+        or len(current_user.edited_collections) == 0
+    ):
         return abort(403)
     if request.args.get("copy", False):
         talk = copy_row(talk, ["id"])
@@ -96,7 +101,7 @@ def delete_talk(id):
 
     if talk is None:
         return abort(404)
-    if not talk.can_edit(current_user):
+    if not (talk.can_edit(current_user) or current_user.is_admin):
         return abort(403)
 
     next = request.args.get("next")
@@ -116,8 +121,17 @@ def delete_talk(id):
 def talks():
     if not current_user.can_edit:
         return abort(403)
+    filters = []
+    if not current_user.is_admin:
+        filters.append(
+            Talk.collections.any(Collection.editors.any(User.id == current_user.id))
+        )
+        if current_user.is_organizer:
+            filters.append(Talk.collections.any(Collection.organizer == current_user))
     return render_template(
-        "admin/talks.html", title="Talks - Admin", talk_table=TalkTable()
+        "admin/talks.html",
+        title="Talks - Admin",
+        talk_table=TalkTable(query=Talk.query.filter(or_(*filters))),
     )
 
 
@@ -126,11 +140,20 @@ def talks():
 @login_required
 def collection(id=None):
     collection = Collection() if id is None else Collection.query.get(id)
+    can_create = current_user.is_organizer or current_user.is_admin
 
     if collection is None and id is not None:
+        # id given but talk not found
         return abort(404)
-    if id is not None and not collection.can_edit(current_user):
+    if (
+        id is not None
+        and not collection.can_edit(current_user)
+        or id is None
+        and not can_create
+    ):
+        # id given but can't edit + id not given but can create
         return abort(403)
+
     if request.args.get("copy", False):
         collection = copy_row(collection, ["id"])
 
@@ -141,7 +164,15 @@ def collection(id=None):
         next = next or url_for("admin.collections")
 
     is_new = collection.id is None
+    if is_new:
+        collection.organizer = current_user
+    has_full_access = current_user.is_admin or collection.organizer == current_user
     form = CollectionForm(obj=collection)
+    if not has_full_access:
+        del form["editors"]
+        del form["organizer"]
+        del form["is_meta"]
+        del form["meta_collections"]
 
     if form.validate_on_submit():
         form.populate_obj(collection)
@@ -149,7 +180,6 @@ def collection(id=None):
         if is_new:
             db.session.add(collection)
         db.session.commit()
-        current_app.logger.debug(collection.organizer)
         return redirect(next)
 
     return render_template(
@@ -157,6 +187,7 @@ def collection(id=None):
         title="Collection - Admin",
         form=form,
         new=is_new,
+        has_full_access=has_full_access,
         next=next,
         collection=collection,
     )
@@ -169,7 +200,7 @@ def delete_collection(id):
 
     if collection is None:
         return abort(404)
-    if not collection.can_edit(current_user):
+    if not (collection.organizer == current_user or current_user.is_admin):
         return abort(403)
 
     next = request.args.get("next")
@@ -189,10 +220,15 @@ def delete_collection(id):
 def collections():
     if not current_user.can_edit:
         return abort(403)
+    filters = []
+    if not current_user.is_admin:
+        filters.append(Collection.editors.any(User.id == current_user.id))
+        if current_user.is_organizer:
+            filters.append(Collection.organizer == current_user)
     return render_template(
         "admin/collections.html",
         title="Collections - Admin",
-        collection_table=CollectionTable(),
+        collection_table=CollectionTable(query=Collection.query.filter(or_(*filters))),
     )
 
 
@@ -219,9 +255,10 @@ def user(id=None):
 
     if form.validate_on_submit():
         form.populate_obj(user)
-        HistoryItem.build_for(user)
         db.session.commit()
         return redirect(next)
+
+    current_app.logger.error(form.errors.values())
 
     return render_template(
         "admin/user.html", title="User - Admin", form=form, next=next, user=user

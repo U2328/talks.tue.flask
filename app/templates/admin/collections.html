@@ -6,7 +6,9 @@
     </div>
     <div class="right labeled icon menu">
         <a href="{{ url_for('admin.historyitems', discriminator="collection") }}" class="ui small button item"><i class="history icon"></i>{{ _("View related history") }}</a>
-        <a href="{{ url_for('admin.collection') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new collection") }}</a>
+        {% if current_user.is_organizer or current_user.is_admin%}
+            <a href="{{ url_for('admin.collection') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new collection") }}</a>
+        {% endif %}
     </div>
 </div>
 <div class="ui bottom attached segment">

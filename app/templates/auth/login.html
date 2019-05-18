@@ -9,8 +9,8 @@
             </div>
         </div>
         <div class="ui attached segment">
-            <form id="loginForm" method="post" class="ui form" novalidate>
-                {{ form.hidden_tag() }}
+            <form id="loginForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
+                {{ form.csrf_token }}
                 <div class="field{% if form.username.errors %} error{% endif %}">
                     {{ form.username.label }}
                     {{ form.username(size=32) }}
