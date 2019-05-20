@@ -63,7 +63,7 @@ def profile():
     user = current_user
     form = ProfileForm(request.form, obj=user)
     if form.validate_on_submit():
-        if form.password.data is not None:
+        if form.password.data:
             user.set_password(form.password.data)
         if form.email is not None:
             user.email = form.email.data
@@ -72,7 +72,7 @@ def profile():
         db.session.commit()
         flash(_("Your profile has been updated."), "success")
         current_app.logger.info(f"Updated user: {user}")
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth.profile"))
     return render_template(
         "auth/profile.html",
         title="Profile",
