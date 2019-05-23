@@ -77,6 +77,7 @@ class DataTable:
                         or value in str(getattr(obj, col["field"]))
                     )
                     for col in self.cols
+                    if col.get("filterable", True)
                 )
                 for value in filter_values
             )
@@ -199,7 +200,7 @@ class ModelDataTable(DataTable, new_base=True):
             or_(
                 cast(self.db_cols[col["field"]], Text).contains(value)
                 for col in self.cols
-                if col["field"] in self.db_cols
+                if col.get("filterable", True) and col["field"] in self.db_cols
             )
             for value in filter_values
         ]

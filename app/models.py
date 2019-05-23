@@ -484,3 +484,17 @@ class Tag(db.Model):  # type: ignore
 
     def render(self):
         return self.name
+
+
+class AccessToken(db.Model):  # type: ignore
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(128), unique=True, nullable=True)
+    password_hash = db.Column(db.String(128))
+    talk_id = db.Column(db.Integer, db.ForeignKey("talk.id"))
+    talk = db.relationship("Talk", backref=backref("access_tokens"))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
