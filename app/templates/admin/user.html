@@ -49,7 +49,7 @@
 </div>
 <div id="historyModal" class="ui tiny longer modal">
     <div class="header">{{ _("History") }}</div>
-    <div class="content">
+    <div class="scrolling content">
         {% with history=user.history %}
             {% include 'snippets/historyitems.html' %}
         {% endwith %}
