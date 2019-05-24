@@ -28,8 +28,8 @@ babel_compile: ## compile all language files
 db_migrate: ## generate database-migration
 	docker-compose exec app flask db migrate
 
-db_apply: ## apply database-migration
-	docker-compose exec app flask db apply
+db_upgrade: ## upgrade database to newest revision
+	docker-compose exec app flask db upgrade
 
 db_migration: ## find out what the current db revision is
 	docker-compose exec app flask db show
