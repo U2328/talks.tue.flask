@@ -6,16 +6,22 @@
         <h3><i class="calendar icon"></i>&nbsp;{{ _('Collections') }}</h3>
     </div>
     {% if current_user.can_edit %}
-        <div class="right labeled icon menu">
-            {% if not editables %}
-                <a href="{{ url_for('core.editable_collections') }}" class="ui small button item"><i class="edit outline icon"></i>{{ _("View editable collections") }}</a>
-            {% else %}
-                <a href="{{ url_for('core.collections') }}" class="ui small button item"><i class="backward icon"></i></i>{{ _("View all collections") }}</a>
-                <a href="{{ url_for('core.historyitems', discriminator="collection") }}" class="ui small button item"><i class="history icon"></i>{{ _("View related history") }}</a>
-            {% endif %}
-            {% if current_user.is_organizer or current_user.is_admin%}
-                <a href="{{ url_for('core.edit_collection') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new collection") }}</a>
-            {% endif %}
+        <div class="right menu">
+            <div class="ui simple dropdown item">
+                {{ _('Edit') }}
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    {% if not editables %}
+                        <a href="{{ url_for('core.editable_collections') }}" class="ui small button item"><i class="edit outline icon"></i>{{ _("View editable collections") }}</a>
+                    {% else %}
+                        <a href="{{ url_for('core.collections') }}" class="ui small button item"><i class="backward icon"></i></i>{{ _("View all collections") }}</a>
+                        <a href="{{ url_for('core.historyitems', discriminator="collection") }}" class="ui small button item"><i class="history icon"></i>{{ _("View related history") }}</a>
+                    {% endif %}
+                    {% if current_user.is_organizer or current_user.is_admin%}
+                        <a href="{{ url_for('core.edit_collection') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new collection") }}</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     {% endif %}
 </div>
