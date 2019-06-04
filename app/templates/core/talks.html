@@ -5,6 +5,17 @@
     <div class="item">
         <h3><i class="calendar icon"></i>&nbsp;{{ _('Talks') }}</h3>
     </div>
+    {% if current_user.can_edit %}
+        <div class="right labeled icon menu">
+            {% if not editables %}
+                <a href="{{ url_for('core.editable_talks') }}" class="ui small button item"><i class="edit outline icon"></i>{{ _("View editable talks") }}</a>
+            {% else %}
+                <a href="{{ url_for('core.talks') }}" class="ui small button item"><i class="backward icon"></i></i>{{ _("View all talks") }}</a>
+                <a href="{{ url_for('core.historyitems', discriminator="talk") }}" class="ui small button item"><i class="history icon"></i>{{ _("View related history") }}</a>
+            {% endif %}
+            <a href="{{ url_for('core.edit_talk') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new talk") }}</a>
+        </div>
+    {% endif %}
 </div>
 <div class="ui bottom attached segment">
     {{ table.generate_html() | safe }}

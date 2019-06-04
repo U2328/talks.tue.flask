@@ -1,7 +1,6 @@
 from datetime import datetime
 from dateutil.parser import parse as parse_datetime
 
-from flask import current_app, request
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -9,10 +8,11 @@ from wtforms import (
     BooleanField,
     DateTimeField as _DateTimeField,
     TextAreaField,
+    PasswordField,
 )
 
 
-from wtforms.validators import DataRequired, Length, ValidationError, Email
+from wtforms.validators import DataRequired, Length, ValidationError, Email, EqualTo
 from wtforms_alchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_babel import lazy_gettext as _l
 
@@ -50,7 +50,7 @@ class TalkForm(FlaskForm):
     speaker_name = StringField(
         _l("Speaker's Name"), validators=[DataRequired(), Length(max=64)]
     )
-    speaker_aboutme = TextAreaField(_l("Speaker's About me"))
+    speaker_aboutme = TextAreaField(_l("Speaker's Bio"))
     collections = QuerySelectMultipleField(
         _l("Collections"),
         query_factory=lambda: Collection.query.filter(Collection.is_meta == False),
@@ -93,3 +93,10 @@ class UserForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user is not None:
                 raise ValidationError(_l("Please use a different email address."))
+
+
+class AccessTokenForm(FlaskForm):
+    password = PasswordField(_l("Password"), validators=[DataRequired()])
+    password2 = PasswordField(
+        _l("Repeat Password"), validators=[DataRequired(), EqualTo("password")]
+    )

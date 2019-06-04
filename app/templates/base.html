@@ -27,34 +27,24 @@
             <div class="ui large menu borderless top">
                 {% block navbar %}
                     <a class="item" href="{{ url_for('core.index') }}"><h3><i class="university icon"></i>&nbsp;Talks.Tue</h3></a>
-                    {% if not current_user.is_anonymous %}
-                        <div class="ui simple dropdown item">
-                            {{ _("Personal") }}
-                            <i class="dropdown icon"></i>
-                            <div class="menu">
-                                <a class="item" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
-                                <a class="item" href="{{ url_for('auth.subscriptions') }}">{{ _('Upcoming talks') }}</a>
-                            </div>
+                    <div class="ui simple dropdown item">
+                        {{ _("Browse") }}
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <a class="item" href="{{ url_for('core.talks') }}">{{ _('Talks') }}</a>
+                            <a class="item" href="{{ url_for('core.collections') }}">{{ _('Collections') }}</a>
+                            {% if current_user.is_admin %}
+                                <a class="item" href="{{ url_for('core.users') }}">{{ _('Users') }}</a>
+                            {% endif %}
                         </div>
-                    {% endif %}
-                    {% if current_user.can_edit %}
-                        <div class="ui simple dropdown item">
-                            {{ _("Admin") }}
-                            <i class="dropdown icon"></i>
-                            <div class="menu">
-                                <a class="item" href="{{ url_for('admin.talks') }}">{{ _('Talks') }}</a>
-                                <a class="item" href="{{ url_for('admin.collections') }}">{{ _('Collections') }}</a>
-                                {% if current_user.is_admin %}
-                                    <a class="item" href="{{ url_for('admin.users') }}">{{ _('Users') }}</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endif %}
+                    </div>
                     <div class="right menu">
                         {% if current_user.is_anonymous %}
-                            <a class="item" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
+                            <a class="item" href="{{ url_for('auth.login') }}?next={{ request.path }}">{{ _('Login') }}</a>
                             <a class="item" href="{{ url_for('auth.register') }}">{{ _('Register') }}</a>
                         {% else %}
+                            <a class="item" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
+                            <a class="item" href="{{ url_for('auth.subscriptions') }}">{{ _('Upcoming talks') }}</a>
                             <a class="item" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
                         {% endif %}
                     </div>

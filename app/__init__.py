@@ -56,7 +56,6 @@ from app.core import bp as core_bp  # noqa: E402
 from app.auth import bp as auth_bp  # noqa: E402
 from app.api import bp as api_bp  # noqa: E402
 from app.errors import bp as errors_bp  # noqa: E402
-from app.admin import bp as admin_bp  # noqa: E402
 
 
 def create_app():
@@ -83,7 +82,6 @@ def create_app():
     app.register_blueprint(core_bp)
     app.register_blueprint(errors_bp)
     app.register_blueprint(auth_bp)
-    app.register_blueprint(admin_bp, url_prefix="/admin")
     app.register_blueprint(api_bp, url_prefix="/api")
 
     @babel.localeselector

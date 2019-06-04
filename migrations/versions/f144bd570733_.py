@@ -21,7 +21,7 @@ def upgrade():
     op.create_table(
         "access_token",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("uuid", sa.String(length=128), nullable=True),
+        sa.Column("uuid", sa.String(length=128)),
         sa.Column("password_hash", sa.String(length=128), nullable=True),
         sa.Column("talk_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(["talk_id"], ["talk.id"]),

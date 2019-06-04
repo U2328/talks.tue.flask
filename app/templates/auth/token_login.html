@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui one column stackable centered aligned page grid">
+    <div class="column twelve wide">
+        <div class="ui top attached secondary menu">
+            <div class="item">
+                <h3>{{ _('Enable token access') }}</h3>
+            </div>
+        </div>
+        <div class="ui attached segment">
+            <form id="accessTokenForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
+                {{ form.csrf_token }}
+                <div class="disabled field" data-children-count="1">
+                    <input type="text" placeholder="{{ uuid }}">
+                </div>
+                <div class="field{% if form.password.errors %} error{% endif %}">
+                    {{ form.password.label }}
+                    {{ form.password(size=32) }}
+                </div>
+            </form>
+        </div>
+        <div class="ui bottom attached segment">
+            {{ form.submit(form='accessTokenForm', class="ui button positive") }}
+            <a class="ui button negative" href="{{ url_for('core.index') }}">{{ _('Cancel') }}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

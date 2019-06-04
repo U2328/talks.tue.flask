@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="ui top attached secondary menu">
+    <div class="item">
+        <h3><i class="calendar icon"></i>&nbsp;{{ _('Collections') }}</h3>
+    </div>
+    {% if current_user.can_edit %}
+        <div class="right labeled icon menu">
+            {% if not editables %}
+                <a href="{{ url_for('core.editable_collections') }}" class="ui small button item"><i class="edit outline icon"></i>{{ _("View editable collections") }}</a>
+            {% else %}
+                <a href="{{ url_for('core.collections') }}" class="ui small button item"><i class="backward icon"></i></i>{{ _("View all collections") }}</a>
+                <a href="{{ url_for('core.historyitems', discriminator="collection") }}" class="ui small button item"><i class="history icon"></i>{{ _("View related history") }}</a>
+            {% endif %}
+            {% if current_user.is_organizer or current_user.is_admin%}
+                <a href="{{ url_for('core.edit_collection') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new collection") }}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+<div class="ui bottom attached segment">
+    {{ table.generate_html() | safe }}
+</div>
+{% endblock content %}
+{% block script %}
+{{ table.generate_js(url_for('api.collection_table')) | safe }}
+<script type="text/javascript">
+    $('#{{ table.table_id }}').on('click', '.{{ table.table_id }}-row', function () {window.open("{{ url_for('core.collection') }}/" + $(this).attr('id'), "_self");});
+</script>
+{% endblock script %}

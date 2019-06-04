@@ -1,13 +1,28 @@
-from flask import render_template, redirect, flash, url_for, request, abort, current_app
+from flask import (
+    render_template,
+    redirect,
+    flash,
+    url_for,
+    request,
+    abort,
+    current_app,
+    session,
+)
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import _
 
 from app import db
 from app.utils import is_safe_url
-from app.models import User, Subscription, Collection, Talk
+from app.models import User, Subscription, Collection, Talk, AccessToken
 from app.api.routes import TalkTable
 from . import bp
-from .forms import LoginForm, RegistrationForm, ProfileForm, SubscriptionForm
+from .forms import (
+    LoginForm,
+    RegistrationForm,
+    ProfileForm,
+    SubscriptionForm,
+    AccessTokenForm,
+)
 
 
 __all__ = ("login", "logout", "register", "profile", "subscribe", "subscription")
@@ -159,3 +174,27 @@ def subscriptions():
         )
     )
     return render_template("auth/subscriptions.html", table=table)
+
+
+@bp.route("/token/<uuid>", methods=["GET", "POST"])
+def token_login(uuid):
+    form = AccessTokenForm(request.form)
+    if form.validate_on_submit():
+        token = AccessToken.query.filter_by(uuid=uuid).first()
+        if token is None:
+            return abort(404)
+        if not token.check_password(form.password.data):
+            flash(_("Invalid password"), "error")
+            return redirect(url_for("auth.token_login", uuid=uuid))
+        if "access_tokens" not in session:
+            session["access_tokens"] = []
+        session["access_tokens"].append(token.id)
+        session.modified = True
+        flash(_("Enabled access token %(uuid)s.", uuid=uuid), "info")
+        next = request.args.get("next")
+        if not is_safe_url(next):
+            return abort(400)
+        return redirect(next or url_for("core.index"))
+    return render_template(
+        "auth/token_login.html", title="Enable token access", uuid=uuid, form=form
+    )

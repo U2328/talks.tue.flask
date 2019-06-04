@@ -1,4 +1,4 @@
-{% extends "admin/base.html" %}
+{% extends "core/_edit_base.html" %}
 {% block content %}
 <div class="ui top attached secondary menu">
     <div class="item">
@@ -7,7 +7,7 @@
     <div class="right labeled icon menu">
         {% if not new %}
             <a id="historyModalTrigger" class="ui small button item"><i class="history icon"></i>{{ _("History") }}</a>
-            <a class="ui small button item" href="{{ url_for('admin.collection', id=collection.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
+            <a class="ui small button item" href="{{ url_for('core.edit_collection', id=collection.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
             <a id="deleteModalTrigger" class="ui small button item"><i class="trash alternate outline icon"></i>{{ _("Delete") }}</a>
         {% endif %}
     </div>
@@ -69,7 +69,7 @@
     <div id="deleteModal" class="ui tiny longer modal">
         <div class="header">{{ _("Are you sure you want to delete this collection?") }}</div>
         <div class="actions">
-            <a class="ui red labeled icon button" href="{{ url_for('admin.delete_collection', id=collection.id) }}">
+            <a class="ui red labeled icon button" href="{{ url_for('core.delete_collection', id=collection.id) }}">
                 <i class="trash alternate outline icon"></i>{{ _('Delete') }}
             </a>
             <div class="ui deny button">{{ _('Cancel') }}</div>

@@ -1,6 +1,7 @@
 from collections import namedtuple
 from datetime import datetime
 from enum import IntEnum, unique, auto
+from uuid import uuid4
 
 from sqlalchemy import and_, or_, event, inspect
 from sqlalchemy.orm import foreign, backref, remote
@@ -488,10 +489,17 @@ class Tag(db.Model):  # type: ignore
 
 class AccessToken(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(128), unique=True, nullable=True)
+    uuid = db.Column(db.String(128), unique=True)
     password_hash = db.Column(db.String(128))
     talk_id = db.Column(db.Integer, db.ForeignKey("talk.id"))
     talk = db.relationship("Talk", backref=backref("access_tokens"))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        uuid = uuid4()
+        while AccessToken.objects.filter(AccessToken.uuid == uuid).count() > 0:
+            uuid = uuid4()
+        self.uuid = uuid
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

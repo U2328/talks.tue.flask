@@ -7,7 +7,7 @@
     </div>
     <div class="right labeled icon menu">
         {% if can_edit %}
-            <a class="ui small button item" href="{{ url_for('admin.talk', id=talk.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit') }}</a>
+            <a class="ui small button item" href="{{ url_for('core.edit_talk', id=talk.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit') }}</a>
         {% endif %}
     </div>
 </div>
@@ -46,7 +46,7 @@
     <div class="eleven wide column">
         <div class="ui top attached tabular menu">
             <a class="item active" data-tab="description"><i class="readme icon"></i>&nbsp;{{ _("Description") }}</a>
-            <a class="item" data-tab="aboutme"><i class="chalkboard teacher icon"></i>&nbsp;{{ _("Speaker’s about me") }}</a>
+            <a class="item" data-tab="aboutme"><i class="chalkboard teacher icon"></i>&nbsp;{{ _("Speaker's Bio") }}</a>
             {% if talk.can_edit(current_user) %}
                 <a class="item" data-tab="history"><i class="history icon"></i>&nbsp;{{ _("History") }}</a>
             {% endif %}

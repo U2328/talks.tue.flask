@@ -42,9 +42,7 @@ class Config:
         "CELERY_BACKEND_URL", "rpc://talks_tue@rabbit:5672//"
     )
     CELERY_IMPORTS = ("app.tasks",)
-    CELERYBEAT_SCHEDULE = {
-        "every-minute": {"task": "heart_beat", "schedule": crontab(minute="*/1")}
-    }
+    CELERYBEAT_SCHEDULE = dict()
 
 
 @_register_config

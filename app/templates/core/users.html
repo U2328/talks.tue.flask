@@ -1,4 +1,4 @@
-{% extends "admin/base.html" %}
+{% extends "base.html" %}
 {% block content %}
 <div class="ui top attached secondary menu">
     <div class="item">
@@ -12,6 +12,6 @@
 {% block script %}
 {{ user_table.generate_js(url_for('api.user_table')) | safe }}
 <script type="text/javascript">
-    $('#{{ user_table.table_id }}').on('click', '.{{ user_table.table_id }}-row', function () {window.open("{{ url_for('admin.user') }}/" + $(this).attr('id'), "_self");});
+    $('#{{ user_table.table_id }}').on('click', '.{{ user_table.table_id }}-row', function () {window.open("{{ url_for('core.user') }}/" + $(this).attr('id'), "_self");});
 </script>
 {% endblock script %}

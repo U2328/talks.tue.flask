@@ -7,7 +7,7 @@
     </div>
     <div class="right labeled icon menu">
         {% if can_edit %}
-            <a class="ui small button item" href="{{ url_for('admin.collection', id=collection.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit') }}</a>
+            <a class="ui small button item" href="{{ url_for('core.edit_collection', id=collection.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit') }}</a>
         {% endif %}
         {% if current_user.is_authenticated and current_user.is_subscribed_to(collection) %}
             <a class="ui small primary button item" href="{{ url_for("auth.subscription", id=collection.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit Subscription') }}</a>
