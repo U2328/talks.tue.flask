@@ -76,17 +76,11 @@ class CollectionForm(FlaskForm):
 
 
 class UserForm(FlaskForm):
-    username = StringField(_l("Username"), validators=[DataRequired()])
+    display_name = StringField(_l("Display name"), validators=[DataRequired()])
     email = StringField(_l("Email"), validators=[DataRequired(), Email()])
     is_admin = BooleanField(_l("Is Admin?"))
     is_organizer = BooleanField(_l("Is Organizer?"))
     submit = SubmitField(_l("Save"))
-
-    def validate_username(self, username):
-        if username.data != username.object_data:
-            user = User.query.filter_by(username=username.data).first()
-            if user is not None:
-                raise ValidationError(_l("Please use a different username."))
 
     def validate_email(self, email):
         if email.data != email.object_data:
