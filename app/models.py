@@ -1,5 +1,5 @@
 from collections import namedtuple
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import IntEnum, unique, auto
 from uuid import uuid4
 
@@ -305,7 +305,10 @@ class Talk(HasHistory, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     description = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
+    start_timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
+    end_timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now() + timedelta(minutes=10)
+    )
     speaker_name = db.Column(db.String(64))
     speaker_aboutme = db.Column(db.Text)
     tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=backref("talks"))
