@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-06-03 19:54+0000\n"
+"POT-Creation-Date: 2019-06-04 10:01+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -135,7 +135,7 @@ msgid "Remember Me"
 msgstr "Speichern"
 
 #: app/auth/forms.py:24 app/templates/auth/login.html:8
-#: app/templates/auth/register.html:34 app/templates/base.html:43
+#: app/templates/auth/register.html:34 app/templates/base.html:45
 msgid "Login"
 msgstr "Einloggen"
 
@@ -144,7 +144,7 @@ msgid "Repeat Password"
 msgstr "Passwort widerholen"
 
 #: app/auth/forms.py:34 app/templates/auth/login.html:32
-#: app/templates/auth/register.html:8 app/templates/base.html:44
+#: app/templates/auth/register.html:8 app/templates/base.html:46
 msgid "Register"
 msgstr "Registrieren"
 
@@ -224,7 +224,7 @@ msgstr "Beschreibung"
 msgid "Speaker's Bio"
 msgstr "Informationen über den Redner"
 
-#: app/core/forms.py:55 app/templates/base.html:35
+#: app/core/forms.py:55 app/templates/base.html:34
 #: app/templates/core/collections.html:6 app/templates/core/index.html:9
 #: app/templates/core/talk.html:36
 msgid "Collections"
@@ -246,36 +246,36 @@ msgstr "Organisator"
 msgid "Editors"
 msgstr "Editoren"
 
-#: app/templates/base.html:31
+#: app/templates/base.html:30
 msgid "Browse"
 msgstr "Stöbern"
 
-#: app/templates/base.html:34 app/templates/core/collection.html:66
+#: app/templates/base.html:33 app/templates/core/collection.html:66
 #: app/templates/core/index.html:8 app/templates/core/talks.html:6
 msgid "Talks"
 msgstr "Talks"
 
-#: app/templates/base.html:37 app/templates/core/users.html:5
+#: app/templates/base.html:36 app/templates/core/users.html:5
 msgid "Users"
 msgstr "Nutzer"
 
-#: app/templates/auth/profile.html:8 app/templates/base.html:46
+#: app/templates/auth/profile.html:8 app/templates/base.html:48
 msgid "Profile"
 msgstr "Profil"
 
-#: app/templates/base.html:47
+#: app/templates/base.html:49
 msgid "Upcoming talks"
 msgstr "Anstehende Talks"
 
-#: app/templates/base.html:48
+#: app/templates/base.html:50
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: app/templates/base.html:67
+#: app/templates/base.html:79
 msgid "Errors"
 msgstr "Fehler"
 
-#: app/templates/base.html:89
+#: app/templates/base.html:90
 msgid "Back to top"
 msgstr "Zurück an den Seitenanfang"
 
@@ -325,7 +325,8 @@ msgstr "Anstehende Talks"
 msgid "Enable token access"
 msgstr "Zugriffstoken aktivieren"
 
-#: app/templates/core/collection.html:10 app/templates/core/talk.html:10
+#: app/templates/core/collection.html:10 app/templates/core/collections.html:11
+#: app/templates/core/talk.html:10 app/templates/core/talks.html:11
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -395,19 +396,19 @@ msgstr "Kopie erstellen"
 msgid "Are you sure you want to delete this collection?"
 msgstr "Sind Sie sicher, dass Sie diese Kollektion löschen wollen?"
 
-#: app/templates/core/collections.html:11
+#: app/templates/core/collections.html:15
 msgid "View editable collections"
 msgstr "Editierbare Kollektionen"
 
-#: app/templates/core/collections.html:13
+#: app/templates/core/collections.html:17
 msgid "View all collections"
 msgstr "Alle Kollketionen"
 
-#: app/templates/core/collections.html:14 app/templates/core/talks.html:14
+#: app/templates/core/collections.html:18 app/templates/core/talks.html:18
 msgid "View related history"
 msgstr "Verwandte Historie anschauen"
 
-#: app/templates/core/collections.html:17
+#: app/templates/core/collections.html:21
 msgid "Add new collection"
 msgstr "Neue Kollektion erstellen"
 
@@ -443,15 +444,15 @@ msgstr "Talk bearbeiten"
 msgid "Are you sure you want to delete this talk?"
 msgstr "Sind Sie sicher, dass Sie diesen Talk löschen wollen?"
 
-#: app/templates/core/talks.html:11
+#: app/templates/core/talks.html:15
 msgid "View editable talks"
 msgstr "Editierbare Talks"
 
-#: app/templates/core/talks.html:13
+#: app/templates/core/talks.html:17
 msgid "View all talks"
 msgstr "Alle Talks"
 
-#: app/templates/core/talks.html:16
+#: app/templates/core/talks.html:20
 msgid "Add new talk"
 msgstr "Neuen Talk anlegen"
 
