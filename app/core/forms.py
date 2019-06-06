@@ -41,8 +41,14 @@ class DateTimeField(_DateTimeField):
 class TalkForm(FlaskForm):
     title = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
     description = TextAreaField(_l("Description"))
-    timestamp = DateTimeField(
-        _l("Date/Time"),
+    start_timestamp = DateTimeField(
+        _l("Starting date"),
+        format="%Y.%m.%d %H:%M",
+        default=datetime.now,
+        validators=[DataRequired()],
+    )
+    end_timestamp = DateTimeField(
+        _l("Ending date"),
         format="%Y.%m.%d %H:%M",
         default=datetime.now,
         validators=[DataRequired()],
@@ -57,6 +63,16 @@ class TalkForm(FlaskForm):
     )
     tags = QuerySelectMultipleField(_l("Categories"), query_factory=lambda: Tag.query)
     submit = SubmitField(_l("Save"))
+
+    def validate_start_timestamp(self, start_timestamp):
+        if start_timestamp.data < datetime.now():
+            raise ValidationError(_l("You can only create talks for the future."))
+
+    def validate_end_timestamp(self, end_timestamp):
+        if end_timestamp.data < datetime.now():
+            raise ValidationError(_l("You can only create talks for the future."))
+        if end_timestamp.data <= self.start_timestamp.data:
+            raise ValidationError(_l("Talk durations must be >= 0."))
 
 
 class CollectionForm(FlaskForm):

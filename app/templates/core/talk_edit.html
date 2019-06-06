@@ -48,12 +48,23 @@
             </div>
             <div class="three column row">
                 <div class="column">
-                    <div class="field{% if form.timestamp.errors %} error{% endif %}">
-                        {{ form.timestamp.label }}
-                        <div class="ui calendar" id="timestamp">
+                    <div class="field{% if form.start_timestamp.errors %} error{% endif %}">
+                        {{ form.start_timestamp.label }}
+                        <div class="ui calendar" id="start_timestamp">
                             <div class="ui input left icon">
                                 <i class="calendar icon"></i>
-                                {{ form.timestamp() }}
+                                {{ form.start_timestamp() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field{% if form.end_timestamp.errors %} error{% endif %}">
+                        {{ form.end_timestamp.label }}
+                        <div class="ui calendar" id="end_timestamp">
+                            <div class="ui input left icon">
+                                <i class="calendar icon"></i>
+                                {{ form.end_timestamp() }}
                             </div>
                         </div>
                     </div>
@@ -62,12 +73,6 @@
                     <div class="field{% if form.collections.errors %} error{% endif %}">
                         {{ form.collections.label }}
                         {{ form.collections(class_='ui dropdown') }}
-                    </div>
-                </div>
-                <div class="column">
-                    <div class="field{% if form.tags.errors %} error{% endif %}">
-                        {{ form.tags.label }}
-                        {{ form.tags(class_='ui dropdown') }}
                     </div>
                 </div>
             </div>
@@ -105,6 +110,7 @@
     $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
     $('#deleteModal').modal('attach events', '#deleteModalTrigger', 'show');
     $('.ui.dropdown').dropdown();
-    $('#timestamp').calendar({ ampm: false });
+    $('#start_timestamp').calendar({ ampm: false });
+    $('#end_timestamp').calendar({ ampm: false });
 </script>
 {% endblock script %}

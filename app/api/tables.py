@@ -13,8 +13,14 @@ class TalkTable(ModelDataTable):
     cols = [
         {"field": "title", "name": _l("Name")},
         {
-            "field": "timestamp",
-            "name": _l("Date/Time"),
+            "field": "start_timestamp",
+            "name": _l("Starting date"),
+            "weight": 0,
+            "render": "function(data, type, row) {return moment(data).calendar();}",
+        },
+        {
+            "field": "end_timestamp",
+            "name": _l("Ending date"),
             "weight": 0,
             "render": "function(data, type, row) {return moment(data).calendar();}",
         },
