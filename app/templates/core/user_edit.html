@@ -8,15 +8,23 @@
         <a id="historyModalTrigger" class="ui small button item"><i class="history icon"></i>{{ _("History") }}</a>
     </div>
 </div>
+{% if form.errors %}
+    <div class="ui attached small error message">
+        <div class="header">{{ _("Errors") }}</div>
+        <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
+            <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
+        </ul>
+    </div>
+{% endif %}
 <div class="ui attached segment">
     <form id="userForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
         {{ form.csrf_token }}
         <div class="ui stackable grid">
             <div class="three column row">
                 <div class="six wide column">
-                    <div class="inline field{% if form.username.errors %} error{% endif %}">
-                        {{ form.username.label }}
-                        {{ form.username(size=32) }}
+                    <div class="inline field{% if form.display_name.errors %} error{% endif %}">
+                        {{ form.display_name.label }}
+                        {{ form.display_name(size=32) }}
                     </div>
                 </div>
                 <div class="six wide column">

@@ -4,15 +4,23 @@
 <div class="ui two column stackable page grid">
     <div class="eight wide column">
         <div class="ui segments">
-            <div class="ui segment">
+            <div class="ui top attached segment">
                 <h3>{{ _("Profile") }}</h3>
             </div>
-            <div class="ui segment">
+            {% if form.errors %}
+                <div class="ui attached small error message">
+                    <div class="header">{{ _("Errors") }}</div>
+                    <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
+                        <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <div class="ui attached segment">
                 <form id="loginForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
                     {{ form.csrf_token }}
                     <div class="field">
-                        {{ user.username.label }}
-                        <input type="text" placeholder="{{ user.username }}" readonly>
+                        {{ user.display_name.label }}
+                        <input type="text" placeholder="{{ user.display_name }}" readonly>
                     </div>
                     <div class="field{% if form.email.errors %} error{% endif %}">
                         {{ form.email.label }}
@@ -32,7 +40,7 @@
                     </div>
                 </form>
             </div>
-            <div class="ui segment">
+            <div class="ui bottom attached segment">
                 {{ form.submit(form='loginForm', class="ui button positive") }}
             </div>
         </div>

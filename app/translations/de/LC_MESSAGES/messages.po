@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-06-04 10:01+0000\n"
+"POT-Creation-Date: 2019-06-06 19:01+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -107,13 +107,12 @@ msgstr "Nutzer"
 msgid "Changes"
 msgstr "Änderungen"
 
-#: app/api/tables.py:85 app/auth/forms.py:21 app/auth/forms.py:28
-#: app/core/forms.py:79
-msgid "Username"
-msgstr "Benutzername"
+#: app/api/tables.py:85 app/auth/forms.py:28 app/core/forms.py:79
+msgid "Display name"
+msgstr "Name"
 
-#: app/api/tables.py:86 app/auth/forms.py:29 app/auth/forms.py:48
-#: app/core/forms.py:80
+#: app/api/tables.py:86 app/auth/forms.py:21 app/auth/forms.py:29
+#: app/auth/forms.py:43 app/core/forms.py:80
 msgid "Email"
 msgstr "E-Mail"
 
@@ -125,8 +124,8 @@ msgstr "Ist Administrator?"
 msgid "Is Organizer?"
 msgstr "Ist Organisator?"
 
-#: app/auth/forms.py:22 app/auth/forms.py:30 app/auth/forms.py:49
-#: app/auth/forms.py:71 app/core/forms.py:99
+#: app/auth/forms.py:22 app/auth/forms.py:30 app/auth/forms.py:44
+#: app/auth/forms.py:66 app/core/forms.py:93
 msgid "Password"
 msgstr "Passwort"
 
@@ -139,7 +138,7 @@ msgstr "Speichern"
 msgid "Login"
 msgstr "Einloggen"
 
-#: app/auth/forms.py:32 app/auth/forms.py:50 app/core/forms.py:101
+#: app/auth/forms.py:32 app/auth/forms.py:45 app/core/forms.py:95
 msgid "Repeat Password"
 msgstr "Passwort widerholen"
 
@@ -148,61 +147,57 @@ msgstr "Passwort widerholen"
 msgid "Register"
 msgstr "Registrieren"
 
-#: app/auth/forms.py:39 app/core/forms.py:89
-msgid "Please use a different username."
-msgstr "Bitte benutzen sie einen anderen Benutzernamen."
-
-#: app/auth/forms.py:44 app/auth/forms.py:57 app/core/forms.py:95
+#: app/auth/forms.py:39 app/auth/forms.py:52 app/core/forms.py:89
 msgid "Please use a different email address."
 msgstr "Bitte benutzen sie eine andere E-Mail-Adresse."
 
-#: app/auth/forms.py:51 app/core/forms.py:58
+#: app/auth/forms.py:46 app/core/forms.py:58
 msgid "Categories"
 msgstr "Kategorien"
 
-#: app/auth/forms.py:52 app/auth/forms.py:67 app/core/forms.py:59
+#: app/auth/forms.py:47 app/auth/forms.py:62 app/core/forms.py:59
 #: app/core/forms.py:75 app/core/forms.py:83
 msgid "Save"
 msgstr "Speichern"
 
-#: app/auth/forms.py:61
+#: app/auth/forms.py:56
 msgid "Remind me"
 msgstr "Erinnere mich"
 
-#: app/auth/forms.py:63
+#: app/auth/forms.py:58
 msgid "Mode"
 msgstr "Modus"
 
-#: app/auth/forms.py:72
+#: app/auth/forms.py:67
 msgid "Enable"
 msgstr "Aktivieren"
 
 #: app/auth/routes.py:39
-msgid "Invalid username or password"
-msgstr "Ungülitger Benutzername u.o. Passwort"
+msgid "Invalid email or password"
+msgstr "Ungülitge Email oder Passwort"
 
-#: app/auth/routes.py:42
+#: app/auth/routes.py:43
 #, python-format
-msgid "Logged in as %(username)s."
-msgstr "Eingloggt als %(username)s."
+msgid "Logged in as %(display_name)s."
+msgstr "Eingeloggt als %(display_name)s"
 
-#: app/auth/routes.py:55
+#: app/auth/routes.py:57
 msgid "Logged out."
 msgstr "Ausgeloggt."
 
-#: app/auth/routes.py:69
+#: app/auth/routes.py:71
 msgid "Congratulations, you are now a registered user!"
 msgstr "herzlich glückwunsch, sie sind ein registrierter Benutzer!"
 
-#: app/auth/routes.py:88
+#: app/auth/routes.py:90
 msgid "Your profile has been updated."
 msgstr "Ihr Profil wurde aktualisiert."
 
-#: app/auth/routes.py:187
+#: app/auth/routes.py:189
 msgid "Invalid password"
 msgstr "Invalides passwort"
 
-#: app/auth/routes.py:193
+#: app/auth/routes.py:195
 #, python-format
 msgid "Enabled access token %(uuid)s."
 msgstr "Zugriffstoken %(uuid)s aktiviert."
@@ -238,7 +233,7 @@ msgstr "Ist meta?"
 msgid "Meta Collections"
 msgstr "Meta Listen"
 
-#: app/core/forms.py:71
+#: app/core/forms.py:71 app/templates/core/collection.html:27
 msgid "Organizer"
 msgstr "Organisator"
 
@@ -341,10 +336,6 @@ msgstr "Abonnieren"
 #: app/templates/core/collection.html:24 app/templates/core/talk.html:18
 msgid "Info"
 msgstr "Information"
-
-#: app/templates/core/collection.html:27
-msgid "Organizers’s username"
-msgstr "Name des Organisators"
 
 #: app/templates/core/collection.html:39
 msgid "Subscribers"
@@ -463,25 +454,3 @@ msgstr "Nutzer bearbeiten"
 #: app/templates/snippets/historyitems.html:11
 msgid "No diff"
 msgstr "Kein Änderungen"
-
-#~ msgid "Personal"
-#~ msgstr "Persönlich"
-
-#~ msgid "Admin"
-#~ msgstr "Administration"
-
-#~ msgid "Access-Tokens"
-#~ msgstr "Zugriffstoken"
-
-#~ msgid "Create new token"
-#~ msgstr "Neues Zugriffstoken erstellen"
-
-#~ msgid "No tokens have been generated for this talk."
-#~ msgstr "Für diesen Talk gibt es noch keine Zugriffstokens."
-
-#~ msgid "Browse talks"
-#~ msgstr "Talks durchstöbern"
-
-#~ msgid "Your profile"
-#~ msgstr "Ihr Pofil"
-

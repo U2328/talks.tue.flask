@@ -8,12 +8,23 @@
                 <h3>{{ _('Register') }}</h3>
             </div>
         </div>
+        <div class="ui attached small info message">
+            <p>{{ _('Please note that the display name will be treated as though it were your real name.') }}</p>
+        </div>
+        {% if form.errors %}
+            <div class="ui attached small error message">
+                <div class="header">{{ _("Errors") }}</div>
+                <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
+                    <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         <div class="ui attached segment">
             <form id="loginForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
                 {{ form.csrf_token }}
-                <div class="field{% if form.username.errors %} error{% endif %}">
-                    {{ form.username.label }}
-                    {{ form.username(size=32) }}
+                <div class="field{% if form.display_name.errors %} error{% endif %}">
+                    {{ form.display_name.label }}
+                    {{ form.display_name(size=32) }}
                 </div>
                 <div class="field{% if form.email.errors %} error{% endif %}">
                     {{ form.email.label }}

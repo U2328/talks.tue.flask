@@ -28,7 +28,9 @@ def auth():
 
 @auth.command(with_appcontext=True)
 @click.option(
-    "--username", prompt=True, default=lambda: os.environ.get("ADMIN_USERNAME", "")
+    "--display_name",
+    prompt=True,
+    default=lambda: os.environ.get("ADMIN_DISPLAY_NAME", ""),
 )
 @click.option(
     "--email",
@@ -41,9 +43,9 @@ def auth():
     hide_input=True,
     default=lambda: "*" * len(os.environ.get("ADMIN_PASSWORD", "")),
 )
-def createsuperuser(username, email, password):
+def createsuperuser(display_name, email, password):
     """Create a superuser"""
-    u = models.User(username=username, email=email, is_admin=True)
+    u = models.User(display_name=display_name, email=email, is_admin=True)
     u.set_password(password)
     db.session.add(u)
     db.session.commit()

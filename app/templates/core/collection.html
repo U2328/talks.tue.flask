@@ -24,12 +24,12 @@
                     <h4><i class="info circle icon"></i>&nbsp;{{ _("Info") }}</h4>
                 </div>
                 <div class="ui segment">
-                    <small>{{ _("Organizers’s username") }}</small><br>
+                    <small>{{ _("Organizer") }}</small><br>
                     <span class="h6">{{ collection.organizer }}</span>
                 </div>
                 <div class="ui segment">
                     <small>{{ _("Editors") }}</small><br>
-                    <span class="h6">{% for editor in collection.editors %}<span class="ui tiny label grey">{{ editor.username }}</span>{% endfor %}</span>
+                    <span class="h6">{% for editor in collection.editors %}<span class="ui tiny label grey">{{ editor.display_name }}</span>{% endfor %}</span>
                 </div>
                 <div class="ui segment">
                     <small>{{ _("Tags") }}</small><br>

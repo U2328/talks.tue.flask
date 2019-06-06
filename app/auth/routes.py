@@ -34,12 +34,14 @@ def login():
         return redirect(url_for("core.index"))
     form = LoginForm(request.form)
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash(_("Invalid username or password"), "error")
+            flash(_("Invalid email or password"), "error")
             return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
-        flash(_("Logged in as %(username)s.", username=user.username), "info")
+        flash(
+            _("Logged in as %(display_name)s.", display_name=user.display_name), "info"
+        )
         current_app.logger.info(f"User logged in: {user}")
         next = request.args.get("next")
         if not is_safe_url(next):
@@ -62,7 +64,7 @@ def register():
         return redirect(url_for("core.index"))
     form = RegistrationForm(request.form)
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(display_name=form.display_name.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()

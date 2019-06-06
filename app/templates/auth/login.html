@@ -8,12 +8,20 @@
                 <h3>{{ _('Login') }}</h3>
             </div>
         </div>
+        {% if form.errors %}
+            <div class="ui attached small error message">
+                <div class="header">{{ _("Errors") }}</div>
+                <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
+                    <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         <div class="ui attached segment">
             <form id="loginForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
                 {{ form.csrf_token }}
-                <div class="field{% if form.username.errors %} error{% endif %}">
-                    {{ form.username.label }}
-                    {{ form.username(size=32) }}
+                <div class="field{% if form.email.errors %} error{% endif %}">
+                    {{ form.email.label }}
+                    {{ form.email(size=32) }}
                 </div>
                 <div class="field{% if form.password.errors %} error{% endif %}">
                     {{ form.password.label }}

@@ -73,7 +73,7 @@ class HistoryItemTable(ModelDataTable):
             "field": "user",
             "name": _l("User"),
             "orderable": False,
-            "value": lambda historyitem: historyitem.user.username,
+            "value": lambda historyitem: historyitem.user.display_name,
         },
         {"field": "rendered_diff", "name": _l("Changes"), "orderable": False},
     ]
@@ -82,7 +82,7 @@ class HistoryItemTable(ModelDataTable):
 class UserTable(ModelDataTable):
     model = User
     cols = [
-        {"field": "username", "name": _l("Username")},
+        {"field": "display_name", "name": _l("Display name")},
         {"field": "email", "name": _l("Email")},
         {
             "field": "is_admin",

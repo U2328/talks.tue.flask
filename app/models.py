@@ -193,7 +193,7 @@ def setup_listener(mapper, cls):
 
 class User(UserMixin, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
+    display_name = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     is_admin = db.Column(db.Boolean, default=False)
     is_organizer = db.Column(db.Boolean, default=False)
@@ -203,10 +203,10 @@ class User(UserMixin, db.Model):  # type: ignore
         super().__init__(*args, **kwargs)
 
     def __repr__(self):
-        return "<User {}>".format(self.username)
+        return "<User {}>".format(self.display_name)
 
     def __str__(self):
-        return self.username
+        return self.display_name
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
