@@ -28,7 +28,7 @@
                 <div class="eight wide column">
                     <div class="field{% if form.title.errors %} error{% endif %}">
                         {{ form.title.label }}
-                        {{ form.title(size=32) }}
+                        {{ form.title(size=64) }}
                     </div>
                     <div class="field{% if form.description.errors %} error{% endif %}">
                         {{ form.description.label }}
@@ -46,7 +46,7 @@
                     </div>
                 </div>
             </div>
-            <div class="three column row">
+            <div class="four column row">
                 <div class="column">
                     <div class="field{% if form.start_timestamp.errors %} error{% endif %}">
                         {{ form.start_timestamp.label }}
@@ -67,6 +67,12 @@
                                 {{ form.end_timestamp() }}
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field{% if form.location.errors %} error{% endif %}">
+                        {{ form.location.label }}
+                        {{ form.location(size=128) }}
                     </div>
                 </div>
                 <div class="column">

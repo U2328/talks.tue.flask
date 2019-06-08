@@ -12,6 +12,7 @@ class TalkTable(ModelDataTable):
     model = Talk
     cols = [
         {"field": "title", "name": _l("Name")},
+        {"field": "speaker_name", "name": _l("Speaker")},
         {
             "field": "start_timestamp",
             "name": _l("Starting date"),
@@ -24,13 +25,7 @@ class TalkTable(ModelDataTable):
             "weight": 0,
             "render": "function(data, type, row) {return moment(data).calendar();}",
         },
-        {"field": "speaker_name", "name": _l("Speaker's Name")},
-        {
-            "field": "tags",
-            "name": _l("Tags"),
-            "orderable": False,
-            "value": lambda talk: talk.rendered_tags,
-        },
+        {"field": "location", "name": _l("Location")},
     ]
 
 

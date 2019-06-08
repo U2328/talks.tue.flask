@@ -305,6 +305,7 @@ class Talk(HasHistory, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     description = db.Column(db.Text)
+    location = db.Column(db.String(128))
     start_timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
     end_timestamp = db.Column(
         db.DateTime, default=lambda: datetime.now() + timedelta(minutes=10)

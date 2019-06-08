@@ -5,10 +5,17 @@
     <div class="column twelve wide">
         <h1>Talks.Tue</h1>
         <p class="lead text-muted">{{ _('A simple way to find the best talks at hosted at our University for you.') }}</p>
-        <a href="{{ url_for('core.talks') }}" class="ui button primary">{{ _('Talks') }}</a>
-        <a href="{{ url_for('core.collections') }}" class="ui button primary">{{ _('Collections') }}</a>
+        <div class="ui buttons">
+            <a href="{{ url_for('core.talks') }}" class="ui button primary">{{ _('Talks') }}</a>
+            <div class="or" data-text="{{ _('or') }}"></div>
+            <a href="{{ url_for('core.collections') }}" class="ui button primary">{{ _('Collections') }}</a>
+        </div>
         {% if current_user.is_anonymous %}
-            <a href="{{ url_for('auth.register') }}" class="ui button">{{ _('Register to build your profile') }}</a>
+            <div class="ui buttons">
+                <a href="{{ url_for('auth.register') }}" class="ui button">{{ _('Register') }}</a>
+                <div class="or" data-text="{{ _('or') }}"></div>
+                <a href="{{ url_for('auth.login') }}" class="ui button">{{ _('Login') }}</a>
+            </div>
         {% endif %}
     </div>
 </div>
@@ -18,7 +25,7 @@
             <div class="content">
                 <a href="{{ url_for('core.talk', id=talk.id) }}" class="ui basic button right floated">{{ _('View') }}</a>
                 <div class="header">{{ talk.title }}</div>
-                <div class="meta"><small>{{ moment(talk.timestamp).calendar() }}</small></div>
+                <div class="meta"><small>{{ moment(talk.start_timestamp).calendar() }}</small></div>
             </div>
         </div>
     {% endfor %}

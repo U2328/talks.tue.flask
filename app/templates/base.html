@@ -46,7 +46,7 @@
                                 <a class="item" href="{{ url_for('auth.register') }}">{{ _('Register') }}</a>
                             {% else %}
                                 <a class="item" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
-                                <a class="item" href="{{ url_for('auth.subscriptions') }}">{{ _('Upcoming talks') }}</a>
+                                <a class="item" href="{{ url_for('auth.subscriptions') }}">{{ _('Subscribed talks') }}</a>
                                 <a class="item" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
                             {% endif %}
                         </div>

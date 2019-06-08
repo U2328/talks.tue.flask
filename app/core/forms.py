@@ -41,6 +41,7 @@ class DateTimeField(_DateTimeField):
 class TalkForm(FlaskForm):
     title = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
     description = TextAreaField(_l("Description"))
+    location = StringField(_l("Location"), validators=[DataRequired(), Length(max=128)])
     start_timestamp = DateTimeField(
         _l("Starting date"),
         format="%Y.%m.%d %H:%M",

@@ -32,10 +32,6 @@
                     <span class="h6">{% for editor in collection.editors %}<span class="ui tiny label grey">{{ editor.display_name }}</span>{% endfor %}</span>
                 </div>
                 <div class="ui segment">
-                    <small>{{ _("Tags") }}</small><br>
-                    <span class="h6">{% for tag in collection.tags %}{% include 'snippets/tag.html' %} {% endfor %}</span>
-                </div>
-                <div class="ui segment">
                     <small>{{ _("Subscribers") }}</small>&nbsp;<span class="h6">{{ collection.subscriptions.count(collection.subscriptions) }}</span>
                 </div>
             </div>
