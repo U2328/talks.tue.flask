@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="ui attached segment">
-            <form id="subscriptionForm" method="post" action="{{ url_for("auth.subscription", id=subscription.collection.id) }}" class="ui {% if form.errors %}error {% endif %}form" novalidate>
+            <form id="subscriptionForm" method="post" action="{{ url_for("auth.subscription", id=subscription.collection.id) }}?next={{ next }}" class="ui {% if form.errors %}error {% endif %}form" novalidate>
                 {{ form.csrf_token }}
                 <div class="field">
                     <label>{{ _("Collection") }}</label>

@@ -2,7 +2,7 @@ from flask_babel import lazy_gettext as _l
 
 from .dt_tools import ModelDataTable
 from app.models import Talk, Tag, Collection, User, HistoryItem
-from app.filters import render_bool
+from app.filters import render_bool, render_datetime
 
 
 __all__ = ("TalkTable", "CollectionTable", "TagTable", "HistoryItemTable", "UserTable")
@@ -17,13 +17,13 @@ class TalkTable(ModelDataTable):
             "field": "start_timestamp",
             "name": _l("Starting date"),
             "weight": 0,
-            "render": "function(data, type, row) {return moment(data).calendar();}",
+            "value": lambda talk: render_datetime(talk.start_timestamp),
         },
         {
             "field": "end_timestamp",
             "name": _l("Ending date"),
             "weight": 0,
-            "render": "function(data, type, row) {return moment(data).calendar();}",
+            "value": lambda talk: render_datetime(talk.end_timestamp),
         },
         {"field": "location", "name": _l("Location")},
     ]

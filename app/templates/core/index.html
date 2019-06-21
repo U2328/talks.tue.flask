@@ -25,7 +25,7 @@
             <div class="content">
                 <a href="{{ url_for('core.talk', id=talk.id) }}" class="ui basic button right floated">{{ _('View') }}</a>
                 <div class="header">{{ talk.title }}</div>
-                <div class="meta"><small>{{ moment(talk.start_timestamp).calendar() }}</small></div>
+                <div class="meta"><small>{{ talk.start_timestamp | render_datetime }}</small></div>
             </div>
         </div>
     {% endfor %}

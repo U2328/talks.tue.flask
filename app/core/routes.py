@@ -4,18 +4,10 @@ from sqlalchemy import or_
 
 from . import bp
 from .forms import TalkForm, CollectionForm, UserForm
-from app.auth.forms import SubscriptionForm
 from app import db
 from app.utils import is_safe_url, copy_row
 from app.api.tables import TalkTable, CollectionTable, HistoryItemTable, UserTable
-from app.models import (
-    HistoryItem,
-    HISTORY_DISCRIMINATOR_MAP,
-    Talk,
-    Collection,
-    User,
-    Subscription,
-)
+from app.models import HistoryItem, HISTORY_DISCRIMINATOR_MAP, Talk, Collection, User
 
 
 __all__ = (

@@ -191,7 +191,8 @@ def subscriptions():
     return render_template("auth/subscriptions.html", table=table)
 
 
-@bp.route("/token/<uuid>", methods=["GET", "POST"])
+# Disabled for now as the related issue has been put on hold.
+# @bp.route("/token/<uuid>", methods=["GET", "POST"])
 def token_login(uuid):
     form = AccessTokenForm(request.form)
     if form.validate_on_submit():

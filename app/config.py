@@ -26,6 +26,7 @@ class Config:
     DEBUG = False
     TESTING = False
     SECRET_KEY = os.getenv("SECRET_KEY") or "ultra-secret-key"
+    DATETIME_FORMAT = "%d.%m.%Y %H:%M"
 
     # SQLAlchemy
     SQLALCHEMY_DATABASE_URI = os.getenv(

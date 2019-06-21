@@ -223,7 +223,7 @@ class User(UserMixin, db.Model):  # type: ignore
                 talk
                 for subscription in self.subscriptions
                 for talk in subscription.collection.related_talks
-                if talk.timestamp >= now
+                if talk.start_timestamp >= now
             )
         )
 

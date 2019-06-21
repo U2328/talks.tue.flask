@@ -1,7 +1,7 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
 
-# Created by https://www.gitignore.io/api/linux,visualstudiocode,flask,python
-# Edit at https://www.gitignore.io/?templates=linux,visualstudiocode,flask,python
+# Created by https://www.gitignore.io/api/flask,linux,python,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=flask,linux,python,visualstudiocode
 
 ### Flask ###
 instance/*
@@ -92,6 +92,13 @@ ipython_config.py
 # pyenv
 .python-version
 
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don’t work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
 # celery beat schedule file
 celerybeat-schedule
 
@@ -173,6 +180,12 @@ dmypy.json
 
 # pyenv
 
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don’t work, or not
+#   install all needed dependencies.
+
 # celery beat schedule file
 
 # SageMath parsed files
@@ -189,25 +202,23 @@ dmypy.json
 
 # Pyre type checker
 
-### Python Patch ###
-.venv/
-
 ### VisualStudioCode ###
 .vscode/*
-# !.vscode/settings.json
-# !.vscode/tasks.json
-# !.vscode/launch.json
-# !.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
 
-# End of https://www.gitignore.io/api/linux,visualstudiocode,flask,python
+# End of https://www.gitignore.io/api/flask,linux,python,visualstudiocode
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
 *.db
 celerybeat.pid
-postgres-data/
-postgres-backups/
+postgres-data/*
+postgres-backups/*
+XDG_CACHE_HOME/*
