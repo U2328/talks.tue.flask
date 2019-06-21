@@ -6,7 +6,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_babel import Babel, lazy_gettext as _l
-from flask_moment import Moment
 from flask_caching import Cache
 from flask_mail import Mail
 from flask_htmlmin import HTMLMIN
@@ -18,7 +17,7 @@ from markdown import Markdown
 from .config import get_config
 
 
-__all__ = ("create_app", "db", "migrate", "login", "babel", "moment", "celery", "md")
+__all__ = ("create_app", "db", "migrate", "login", "babel", "celery", "md")
 
 config = get_config()
 
@@ -27,7 +26,6 @@ db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 babel = Babel()
-moment = Moment()
 login.login_view = "auth.login"
 login.login_message = _l("Please log in to access this page.")
 cache = Cache(config={"CACHE_TYPE": "simple"})
@@ -67,7 +65,6 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     babel.init_app(app)
-    moment.init_app(app)
     login.init_app(app)
     cache.init_app(app)
     mail.init_app(app)

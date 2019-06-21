@@ -10,8 +10,6 @@ from wtforms import (
     TextAreaField,
     PasswordField,
 )
-
-
 from wtforms.validators import DataRequired, Length, ValidationError, Email, EqualTo
 from wtforms_alchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_babel import lazy_gettext as _l
@@ -42,15 +40,16 @@ class TalkForm(FlaskForm):
     title = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
     description = TextAreaField(_l("Description"))
     location = StringField(_l("Location"), validators=[DataRequired(), Length(max=128)])
+
     start_timestamp = DateTimeField(
         _l("Starting date"),
-        format="%Y.%m.%d %H:%M",
+        format="%d.%m.%Y %H:%M",
         default=datetime.now,
         validators=[DataRequired()],
     )
     end_timestamp = DateTimeField(
         _l("Ending date"),
-        format="%Y.%m.%d %H:%M",
+        format="%d.%m.%Y %H:%M",
         default=datetime.now,
         validators=[DataRequired()],
     )

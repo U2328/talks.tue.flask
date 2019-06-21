@@ -59,7 +59,11 @@ class TagTable(ModelDataTable):
 class HistoryItemTable(ModelDataTable):
     model = HistoryItem
     cols = [
-        {"field": "timestamp", "name": _l("Timestamp")},
+        {
+            "field": "timestamp",
+            "name": _l("Timestamp"),
+            "value": lambda hi: render_datetime(hi.timestamp),
+        },
         {"field": "rendered_action", "name": _l("Action")},
         {
             "field": "target_id",

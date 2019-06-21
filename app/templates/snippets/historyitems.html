@@ -2,7 +2,7 @@
     {% for historyitem in history %}
         <div class="title">
             <i class='{{ historyitem.type.icon }}'></i>&nbsp;{{ historyitem.message }}<br>
-            <small>{{ moment(historyitem.timestamp).calendar() }}</small>
+            <small>{{ historyitem.timestamp | render_datetime }}</small>
         </div>
         <div class="content">
             {% if historyitem.diff %}
