@@ -86,6 +86,7 @@
 {% endif %}
 {% endblock %}
 {% block script %}
+{{ super() }}
 <script>
     var descriptionMDE = new SimpleMDE({ element: $('#description')[0] });
     $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');

@@ -110,6 +110,7 @@
 {% endif %}
 {% endblock %}
 {% block script %}
+{{ super() }}
 <script>
     var descriptionMDE = new SimpleMDE({ element: $('#description')[0], });
     var aboutmeMDE = new SimpleMDE({ element: $('#speaker_aboutme')[0] });

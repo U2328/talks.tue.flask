@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-06-08 07:19+0000\n"
+"POT-Creation-Date: 2019-06-08 07:35+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -296,7 +296,8 @@ msgid "Errors"
 msgstr "Fehler"
 
 #: app/templates/auth/login.html:41 app/templates/auth/register.html:46
-#: app/templates/auth/subscription.html:32
+#: app/templates/auth/subscription.html:35
+#: app/templates/auth/subscription.html:45
 #: app/templates/auth/token_login.html:25
 #: app/templates/core/collection_edit.html:66
 #: app/templates/core/collection_edit.html:83
@@ -309,18 +310,7 @@ msgstr "Abbrechen"
 msgid "Subscriptions"
 msgstr "Abonnements"
 
-#: app/templates/auth/profile.html:53
-msgid "Configure"
-msgstr "Konfigurieren"
-
-#: app/templates/auth/profile.html:54
-#: app/templates/core/collection_edit.html:11
-#: app/templates/core/collection_edit.html:81
-#: app/templates/core/talk_edit.html:11 app/templates/core/talk_edit.html:105
-msgid "Delete"
-msgstr "Löschen"
-
-#: app/templates/auth/profile.html:59
+#: app/templates/auth/profile.html:61
 msgid "No Subscriptions yet."
 msgstr "Keine Abonnements."
 
@@ -337,9 +327,21 @@ msgstr ""
 msgid "Subscription to '%(collection)s'"
 msgstr "Abonnement für '%(collection)s'"
 
-#: app/templates/auth/subscription.html:15
+#: app/templates/auth/subscription.html:11
+#: app/templates/auth/subscription.html:43
+#: app/templates/core/collection_edit.html:11
+#: app/templates/core/collection_edit.html:81
+#: app/templates/core/talk_edit.html:11 app/templates/core/talk_edit.html:105
+msgid "Delete"
+msgstr "Löschen"
+
+#: app/templates/auth/subscription.html:18
 msgid "Collection"
 msgstr "Kollektion"
+
+#: app/templates/auth/subscription.html:40
+msgid "Are you sure you want to delete this subscription?"
+msgstr "Sin Sie sich sicher, dass Sie dieses Abo löschen wollen?"
 
 #: app/templates/auth/subscriptions.html:6
 msgid "Upcoming Talks"
@@ -479,3 +481,7 @@ msgstr "Nutzer bearbeiten"
 #: app/templates/snippets/historyitems.html:11
 msgid "No diff"
 msgstr "Kein Änderungen"
+
+#~ msgid "Configure"
+#~ msgstr "Konfigurieren"
+

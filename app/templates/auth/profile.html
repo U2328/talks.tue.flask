@@ -50,8 +50,10 @@
                 {% for subscription in current_user.subscriptions %}
                     <div class="ui segment" onclick="window.location='{{ url_for('core.collection', id=subscription.collection.id) }}';" style="cursor: pointer;">
                         {{ subscription.collection.title }}
-                        <a class="ui mini button right floated" href="{{ url_for("auth.subscription", id=subscription.collection.id) }}">{{ _("Configure") }}</a>
-                        <a class="ui mini button right floated" href="{{ url_for("auth.subscription_delete", id=subscription.collection.id) }}">{{ _("Delete") }}</a>
+                        <div class="ui right floated icon buttons">
+                            <a class="ui mini compact button" href="{{ url_for("auth.subscription", id=subscription.collection.id) }}"><i class="cogs icon"></i></a>
+                            <a class="ui mini compact button" href="{{ url_for("auth.unsubscribe", id=subscription.collection.id) }}"><i class="trash alternate icon"></i></a>
+                        </div>
                     </div>
                 {% endfor %}
             {% else %}
