@@ -1,9 +1,7 @@
-from datetime import datetime
-
 from flask import abort
 from flask_login import current_user, login_required
 
-from .tables import TalkTable, CollectionTable, TagTable, HistoryItemTable, UserTable
+from .tables import TalkTable, CollectionTable, HistoryItemTable, UserTable
 from app.models import Talk, Collection, HISTORY_DISCRIMINATOR_MAP
 from . import bp
 
@@ -14,7 +12,6 @@ __all__ = (
     "admin_talk_table",
     "collection_table",
     "admin_collection_table",
-    "tag_table",
     "historyitem_table",
     "user_table",
 )
@@ -49,12 +46,6 @@ def collection_table():
 @bp.route("/admin_collection_table", methods=["GET"])
 def admin_collection_table():
     table = CollectionTable(query=Collection.related_to(current_user))
-    return table.get_response()
-
-
-@bp.route("/tag_table", methods=["GET"])
-def tag_table():
-    table = TagTable()
     return table.get_response()
 
 

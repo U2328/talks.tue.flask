@@ -1,11 +1,11 @@
 from flask_babel import lazy_gettext as _l
 
 from .dt_tools import ModelDataTable
-from app.models import Talk, Tag, Collection, User, HistoryItem
+from app.models import Talk, Collection, User, HistoryItem
 from app.filters import render_bool, render_datetime
 
 
-__all__ = ("TalkTable", "CollectionTable", "TagTable", "HistoryItemTable", "UserTable")
+__all__ = ("TalkTable", "CollectionTable", "HistoryItemTable", "UserTable")
 
 
 class TalkTable(ModelDataTable):
@@ -39,19 +39,6 @@ class CollectionTable(ModelDataTable):
             "value": lambda collection: collection.subscriptions.count(
                 collection.subscriptions
             ),
-        },
-    ]
-
-
-class TagTable(ModelDataTable):
-    model = Tag
-    cols = [
-        {"field": "name", "name": _l("Name")},
-        {
-            "field": "num_of_talks",
-            "value": lambda tag: len(tag.talks),
-            "orderable": False,
-            "name": _l("# Talks"),
         },
     ]
 

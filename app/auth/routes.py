@@ -92,8 +92,8 @@ def profile():
             user.set_password(form.password.data)
         if form.email is not None:
             user.email = form.email.data
-        if form.tags is not None:
-            user.tags = form.tags.data
+        if form.topics is not None:
+            user.topics = form.topics.data
         db.session.commit()
         flash(_("Your profile has been updated."), "success")
         current_app.logger.info(f"Updated user: {user}")

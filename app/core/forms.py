@@ -14,13 +14,13 @@ from wtforms.validators import DataRequired, Length, ValidationError, Email, Equ
 from wtforms_alchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_babel import lazy_gettext as _l
 
-from app.models import Tag, Collection, User
+from app.models import Topic, Collection, User
 
 
-__all__ = ("TagForm", "TalkForm", "CollectionForm", "UserForm")
+__all__ = ("TopicForm", "TalkForm", "CollectionForm", "UserForm")
 
 
-class TagForm(FlaskForm):
+class TopicForm(FlaskForm):
     name = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
     submit = SubmitField(_l("Add"))
 
@@ -61,7 +61,9 @@ class TalkForm(FlaskForm):
         _l("Collections"),
         query_factory=lambda: Collection.query.filter(Collection.is_meta == False),
     )
-    tags = QuerySelectMultipleField(_l("Categories"), query_factory=lambda: Tag.query)
+    topics = QuerySelectMultipleField(
+        _l("Categories"), query_factory=lambda: Topic.query
+    )
     submit = SubmitField(_l("Save"))
 
     def validate_start_timestamp(self, start_timestamp):
