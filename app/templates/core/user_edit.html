@@ -65,6 +65,7 @@
 </div>
 {% endblock %}
 {% block script %}
+{{ super() }}
 <script>
     $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
 </script>

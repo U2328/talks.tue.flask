@@ -17,7 +17,7 @@ from .utils import DillField
 __all__ = (
     "Collection",
     "Talk",
-    "Tag",
+    "Topic",
     "User",
     "AnonymousUser",
     "HistoryItem",
@@ -223,7 +223,7 @@ class User(UserMixin, db.Model):  # type: ignore
                 talk
                 for subscription in self.subscriptions
                 for talk in subscription.collection.related_talks
-                if talk.timestamp >= now
+                if talk.start_timestamp >= now
             )
         )
 
@@ -294,9 +294,9 @@ talk_collections = db.Table(
 )
 
 
-talk_tags = db.Table(
-    "talk_tags",
-    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
+talk_topics = db.Table(
+    "talk_topics",
+    db.Column("topic_id", db.Integer, db.ForeignKey("topic.id"), primary_key=True),
     db.Column("talk_id", db.Integer, db.ForeignKey("talk.id"), primary_key=True),
 )
 
@@ -305,13 +305,16 @@ class Talk(HasHistory, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     description = db.Column(db.Text)
+    location = db.Column(db.String(128))
     start_timestamp = db.Column(db.DateTime, default=lambda: datetime.now())
     end_timestamp = db.Column(
         db.DateTime, default=lambda: datetime.now() + timedelta(minutes=10)
     )
     speaker_name = db.Column(db.String(64))
     speaker_aboutme = db.Column(db.Text)
-    tags = db.relationship("Tag", secondary=lambda: talk_tags, backref=backref("talks"))
+    topics = db.relationship(
+        "Topic", secondary=lambda: talk_topics, backref=backref("talks")
+    )
     collections = db.relationship(
         "Collection", secondary=lambda: talk_collections, backref=backref("talks")
     )
@@ -323,8 +326,8 @@ class Talk(HasHistory, db.Model):  # type: ignore
         return url_for("core.talk", id=self.id)
 
     @property
-    def rendered_tags(self):
-        return " ".join(tag.render() for tag in self.tags)
+    def rendered_topics(self):
+        return " ".join(topic.render() for topic in self.topics)
 
     @classmethod
     def complete_history(cls, user=None):
@@ -476,7 +479,7 @@ class Collection(HasHistory, db.Model):  # type: ignore
         )
 
 
-class Tag(db.Model):  # type: ignore
+class Topic(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
 

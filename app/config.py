@@ -22,10 +22,11 @@ def get_config():
 
 class Config:
     # Base
-    VERSION = "0.2.3"
+    VERSION = "0.2.4"
     DEBUG = False
     TESTING = False
     SECRET_KEY = os.getenv("SECRET_KEY") or "ultra-secret-key"
+    DATETIME_FORMAT = "%d.%m.%Y %H:%M"
 
     # SQLAlchemy
     SQLALCHEMY_DATABASE_URI = os.getenv(

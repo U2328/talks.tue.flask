@@ -1,36 +1,31 @@
 from flask_babel import lazy_gettext as _l
 
 from .dt_tools import ModelDataTable
-from app.models import Talk, Tag, Collection, User, HistoryItem
-from app.filters import render_bool
+from app.models import Talk, Collection, User, HistoryItem
+from app.filters import render_bool, render_datetime
 
 
-__all__ = ("TalkTable", "CollectionTable", "TagTable", "HistoryItemTable", "UserTable")
+__all__ = ("TalkTable", "CollectionTable", "HistoryItemTable", "UserTable")
 
 
 class TalkTable(ModelDataTable):
     model = Talk
     cols = [
         {"field": "title", "name": _l("Name")},
+        {"field": "speaker_name", "name": _l("Speaker")},
         {
             "field": "start_timestamp",
             "name": _l("Starting date"),
             "weight": 0,
-            "render": "function(data, type, row) {return moment(data).calendar();}",
+            "value": lambda talk: render_datetime(talk.start_timestamp),
         },
         {
             "field": "end_timestamp",
             "name": _l("Ending date"),
             "weight": 0,
-            "render": "function(data, type, row) {return moment(data).calendar();}",
+            "value": lambda talk: render_datetime(talk.end_timestamp),
         },
-        {"field": "speaker_name", "name": _l("Speaker's Name")},
-        {
-            "field": "tags",
-            "name": _l("Tags"),
-            "orderable": False,
-            "value": lambda talk: talk.rendered_tags,
-        },
+        {"field": "location", "name": _l("Location")},
     ]
 
 
@@ -48,23 +43,14 @@ class CollectionTable(ModelDataTable):
     ]
 
 
-class TagTable(ModelDataTable):
-    model = Tag
-    cols = [
-        {"field": "name", "name": _l("Name")},
-        {
-            "field": "num_of_talks",
-            "value": lambda tag: len(tag.talks),
-            "orderable": False,
-            "name": _l("# Talks"),
-        },
-    ]
-
-
 class HistoryItemTable(ModelDataTable):
     model = HistoryItem
     cols = [
-        {"field": "timestamp", "name": _l("Timestamp")},
+        {
+            "field": "timestamp",
+            "name": _l("Timestamp"),
+            "value": lambda hi: render_datetime(hi.timestamp),
+        },
         {"field": "rendered_action", "name": _l("Action")},
         {
             "field": "target_id",

@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
 from flask_babel import _, lazy_gettext as _l
 
-from app.models import Tag, User, Subscription
+from app.models import Topic, User, Subscription
 
 
 __all__ = (
@@ -43,7 +43,7 @@ class ProfileForm(FlaskForm):
     email = StringField(_l("Email"), validators=[Email()])
     password = PasswordField(_l("Password"))
     password2 = PasswordField(_l("Repeat Password"), validators=[EqualTo("password")])
-    tags = QuerySelectMultipleField(_l("Categories"), query_factory=lambda: Tag.query)
+    topics = QuerySelectMultipleField(_l("Topics"), query_factory=lambda: Topic.query)
     submit = SubmitField(_l("Save"))
 
     def validate_email(self, email):

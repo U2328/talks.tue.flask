@@ -10,19 +10,17 @@ from wtforms import (
     TextAreaField,
     PasswordField,
 )
-
-
 from wtforms.validators import DataRequired, Length, ValidationError, Email, EqualTo
 from wtforms_alchemy.fields import QuerySelectMultipleField, QuerySelectField
 from flask_babel import lazy_gettext as _l
 
-from app.models import Tag, Collection, User
+from app.models import Topic, Collection, User
 
 
-__all__ = ("TagForm", "TalkForm", "CollectionForm", "UserForm")
+__all__ = ("TopicForm", "TalkForm", "CollectionForm", "UserForm")
 
 
-class TagForm(FlaskForm):
+class TopicForm(FlaskForm):
     name = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
     submit = SubmitField(_l("Add"))
 
@@ -41,15 +39,17 @@ class DateTimeField(_DateTimeField):
 class TalkForm(FlaskForm):
     title = StringField(_l("Name"), validators=[DataRequired(), Length(max=64)])
     description = TextAreaField(_l("Description"))
+    location = StringField(_l("Location"), validators=[DataRequired(), Length(max=128)])
+
     start_timestamp = DateTimeField(
         _l("Starting date"),
-        format="%Y.%m.%d %H:%M",
+        format="%d.%m.%Y %H:%M",
         default=datetime.now,
         validators=[DataRequired()],
     )
     end_timestamp = DateTimeField(
         _l("Ending date"),
-        format="%Y.%m.%d %H:%M",
+        format="%d.%m.%Y %H:%M",
         default=datetime.now,
         validators=[DataRequired()],
     )
@@ -61,7 +61,9 @@ class TalkForm(FlaskForm):
         _l("Collections"),
         query_factory=lambda: Collection.query.filter(Collection.is_meta == False),
     )
-    tags = QuerySelectMultipleField(_l("Categories"), query_factory=lambda: Tag.query)
+    topics = QuerySelectMultipleField(
+        _l("Categories"), query_factory=lambda: Topic.query
+    )
     submit = SubmitField(_l("Save"))
 
     def validate_start_timestamp(self, start_timestamp):

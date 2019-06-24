@@ -9,7 +9,7 @@ from flask import (
     session,
 )
 from flask_login import current_user, login_user, logout_user, login_required
-from flask_babel import _
+from flask_babel import gettext as _, lazy_gettext as _l
 
 from app import db
 from app.utils import is_safe_url
@@ -25,7 +25,15 @@ from .forms import (
 )
 
 
-__all__ = ("login", "logout", "register", "profile", "subscribe", "subscription")
+__all__ = (
+    "login",
+    "logout",
+    "register",
+    "profile",
+    "subscribe",
+    "subscription",
+    "unsubscribe",
+)
 
 
 @bp.route("/login", methods=["GET", "POST"])
@@ -84,8 +92,8 @@ def profile():
             user.set_password(form.password.data)
         if form.email is not None:
             user.email = form.email.data
-        if form.tags is not None:
-            user.tags = form.tags.data
+        if form.topics is not None:
+            user.topics = form.topics.data
         db.session.commit()
         flash(_("Your profile has been updated."), "success")
         current_app.logger.info(f"Updated user: {user}")
@@ -99,26 +107,29 @@ def profile():
     )
 
 
-@bp.route("/subscribe/<int:id>")
+@bp.route("/collection/<int:id>/subscribe")
 @login_required
 def subscribe(id):
-    subscription = Subscription(collection=Collection.query.get(id), user=current_user)
-    db.session.add(subscription)
+    collection = Collection.query.get(id)
+    if collection is None:
+        return abort(404)
+
+    db.session.add(Subscription(user=current_user, collection=collection))
     db.session.commit()
+
     next = request.args.get("next")
-    if not is_safe_url(next):
-        return abort(400)
-    if next is not None:
-        return redirect(url_for("auth.subscription", id=id) + f"?next={next}")
-    else:
-        return redirect(url_for("auth.subscription", id=id))
+    return (
+        abort(400)
+        if not is_safe_url(next)
+        else redirect(next or url_for("auth.subscription", id=id))
+    )
 
 
-@bp.route("/subscription/<int:id>", methods=["GET", "POST"])
+@bp.route("/collection/<int:id>/subscription", methods=["GET", "POST"])
 @login_required
 def subscription(id):
     subscription = Subscription.query.filter(
-        Subscription.collection_id == id, Subscription.user == current_user
+        Subscription.user == current_user, Subscription.collection_id == id
     )
     if not subscription:
         return abort(404)
@@ -138,16 +149,18 @@ def subscription(id):
         return redirect(next)
     return render_template(
         "auth/subscription.html",
-        title=f"Subscription to {subscription.collection.title}",
+        title=_l(
+            "Subscription to %(collection)s", collection=subscription.collection.title
+        ),
         subscription=subscription,
         form=form,
         next=next,
     )
 
 
-@bp.route("/subscription/<int:id>/delete")
+@bp.route("/collection/<int:id>/unsubscribe")
 @login_required
-def subscription_delete(id):
+def unsubscribe(id):
     subscription = Subscription.query.filter(
         Subscription.collection_id == id, Subscription.user == current_user
     )
@@ -178,7 +191,8 @@ def subscriptions():
     return render_template("auth/subscriptions.html", table=table)
 
 
-@bp.route("/token/<uuid>", methods=["GET", "POST"])
+# Disabled for now as the related issue has been put on hold.
+# @bp.route("/token/<uuid>", methods=["GET", "POST"])
 def token_login(uuid):
     form = AccessTokenForm(request.form)
     if form.validate_on_submit():

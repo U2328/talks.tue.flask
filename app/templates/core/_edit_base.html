@@ -5,3 +5,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 {% endblock head %}
+
+{% block script %}
+<script>
+    $("form :input").change(function(event) { event.target.data("changed",true); });
+    window.onbeforeunload = function() {
+        if $("form").is(function(i, elem) { return elem.data("changed") })
+            return "{{ _("If you navigate away from this page you will lose your unsaved changes.") }}";
+    }
+    $('form').submit(function() { window.onbeforeunload = null; });
+</script>
+{% endblock script %}

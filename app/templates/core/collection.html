@@ -12,7 +12,7 @@
         {% if current_user.is_authenticated and current_user.is_subscribed_to(collection) %}
             <a class="ui small primary button item" href="{{ url_for("auth.subscription", id=collection.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit Subscription') }}</a>
         {% else %}
-            <a class="ui small primary button item" href="{{ url_for("auth.subscribe", id=collection.id) }}"><i class="plus icon"></i>{{ _('Subscribe') }}</a>
+            <a class="ui small primary button item" href="{{ url_for("auth.subscribe", id=collection.id) }}?next={{ request.path }}"><i class="plus icon"></i>{{ _('Subscribe') }}</a>
         {% endif %}
     </div>
 </div>
@@ -30,10 +30,6 @@
                 <div class="ui segment">
                     <small>{{ _("Editors") }}</small><br>
                     <span class="h6">{% for editor in collection.editors %}<span class="ui tiny label grey">{{ editor.display_name }}</span>{% endfor %}</span>
-                </div>
-                <div class="ui segment">
-                    <small>{{ _("Tags") }}</small><br>
-                    <span class="h6">{% for tag in collection.tags %}{% include 'snippets/tag.html' %} {% endfor %}</span>
                 </div>
                 <div class="ui segment">
                     <small>{{ _("Subscribers") }}</small>&nbsp;<span class="h6">{{ collection.subscriptions.count(collection.subscriptions) }}</span>
