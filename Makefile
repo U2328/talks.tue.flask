@@ -54,3 +54,6 @@ build: ## build docker containers
 
 run: ## run app (wil be deamonized)
 	docker-compose up -d
+
+shell: ## get python shell in app context
+	docker-compose run app flask shell

@@ -14,6 +14,6 @@ def render_bool(val):
     return f"<i class=\"{'green check circle icon' if val else 'red times circle icon'}\"></i>"
 
 
-def render_datetime(dt):
+def render_datetime(dt, default=None):
     """Render a datetime to a standardized format."""
-    return dt.strftime(current_app.config["DATETIME_FORMAT"])
+    return dt.strftime(current_app.config["DATETIME_FORMAT"]) if dt is not None else (default or "-")
