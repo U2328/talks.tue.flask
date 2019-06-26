@@ -1,4 +1,4 @@
-"""empty message
+"""Rename tag to topic
 
 Revision ID: 5b4ac2b6b19c
 Revises: be10b7e0cf43
