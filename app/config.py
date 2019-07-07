@@ -22,7 +22,7 @@ def get_config():
 
 class Config:
     # Base
-    VERSION = "0.2.4"
+    VERSION = "0.2.5"
     DEBUG = False
     TESTING = False
     SECRET_KEY = os.getenv("SECRET_KEY") or "ultra-secret-key"

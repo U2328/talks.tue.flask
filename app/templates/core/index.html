@@ -6,14 +6,12 @@
         <h1>Talks.Tue</h1>
         <p class="lead text-muted">{{ _('A simple way to find the best talks at hosted at our University for you.') }}</p>
         <div class="ui buttons">
-            <a href="{{ url_for('core.talks') }}" class="ui button primary">{{ _('Talks') }}</a>
-            <div class="or" data-text="{{ _('or') }}"></div>
-            <a href="{{ url_for('core.collections') }}" class="ui button primary">{{ _('Collections') }}</a>
+            <a href="{{ url_for('core.talks') }}" class="ui left attached button primary">{{ _('Talks') }}</a>
+            <a href="{{ url_for('core.collections') }}" class="right attached ui button primary">{{ _('Collections') }}</a>
         </div>
         {% if current_user.is_anonymous %}
             <div class="ui buttons">
                 <a href="{{ url_for('auth.register') }}" class="ui button">{{ _('Register') }}</a>
-                <div class="or" data-text="{{ _('or') }}"></div>
                 <a href="{{ url_for('auth.login') }}" class="ui button">{{ _('Login') }}</a>
             </div>
         {% endif %}

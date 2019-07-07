@@ -76,6 +76,7 @@
             {% block content %}{% endblock content%}
             <div class="ui menu secondary">
                 <span class="ui small grey text item">Talks.Tue v{{ config.VERSION }}</span>
+                <a class="ui button small item" href="{{ url_for("core.about") }}">{{ _("About") }}</a>
                 <a class="ui button right item" href="#">{{ _('Back to top') }}</a>
             </div>
         </div>

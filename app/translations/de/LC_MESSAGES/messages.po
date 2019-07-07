@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-06-08 07:35+0000\n"
+"POT-Creation-Date: 2019-07-07 13:29+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -16,9 +16,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.7.0\n"
 
-#: app/__init__.py:32
+#: app/__init__.py:30
 msgid "Please log in to access this page."
 msgstr "Bitte loggen sie sich ein um diese Seite zu besuchen."
 
@@ -61,8 +61,8 @@ msgstr "wöchentlich"
 msgid "daily and weekly"
 msgstr "täglich und wöchentlich"
 
-#: app/api/tables.py:14 app/api/tables.py:35 app/api/tables.py:49
-#: app/core/forms.py:26 app/core/forms.py:42 app/core/forms.py:80
+#: app/api/tables.py:14 app/api/tables.py:35 app/core/forms.py:24
+#: app/core/forms.py:40 app/core/forms.py:81
 msgid "Name"
 msgstr "Name"
 
@@ -71,15 +71,15 @@ msgstr "Name"
 msgid "Speaker"
 msgstr "Redner"
 
-#: app/api/tables.py:18 app/core/forms.py:46
+#: app/api/tables.py:18 app/core/forms.py:45
 msgid "Starting date"
 msgstr "Start"
 
-#: app/api/tables.py:24 app/core/forms.py:52
+#: app/api/tables.py:24 app/core/forms.py:51
 msgid "Ending date"
 msgstr "Ende"
 
-#: app/api/tables.py:28 app/core/forms.py:44 app/templates/core/talk.html:29
+#: app/api/tables.py:28 app/core/forms.py:42 app/templates/core/talk.html:29
 msgid "Location"
 msgstr "Ort"
 
@@ -87,49 +87,45 @@ msgstr "Ort"
 msgid "# Subscribers"
 msgstr "Anzahl der Abonnenten"
 
-#: app/api/tables.py:54
-msgid "# Talks"
-msgstr "Anzahl der Talks"
-
-#: app/api/tables.py:62
+#: app/api/tables.py:51
 msgid "Timestamp"
 msgstr "Zeitpunkt"
 
-#: app/api/tables.py:63
+#: app/api/tables.py:54
 msgid "Action"
 msgstr "Aktion"
 
-#: app/api/tables.py:66
+#: app/api/tables.py:57
 msgid "Target"
 msgstr "Ziel-Objekt"
 
-#: app/api/tables.py:75
+#: app/api/tables.py:66
 msgid "User"
 msgstr "Nutzer"
 
-#: app/api/tables.py:79
+#: app/api/tables.py:70
 msgid "Changes"
 msgstr "Änderungen"
 
-#: app/api/tables.py:86 app/auth/forms.py:28 app/core/forms.py:96
+#: app/api/tables.py:77 app/auth/forms.py:28 app/core/forms.py:97
 msgid "Display name"
 msgstr "Name"
 
-#: app/api/tables.py:87 app/auth/forms.py:21 app/auth/forms.py:29
-#: app/auth/forms.py:43 app/core/forms.py:97
+#: app/api/tables.py:78 app/auth/forms.py:21 app/auth/forms.py:29
+#: app/auth/forms.py:43 app/core/forms.py:98
 msgid "Email"
 msgstr "E-Mail"
 
-#: app/api/tables.py:90 app/core/forms.py:98
+#: app/api/tables.py:81 app/core/forms.py:99
 msgid "Is Admin?"
 msgstr "Ist Administrator?"
 
-#: app/api/tables.py:96 app/core/forms.py:99
+#: app/api/tables.py:87 app/core/forms.py:100
 msgid "Is Organizer?"
 msgstr "Ist Organisator?"
 
 #: app/auth/forms.py:22 app/auth/forms.py:30 app/auth/forms.py:44
-#: app/auth/forms.py:66 app/core/forms.py:110
+#: app/auth/forms.py:66 app/core/forms.py:111
 msgid "Password"
 msgstr "Passwort"
 
@@ -138,31 +134,31 @@ msgid "Remember Me"
 msgstr "Speichern"
 
 #: app/auth/forms.py:24 app/templates/auth/login.html:8
-#: app/templates/auth/register.html:45 app/templates/base.html:45
-#: app/templates/core/index.html:17
+#: app/templates/auth/register.html:45 app/templates/base.html:43
+#: app/templates/core/index.html:15
 msgid "Login"
 msgstr "Einloggen"
 
-#: app/auth/forms.py:32 app/auth/forms.py:45 app/core/forms.py:112
+#: app/auth/forms.py:32 app/auth/forms.py:45 app/core/forms.py:113
 msgid "Repeat Password"
 msgstr "Passwort widerholen"
 
 #: app/auth/forms.py:34 app/templates/auth/login.html:40
-#: app/templates/auth/register.html:8 app/templates/base.html:46
-#: app/templates/core/index.html:15
+#: app/templates/auth/register.html:8 app/templates/base.html:44
+#: app/templates/core/index.html:14
 msgid "Register"
 msgstr "Registrieren"
 
-#: app/auth/forms.py:39 app/auth/forms.py:52 app/core/forms.py:106
+#: app/auth/forms.py:39 app/auth/forms.py:52 app/core/forms.py:107
 msgid "Please use a different email address."
 msgstr "Bitte benutzen sie eine andere E-Mail-Adresse."
 
-#: app/auth/forms.py:46 app/core/forms.py:65
-msgid "Categories"
-msgstr "Kategorien"
+#: app/auth/forms.py:46
+msgid "Topics"
+msgstr "Themen"
 
-#: app/auth/forms.py:47 app/auth/forms.py:62 app/core/forms.py:66
-#: app/core/forms.py:92 app/core/forms.py:100
+#: app/auth/forms.py:47 app/auth/forms.py:62 app/core/forms.py:67
+#: app/core/forms.py:93 app/core/forms.py:101
 msgid "Save"
 msgstr "Speichern"
 
@@ -178,113 +174,126 @@ msgstr "Modus"
 msgid "Enable"
 msgstr "Aktivieren"
 
-#: app/auth/routes.py:39
+#: app/auth/routes.py:47
 msgid "Invalid email or password"
 msgstr "Ungülitge Email oder Passwort"
 
-#: app/auth/routes.py:43
+#: app/auth/routes.py:51
 #, python-format
 msgid "Logged in as %(display_name)s."
 msgstr "Eingeloggt als %(display_name)s"
 
-#: app/auth/routes.py:57
+#: app/auth/routes.py:65
 msgid "Logged out."
 msgstr "Ausgeloggt."
 
-#: app/auth/routes.py:71
+#: app/auth/routes.py:79
 msgid "Congratulations, you are now a registered user!"
 msgstr "herzlich glückwunsch, sie sind ein registrierter Benutzer!"
 
-#: app/auth/routes.py:90
+#: app/auth/routes.py:98
 msgid "Your profile has been updated."
 msgstr "Ihr Profil wurde aktualisiert."
 
-#: app/auth/routes.py:189
+#: app/auth/routes.py:152
+#, python-format
+msgid "Subscription to %(collection)s"
+msgstr "Abonement für %(collection)s"
+
+#: app/auth/routes.py:203
 msgid "Invalid password"
 msgstr "Invalides passwort"
 
-#: app/auth/routes.py:195
+#: app/auth/routes.py:209
 #, python-format
 msgid "Enabled access token %(uuid)s."
 msgstr "Zugriffstoken %(uuid)s aktiviert."
 
-#: app/core/forms.py:27
+#: app/core/forms.py:25
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: app/core/forms.py:38
+#: app/core/forms.py:36
 msgid "Not a valid datetime value"
 msgstr "Kein valider Termin"
 
-#: app/core/forms.py:43 app/core/forms.py:81
+#: app/core/forms.py:41 app/core/forms.py:82
 #: app/templates/core/collection.html:41 app/templates/core/talk.html:48
 msgid "Description"
 msgstr "Beschreibung"
 
-#: app/core/forms.py:58
+#: app/core/forms.py:57
 msgid "Speaker's Name"
 msgstr "Name des Redners"
 
-#: app/core/forms.py:60
+#: app/core/forms.py:59
 msgid "Speaker's Bio"
 msgstr "Informationen über den Redner"
 
-#: app/core/forms.py:62 app/templates/base.html:34
-#: app/templates/core/collections.html:6 app/templates/core/index.html:11
+#: app/core/forms.py:61 app/templates/base.html:32
+#: app/templates/core/collections.html:6 app/templates/core/index.html:10
 #: app/templates/core/talk.html:36
 msgid "Collections"
 msgstr "Kollektionen"
 
-#: app/core/forms.py:70 app/core/forms.py:74
+#: app/core/forms.py:65
+msgid "Categories"
+msgstr "Kategorien"
+
+#: app/core/forms.py:71 app/core/forms.py:75
 msgid "You can only create talks for the future."
 msgstr "Talks können nur mit ausstehenden Termin angelegt werden."
 
-#: app/core/forms.py:76
+#: app/core/forms.py:77
 msgid "Talk durations must be >= 0."
 msgstr "Talks können nur eine Länge >= 0 haben."
 
-#: app/core/forms.py:82
+#: app/core/forms.py:83
 msgid "Is meta?"
 msgstr "Ist meta?"
 
-#: app/core/forms.py:84
+#: app/core/forms.py:85
 msgid "Meta Collections"
 msgstr "Meta Listen"
 
-#: app/core/forms.py:88 app/templates/core/collection.html:27
+#: app/core/forms.py:89 app/templates/core/collection.html:27
 msgid "Organizer"
 msgstr "Organisator"
 
-#: app/core/forms.py:91 app/templates/core/collection.html:31
+#: app/core/forms.py:92 app/templates/core/collection.html:31
 msgid "Editors"
 msgstr "Editoren"
 
-#: app/templates/base.html:30
+#: app/templates/base.html:28
 msgid "Browse"
 msgstr "Stöbern"
 
-#: app/templates/base.html:33 app/templates/core/collection.html:62
+#: app/templates/base.html:31 app/templates/core/collection.html:62
 #: app/templates/core/index.html:9 app/templates/core/talks.html:6
 msgid "Talks"
 msgstr "Talks"
 
-#: app/templates/base.html:36 app/templates/core/users.html:5
+#: app/templates/base.html:34 app/templates/core/users.html:5
 msgid "Users"
 msgstr "Nutzer"
 
-#: app/templates/auth/profile.html:8 app/templates/base.html:48
+#: app/templates/auth/profile.html:8 app/templates/base.html:46
 msgid "Profile"
 msgstr "Profil"
 
-#: app/templates/base.html:49
+#: app/templates/base.html:47
 msgid "Subscribed talks"
 msgstr "Abonierte Talks"
 
-#: app/templates/base.html:50
+#: app/templates/base.html:48
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: app/templates/base.html:81
+#: app/templates/base.html:79
+msgid "About"
+msgstr "Über Talks.Tue"
+
+#: app/templates/base.html:80
 msgid "Back to top"
 msgstr "Zurück an den Seitenanfang"
 
@@ -350,6 +359,50 @@ msgstr "Anstehende Talks"
 #: app/templates/auth/token_login.html:8
 msgid "Enable token access"
 msgstr "Zugriffstoken aktivieren"
+
+#: app/templates/core/_edit_base.html:14
+msgid "If you navigate away from this page you will lose your unsaved changes."
+msgstr ""
+"Wenn sie von dieser Seite weg navigieren wird alle ungespeicherten "
+"Änderung gelöscht."
+
+#: app/templates/core/about.html:7
+msgid ""
+"\n"
+"                <p>\n"
+"                    Talks.Tue is project by the <a href=\"http://mml.cs"
+".uni-"
+"tuebingen.de\">Chair&nbsp;for&nbsp;the&nbsp;Methods&nbsp;of&nbsp;Machine&nbsp;Learning</a>"
+"\n"
+"                    of the <a href=\"https://uni-"
+"tuebingen.de/\">Eberhard&nbsp;Karls&nbsp;University&nbsp;of&nbsp;Tübingen</a>."
+" Additionally it is financially\n"
+"                    backed by the <a href=\"https://cyber-"
+"valley.de\">CyberValley&nbsp;Initiative</a>. The current team behind it "
+"consists of:\n"
+"                    <a "
+"href=\"https://timfi.dev\">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>."
+"\n"
+"                </p>\n"
+"            "
+msgstr ""
+"\n"
+"                <p>\n"
+"                    Talks.Tue ist ein Projekt des <a href=\"http://mml.cs"
+".uni-"
+"tuebingen.de\">Lehrstuhls&nbsp;für&nbsp;die&nbsp;Methoden&nbsp;des&nbsp;Machinellen&nbsp;Lernens</a>"
+"\n"
+"                    der <a href=\"https://uni-"
+"tuebingen.de/\">Eberhard&nbsp;Karls&nbsp;Universität&nbsp;Tübingen</a>. "
+"Es ist finanziell\n"
+"                    unterstützt von der <a href=\"https://cyber-"
+"valley.de\">CyberValley&nbsp;Initiative</a>. Das aktuelle Team für diese "
+"Projekt besteht aus:\n"
+"                    <a "
+"href=\"https://timfi.dev\">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>."
+"\n"
+"                </p>\n"
+"            "
 
 #: app/templates/core/collection.html:10 app/templates/core/collections.html:11
 #: app/templates/core/talk.html:10 app/templates/core/talks.html:11
@@ -438,11 +491,7 @@ msgstr "Neue Kollektion erstellen"
 msgid "A simple way to find the best talks at hosted at our University for you."
 msgstr "Ein simpler weg die besten Talk an unserer Universität zu finden."
 
-#: app/templates/core/index.html:10 app/templates/core/index.html:16
-msgid "or"
-msgstr "oder"
-
-#: app/templates/core/index.html:26
+#: app/templates/core/index.html:24
 msgid "View"
 msgstr "Ansehen"
 
@@ -481,7 +530,4 @@ msgstr "Nutzer bearbeiten"
 #: app/templates/snippets/historyitems.html:11
 msgid "No diff"
 msgstr "Kein Änderungen"
-
-#~ msgid "Configure"
-#~ msgstr "Konfigurieren"
 
