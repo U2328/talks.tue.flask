@@ -8,10 +8,10 @@
 
 {% block script %}
 <script>
-    $("form :input").change(function(event) { event.target.data("changed",true); });
+    var changed = false;
+    $("form :input").change(function(event) { changed = true; });
     window.onbeforeunload = function() {
-        if $("form").is(function(i, elem) { return elem.data("changed") })
-            return "{{ _("If you navigate away from this page you will lose your unsaved changes.") }}";
+        if (changed) { return "{{ _("If you navigate away from this page you will lose your unsaved changes.") }}"; }
     }
     $('form').submit(function() { window.onbeforeunload = null; });
 </script>

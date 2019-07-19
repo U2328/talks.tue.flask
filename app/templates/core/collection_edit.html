@@ -89,6 +89,7 @@
 {{ super() }}
 <script>
     var descriptionMDE = new SimpleMDE({ element: $('#description')[0] });
+    descriptionMDE.codemirror.on("change", function() { changed = true; });
     $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
     $('#deleteModal').modal('attach events', '#deleteModalTrigger', 'show');
     $('.ui.dropdown').dropdown();
