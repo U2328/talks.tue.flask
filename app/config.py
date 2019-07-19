@@ -45,6 +45,14 @@ class Config:
     CELERY_IMPORTS = ("app.tasks",)
     CELERYBEAT_SCHEDULE = dict()
 
+    # Mail
+    MAIL_SERVER   = os.getenv("MAIL_SERVER", "")
+    MAIL_PORT     = int(os.getenv("MAIL_PORT", 0))
+    MAIL_USERNAME =  os.getenv("MAIL_USERNAME", "")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "")
+    MAIL_USE_TLS  = bool(os.getenv("MAIL_USE_TLS", True))
+    MAIL_USE_SSL  = bool(os.getenv("MAIL_USE_SSL", False))
+
 
 @_register_config
 class ProductionConfig(Config):

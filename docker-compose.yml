@@ -5,7 +5,9 @@ services:
       context: .
       dockerfile: docker/app/Dockerfile
     command: docker/app/start_flask.sh
-    env_file: .env
+    env_file:
+      - .env
+      - .flaskenv
     restart: always
     volumes:
       - ".:/code"
