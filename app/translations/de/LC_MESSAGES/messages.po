@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-07 13:29+0000\n"
+"POT-Creation-Date: 2019-07-19 08:01+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -112,7 +112,7 @@ msgid "Display name"
 msgstr "Name"
 
 #: app/api/tables.py:78 app/auth/forms.py:21 app/auth/forms.py:29
-#: app/auth/forms.py:43 app/core/forms.py:98
+#: app/core/forms.py:98
 msgid "Email"
 msgstr "E-Mail"
 
@@ -124,8 +124,8 @@ msgstr "Ist Administrator?"
 msgid "Is Organizer?"
 msgstr "Ist Organisator?"
 
-#: app/auth/forms.py:22 app/auth/forms.py:30 app/auth/forms.py:44
-#: app/auth/forms.py:66 app/core/forms.py:111
+#: app/auth/forms.py:22 app/auth/forms.py:30 app/auth/forms.py:66
+#: app/core/forms.py:111
 msgid "Password"
 msgstr "Passwort"
 
@@ -139,7 +139,7 @@ msgstr "Speichern"
 msgid "Login"
 msgstr "Einloggen"
 
-#: app/auth/forms.py:32 app/auth/forms.py:45 app/core/forms.py:113
+#: app/auth/forms.py:32 app/core/forms.py:113
 msgid "Repeat Password"
 msgstr "Passwort widerholen"
 
@@ -152,6 +152,18 @@ msgstr "Registrieren"
 #: app/auth/forms.py:39 app/auth/forms.py:52 app/core/forms.py:107
 msgid "Please use a different email address."
 msgstr "Bitte benutzen sie eine andere E-Mail-Adresse."
+
+#: app/auth/forms.py:43
+msgid "New Email"
+msgstr "Neue Email"
+
+#: app/auth/forms.py:44
+msgid "New Password"
+msgstr "Neues Passwort"
+
+#: app/auth/forms.py:45
+msgid "New Repeat Password"
+msgstr "Neues Passwort wiederholen"
 
 #: app/auth/forms.py:46
 msgid "Topics"
@@ -277,7 +289,7 @@ msgstr "Talks"
 msgid "Users"
 msgstr "Nutzer"
 
-#: app/templates/auth/profile.html:8 app/templates/base.html:46
+#: app/templates/base.html:46
 msgid "Profile"
 msgstr "Profil"
 
@@ -314,6 +326,10 @@ msgstr "Fehler"
 #: app/templates/core/user_edit.html:56
 msgid "Cancel"
 msgstr "Abbrechen"
+
+#: app/templates/auth/profile.html:8
+msgid "Edit Profile"
+msgstr "Profil bearbeiten"
 
 #: app/templates/auth/profile.html:47
 msgid "Subscriptions"
