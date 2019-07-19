@@ -1,12 +1,17 @@
 import json as _json
 from flask import current_app
 
-__all__ = ("json", "render_bool", "render_datetime")
+__all__ = ("json", "render_bool", "render_datetime", "length")
 
 
 def json(obj):
-    """Format obj as jsobn string."""
+    """Format obj as json string."""
     return _json.dumps(obj, default=str)
+
+
+def length(obj):
+    """Template filter wrapper for len"""
+    return len(obj)
 
 
 def render_bool(val):

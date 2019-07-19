@@ -36,9 +36,7 @@ class CollectionTable(ModelDataTable):
         {
             "field": "subscribers",
             "name": _l("# Subscribers"),
-            "value": lambda collection: collection.subscriptions.count(
-                collection.subscriptions
-            ),
+            "value": lambda collection: len(collection.subscriptions),
         },
     ]
 

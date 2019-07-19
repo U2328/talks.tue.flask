@@ -55,6 +55,7 @@ class DataTable:
                 table_id=cls.table_id,
                 table_url=table_url,
                 js_kwargs={**(cls.js_kwargs or {}), **kwargs.pop("js_kwargs", dict())},
+                kwargs=kwargs
             )
         )
 
