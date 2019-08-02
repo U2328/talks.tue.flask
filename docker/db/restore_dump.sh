@@ -12,4 +12,4 @@ if [ ! -f $DUMP_FILE ]; then
   printf "\033[31m!!! dump file not found\033[0m\n"
 fi
 
-psql -d talks_tue -U postgres -f $DUMP_FILE
+pg_restore -cC -U postgres $DUMP_FILE
