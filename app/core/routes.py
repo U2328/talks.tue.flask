@@ -12,6 +12,7 @@ from app.models import HistoryItem, HISTORY_DISCRIMINATOR_MAP, Talk, Collection,
 
 __all__ = (
     "index",
+    "about",
     "talk",
     "edit_talk",
     "delete_talk",
@@ -30,6 +31,13 @@ __all__ = (
 def index():
     talks = Talk.query[:9]
     return render_template("core/index.html", up_next=talks)
+
+
+
+@bp.route("/")
+@bp.route("/about")
+def about():
+    return render_template("core/about.html")
 
 
 #######################

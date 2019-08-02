@@ -23,6 +23,7 @@ babel_update: ## update all language files
 	rm messages.pot
 
 babel_compile: ## compile all language files
+	$(MAKE) babel_update
 	docker-compose exec app pybabel compile -d app/translations
 
 db_migrate: ## generate database-migration

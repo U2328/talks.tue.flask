@@ -32,7 +32,7 @@
                     <span class="h6">{% for editor in collection.editors %}<span class="ui tiny label grey">{{ editor.display_name }}</span>{% endfor %}</span>
                 </div>
                 <div class="ui segment">
-                    <small>{{ _("Subscribers") }}</small>&nbsp;<span class="h6">{{ collection.subscriptions.count(collection.subscriptions) }}</span>
+                    <small>{{ _("Subscribers") }}</small>&nbsp;<span class="h6">{{ collection.subscriptions|length }}</span>
                 </div>
             </div>
         </div>

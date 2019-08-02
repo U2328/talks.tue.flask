@@ -40,9 +40,9 @@ class RegistrationForm(FlaskForm):
 
 
 class ProfileForm(FlaskForm):
-    email = StringField(_l("Email"), validators=[Email()])
-    password = PasswordField(_l("Password"))
-    password2 = PasswordField(_l("Repeat Password"), validators=[EqualTo("password")])
+    email = StringField(_l("New Email"), validators=[Email()])
+    password = PasswordField(_l("New Password"))
+    password2 = PasswordField(_l("New Repeat Password"), validators=[EqualTo("password")])
     topics = QuerySelectMultipleField(_l("Topics"), query_factory=lambda: Topic.query)
     submit = SubmitField(_l("Save"))
 
