@@ -5,7 +5,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
             <li class="breadcrumb-item"><a href="{{ url_for("auth.profile") }}">{{ _("Profile") }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Subscription to ''%(collection)s'", collection=subscription.collection.title) }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Subscription to '%(collection)s'", collection=subscription.collection.title) }}</a></li>
         </ol>
     </nav>
 {% endblock %}
