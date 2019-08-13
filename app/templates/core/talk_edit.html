@@ -1,17 +1,21 @@
 {% extends "core/_edit_base.html" %}
-{% block content %}
-<div class="ui top attached secondary menu">
-    <div class="item">
-        <h3>{% if new %}{{ _("Create Talk") }}{% else %}{{ _("Edit Talk") }}{% endif %}</h3>
-    </div>
-    <div class="right labeled icon menu">
-        {% if not new %}
-            <a id="historyModalTrigger" class="ui small button item"><i class="history icon"></i>{{ _("History") }}</a>
-            <a class="ui small button item" href="{{ url_for('core.edit_talk', id=talk.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
-            <a id="deleteModalTrigger" class="ui small button item"><i class="trash alternate outline icon"></i>{{ _("Delete") }}</a>
-        {% endif %}
-    </div>
-</div>
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for("core.talks") }}">{{ _("Talks") }}</a></li>
+            {% if new %}
+                <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Create") }}</a></li>
+            {% else %}
+                <li class="breadcrumb-item"><a href="{{ url_for("core.talk", id=talk.id) }}">{{ talk.title }} (#{{ talk.id }})</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Edit") }}</a></li>
+            {% endif %}
+        </ol>
+    </nav>
+{% endblock %}
+
+
 {% if form.errors %}
     <div class="ui attached small error message">
         <div class="header">{{ _("Errors") }}</div>
@@ -20,91 +24,195 @@
         </ul>
     </div>
 {% endif %}
-<div class="ui attached segment">
-    <form id="talkForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
-        {{ form.csrf_token }}
-        <div class="ui stackable grid">
-            <div class="two column row">
-                <div class="eight wide column">
-                    <div class="field{% if form.title.errors %} error{% endif %}">
+
+{% block content %}
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <h2>{% if new %}{{ _("Create Talk") }}{% else %}{{ _("Edit Talk") }}{% endif %}</h2>
+        </div>
+        <div class="col-sm-6">
+            <div class="btn-group btn-group-sm d-none d-sm-block float-sm-right" role="group" aria-label="controls">
+                {% if not new %}
+                    <button type="button" data-toggle="modal" data-target="#historyModal" class="btn btn-primary"><i class="history icon"></i>{{ _("History") }}</button>
+                    <a class="btn btn-primary" href="{{ url_for('core.edit_talk', id=talk.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
+                    <button type="button" data-toggle="modal" data-target="#deleteModal" class="btn btn-primary"><i class="trash alternate outline icon"></i>{{ _("Delete") }}</button>
+                {% endif %}
+            </div>
+            <div class="btn-group-vertical btn-group-sm d-block d-sm-none" role="group" aria-label="controls">
+                {% if not new %}
+                    <a id="historyModalTrigger" class="btn btn-primary text-white"><i class="history icon"></i>{{ _("History") }}</a>
+                    <a class="btn btn-primary" href="{{ url_for('core.edit_talk', id=talk.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
+                    <a id="deleteModalTrigger" class="btn btn-primary text-white"><i class="trash alternate outline icon"></i>{{ _("Delete") }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form id="talkForm" method="post" class="form" novalidate>
+            {{ form.csrf_token }}
+            <div class="form-row">
+                <div class="col-sm-6 mb-3 px-2">
+                    <div class="form-group{% if form.title.errors %} error{% endif %}">
                         {{ form.title.label }}
-                        {{ form.title(size=64) }}
+                        {{ form.title(class_="form-control is-" + ('in' if form.title.errors else '') + 'valid', size=64) }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                <ul>
+                                    {% for error in form.title.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="field{% if form.description.errors %} error{% endif %}">
+                </div>
+                <div class="col-sm-6 mb-3 px-2">
+                    <div class="form-group{% if form.speaker_name.errors %} error{% endif %}">
+                        {{ form.speaker_name.label }}
+                        {{ form.speaker_name(class_="form-control is-" + ('in' if form.speaker_name.errors else '') + 'valid', size=32) }}
+                        {% if form.speaker_name.errors %}
+                            <div class="invalid-feedback">
+                                <ul>
+                                    {% for error in form.speaker_name.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12 col-lg-6 mb-3 px-2">
+                    <div class="form-group{% if form.description.errors %} error{% endif %}">
                         {{ form.description.label }}
                         {{ form.description() }}
                     </div>
                 </div>
-                <div class="eight wide column">
-                    <div class="field{% if form.speaker_name.errors %} error{% endif %}">
-                        {{ form.speaker_name.label }}
-                        {{ form.speaker_name(size=32) }}
-                    </div>
-                    <div class="field{% if form.speaker_aboutme.errors %} error{% endif %}">
+                <div class="col-md-12 col-lg-6 mb-3 px-2">
+                    <div class="form-group{% if form.speaker_aboutme.errors %} error{% endif %}">
                         {{ form.speaker_aboutme.label }}
                         {{ form.speaker_aboutme() }}
                     </div>
                 </div>
             </div>
-            <div class="four column row">
-                <div class="column">
-                    <div class="field{% if form.start_timestamp.errors %} error{% endif %}">
-                        {{ form.start_timestamp.label }}
-                        <div class="ui calendar" id="start_timestamp">
-                            <div class="ui input left icon">
-                                <i class="calendar icon"></i>
-                                {{ form.start_timestamp() }}
+            <div class="form-row">
+                <div class="col-md-6 col-md-4 mb-3 px-2">
+                    <div class="form-group{% if form.start_timestamp.errors %} error{% endif %}">
+                        {{ form.start_timestamp.label(for_="start_timestamp") }}
+                        <div class="input-group date" id="startTimestampPicker" data-target-input="nearest">
+                            {{ form.start_timestamp(class_="form-control datetimepicker-input is-" + ('in' if form.start_timestamp.errors else '') + 'valid', data_target="#startTimestampPicker") }}
+                            <div class="input-group-append" data-target="#startTimestampPicker" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
+                            {% if form.start_timestamp.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.start_timestamp.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-                <div class="column">
-                    <div class="field{% if form.end_timestamp.errors %} error{% endif %}">
-                        {{ form.end_timestamp.label }}
-                        <div class="ui calendar" id="end_timestamp">
-                            <div class="ui input left icon">
-                                <i class="calendar icon"></i>
-                                {{ form.end_timestamp() }}
+                <div class="col-md-6 col-md-4 mb-3 px-2">
+                    <div class="form-group{% if form.end_timestamp.errors %} error{% endif %}">
+                        {{ form.end_timestamp.label(for_="end_timestamp") }}
+                        <div class="input-group date" id="endTimestampPicker" data-target-input="nearest">
+                            {{ form.end_timestamp(class_="form-control datetimepicker-input is-" + ('in' if form.end_timestamp.errors else '') + 'valid', data_target="#endTimestampPicker") }}
+                            <div class="input-group-append" data-target="#endTimestampPicker" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
+                            {% if form.end_timestamp.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.end_timestamp.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-                <div class="column">
-                    <div class="field{% if form.location.errors %} error{% endif %}">
+                <div class="col-md-6 col-md-4 mb-3 px-2">
+                    <div class="form-group{% if form.location.errors %} error{% endif %}">
                         {{ form.location.label }}
-                        {{ form.location(size=128) }}
+                        {{ form.location(class_="form-control is-" + ('in' if form.location.errors else '') + 'valid', size=128) }}
+                        {% if form.location.errors %}
+                            <div class="invalid-feedback">
+                                <ul>
+                                    {% for error in form.location.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="column">
-                    <div class="field{% if form.collections.errors %} error{% endif %}">
-                        {{ form.collections.label }}
-                        {{ form.collections(class_='ui dropdown') }}
+                <div class="col-md-6 col-md-4 mb-3 px-2">
+                    <div class="form-group{% if form.collections.errors %} error{% endif %}">
+                        {{ form.collections.label(for_="collections") }}
+                        {{ form.collections(class_='selectpicker form-control is-' + ('in' if form.collections.errors else '') + 'valid', data_live_search="true", data_style="custom-select") }}
+                        {% if form.collections.errors %}
+                            <div class="invalid-feedback">
+                                <ul>
+                                    {% for error in form.collections.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
-</div>
-<div class="ui bottom attached segment">
-    {{ form.submit(form='talkForm', class="ui button positive") }}
-    <a class="ui button negative"href="{{ next }}">{{ _('Cancel') }}</a>
+            <div class="form-row">
+                <div class="col-sm-6 mb-3 px-2">
+                    {{ form.submit(form='talkForm', class="form-control btn btn-success") }}
+                </div>
+                <div class="col-sm-6 mb-3 px-2">
+                    <a class="form-control btn btn-danger" href="{{ next }}">{{ _('Cancel') }}</a>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 {% if not new %}
-    <div id="historyModal" class="ui tiny longer modal">
-        <div class="header">{{ _("History") }}</div>
-        <div class="scrolling content">
-            {% with history=talk.history %}
-                {% include 'snippets/historyitems.html' %}
-            {% endwith %}
+    <div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="historyModalLabel">{{ _("History") }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% with history=talk.history %}
+                        {% include 'snippets/historyitems.html' %}
+                    {% endwith %}
+                </div>
+            </div>
         </div>
     </div>
-    <div id="deleteModal" class="ui tiny longer modal">
-        <div class="header">{{ _("Are you sure you want to delete this talk?") }}</div>
-        <div class="actions">
-            <a class="ui red labeled icon button" href="{{ url_for('core.delete_talk', id=talk.id) }}">
-                <i class="trash alternate outline icon"></i>{{ _('Delete') }}
-            </a>
-            <div class="ui deny button">{{ _('Cancel') }}</div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">{{ _("Are you sure you want to delete this talk?") }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-outline-danger" href="{{ url_for('core.delete_talk', id=talk.id) }}">
+                        <i class="trash alternate outline icon"></i>{{ _('Delete') }}
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 {% endif %}
@@ -112,14 +220,15 @@
 {% block script %}
 {{ super() }}
 <script>
-    var descriptionMDE = new SimpleMDE({ element: $('#description')[0], });
-    descriptionMDE.codemirror.on("change", function() { changed = true; });
-    var aboutmeMDE = new SimpleMDE({ element: $('#speaker_aboutme')[0] });
-    aboutmeMDE.codemirror.on("change", function() { changed = true; });
-    $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
-    $('#deleteModal').modal('attach events', '#deleteModalTrigger', 'show');
-    $('.ui.dropdown').dropdown();
-    $('#start_timestamp').calendar({ ampm: false });
-    $('#end_timestamp').calendar({ ampm: false });
+    $(function () {
+        var descriptionMDE = new SimpleMDE({ element: $('#description')[0], });
+        descriptionMDE.codemirror.on("change", function() { changed = true; });
+        var aboutmeMDE = new SimpleMDE({ element: $('#speaker_aboutme')[0] });
+        aboutmeMDE.codemirror.on("change", function() { changed = true; });
+        var start_timestamp = moment($('#start_timestamp').val(), 'DD.MM.YYYY HH:mm').toDate();
+        $('#startTimestampPicker').datetimepicker({date:start_timestamp});
+        var end_timestamp = moment($('#end_timestamp').val(), 'DD.MM.YYYY HH:mm').toDate();
+        $('#endTimestampPicker').datetimepicker({date:end_timestamp});
+    });
 </script>
 {% endblock script %}

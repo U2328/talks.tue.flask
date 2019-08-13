@@ -1,31 +1,60 @@
 {% extends "base.html" %}
 
+{% block head %}
+<style>
+    /* taken and adapted from https://getbootstrap.com/docs/4.3/examples/album */
+    .jumbotron {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        margin-bottom: 0;
+        background-color: #fff;
+    }
+    @media (min-width: 768px) {
+        .jumbotron {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+    }
+    .jumbotron p:last-child {
+        margin-bottom: 0;
+    }
+    .jumbotron-heading {
+        font-weight: 300;
+    }
+    .jumbotron .container {
+        max-width: 40rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="ui one column stackable center aligned page grid segment">
-    <div class="column twelve wide">
-        <h1>Talks.Tue</h1>
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Talks.Tue</h1>
         <p class="lead text-muted">{{ _('A simple way to find the best talks at hosted at our University for you.') }}</p>
-        <div class="ui buttons">
-            <a href="{{ url_for('core.talks') }}" class="ui left attached button primary">{{ _('Talks') }}</a>
-            <a href="{{ url_for('core.collections') }}" class="right attached ui button primary">{{ _('Collections') }}</a>
+        <div class="btn-group mr-sm-2" role="group">
+            <a class="btn btn-primary my-2" href="{{ url_for('core.talks') }}">{{ _('Talks') }}</a>
+            <a class="btn btn-primary my-2" href="{{ url_for('core.collections') }}">{{ _('Collections') }}</a>
         </div>
-        {% if current_user.is_anonymous %}
-            <div class="ui buttons">
-                <a href="{{ url_for('auth.register') }}" class="ui button">{{ _('Register') }}</a>
-                <a href="{{ url_for('auth.login') }}" class="ui button">{{ _('Login') }}</a>
-            </div>
-        {% endif %}
     </div>
-</div>
-<div class="ui cards">
-    {% for talk in up_next %}
-        <div class="card">
-            <div class="content">
-                <a href="{{ url_for('core.talk', id=talk.id) }}" class="ui basic button right floated">{{ _('View') }}</a>
-                <div class="header">{{ talk.title }}</div>
-                <div class="meta"><small>{{ talk.start_timestamp | render_datetime }}</small></div>
-            </div>
+</section>
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            {% for talk in up_next %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <p class="card-text"><h4>{{ talk.title }}</h4></p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a class="btn btn-primary" href="{{ url_for('core.talk', id=talk.id) }}">{{ _('View') }}</a>
+                                <small class="text-muted">{{ talk.start_timestamp | render_datetime }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
+    </div>
 </div>
 {% endblock %}
