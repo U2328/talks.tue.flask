@@ -1,29 +1,43 @@
 {% extends 'base.html' %}
 
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Talks") }}</a></li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block content %}
-<div class="ui top attached secondary menu">
-    <div class="item">
-        <h3><i class="calendar icon"></i>&nbsp;{{ _('Talks') }}</h3>
-    </div>
-    {% if current_user.can_edit %}
-        <div class="right menu">
-            <div class="ui simple dropdown item">
-                {{ _('Edit') }}
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                    {% if not editables %}
-                        <a href="{{ url_for('core.editable_talks') }}" class="ui small button item"><i class="edit outline icon"></i>{{ _("View editable talks") }}</a>
-                    {% else %}
-                        <a href="{{ url_for('core.talks') }}" class="ui small button item"><i class="backward icon"></i></i>{{ _("View all talks") }}</a>
-                        <a href="{{ url_for('core.historyitems', discriminator="talk") }}" class="ui small button item"><i class="history icon"></i>{{ _("View related history") }}</a>
-                    {% endif %}
-                    <a href="{{ url_for('core.edit_talk') }}" class="ui small button item"><i class="plus icon"></i>{{ _("Add new talk") }}</a>
-                </div>
-            </div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 col-sm-12 mb-3">
+            <h2><i class="fas fa-calendar-day"></i>&nbsp;{{ _('Talks') }}</h2>
         </div>
-    {% endif %}
-</div>
-<div class="ui bottom attached segment">
+        <div class="col-md-9 col-sm-12 mb-3">
+            {% if current_user.can_edit %}
+                <div class="btn-group btn-group-sm d-none d-sm-block float-right" role="group" aria-label="profile controls">
+                    {% if not editables %}
+                        <a href="{{ url_for('core.editable_talks') }}" class="btn btn-primary"><i class="far fa-edit"></i>&nbsp;{{ _("View editable talks") }}</a>
+                    {% else %}
+                        <a href="{{ url_for('core.talks') }}" class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;{{ _("View all talks") }}</a>
+                        <a href="{{ url_for('core.historyitems', discriminator="talk") }}" class="btn btn-primary"><i class="fas fa-history"></i>&nbsp;{{ _("View related history") }}</a>
+                    {% endif %}
+                    <a href="{{ url_for('core.edit_talk') }}" class="btn btn-primary"><i class="far fa-plus-square"></i>&nbsp;{{ _("Add new talk") }}</a>
+                </div>
+                <div class="btn-group-vertical btn-group-sm d-block d-sm-none" role="group" aria-label="profile controls">
+                    {% if not editables %}
+                        <a href="{{ url_for('core.editable_talks') }}" class="btn btn-primary"><i class="far fa-edit"></i>&nbsp;{{ _("View editable talks") }}</a>
+                    {% else %}
+                        <a href="{{ url_for('core.talks') }}" class="btn btn-primary"><i class="fas fa-backward"></i>&nbsp;{{ _("View all talks") }}</a>
+                        <a href="{{ url_for('core.historyitems', discriminator="talk") }}" class="btn btn-primary"><i class="fas fa-history"></i>&nbsp;{{ _("View related history") }}</a>
+                    {% endif %}
+                    <a href="{{ url_for('core.edit_talk') }}" class="btn btn-primary"><i class="far fa-plus-square"></i>&nbsp;{{ _("Add new talk") }}</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
     {{ table.generate_html() | safe }}
 </div>
 {% endblock content %}

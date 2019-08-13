@@ -1,86 +1,171 @@
 {% extends "core/_edit_base.html" %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for("core.collections") }}">{{ _("Collections") }}</a></li>
+            {% if new %}
+                <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Create") }}</a></li>
+            {% else %}
+                <li class="breadcrumb-item"><a href="{{ url_for("core.collection", id=collection.id) }}">{{ collection.title }} (#{{ collection.id }})</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Edit") }}</a></li>
+            {% endif %}
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block content %}
-<div class="ui top attached secondary menu">
-    <div class="item">
-        <h3>{% if new %}{{ _("Create Collection") }}{% else %}{{ _("Edit Collection") }}{% endif %}</h3>
-    </div>
-    <div class="right labeled icon menu">
-        {% if not new %}
-            <a id="historyModalTrigger" class="ui small button item"><i class="history icon"></i>{{ _("History") }}</a>
-            <a class="ui small button item" href="{{ url_for('core.edit_collection', id=collection.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
-            <a id="deleteModalTrigger" class="ui small button item"><i class="trash alternate outline icon"></i>{{ _("Delete") }}</a>
-        {% endif %}
-    </div>
-</div>
-{% if form.errors %}
-    <div class="ui attached small error message">
-        <div class="header">{{ _("Errors") }}</div>
-        <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
-            <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
-        </ul>
-    </div>
-{% endif %}
-<div class="ui attached segment">
-    <form id="collectionForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
-        {{ form.csrf_token }}
-        <div class="ui stackable grid">
-            <div class="{% if has_full_access %}two column{% endif %} row">
-                <div class="{% if has_full_access %}twelve{% else %}sixteen{% endif %} wide column">
-                    <div class="field{% if form.title.errors %} error{% endif %}">
-                        {{ form.title.label }}
-                        {{ form.title(size=32) }}
-                    </div>
-                    <div class="field{% if form.description.errors %} error{% endif %}">
-                        {{ form.description.label }}
-                        {{ form.description() }}
-                    </div>
-                </div>
-                {% if has_full_access %}
-                    <div class="four wide column">
-                        <div class="inline field{% if form.is_meta.errors %} error{% endif %}">
-                            <div class="ui toggle checkbox">
-                                {{ form.is_meta(class_="hidden") }}
-                                {{ form.is_meta.label }}
-                            </div>
-                        </div>
-                        <div class="field{% if form.meta_collections.errors %} error{% endif %}">
-                            {{ form.meta_collections.label }}
-                            {{ form.meta_collections(class_='ui search dropdown') }}
-                        </div>
-                        <div class="field{% if form.organizer.errors %} error{% endif %}">
-                            {{ form.organizer.label }}
-                            {{ form.organizer(class_='ui search dropdown') }}
-                        </div>
-                        <div class="field{% if form.editors.errors %} error{% endif %}">
-                            {{ form.editors.label }}
-                            {{ form.editors(class_='ui search dropdown') }}
-                        </div>
-                    </div>
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <h2>{% if new %}{{ _("Create Collection") }}{% else %}{{ _("Edit Collection") }}{% endif %}</h2>
+        </div>
+        <div class="col-sm-6">
+            <div class="btn-group btn-group-sm d-none d-sm-block float-sm-right" role="group" aria-label="controls">
+                {% if not new %}
+                    <button type="button" data-toggle="modal" data-target="#historyModal" class="btn btn-primary"><i class="history icon"></i>{{ _("History") }}</button>
+                    <a class="btn btn-primary" href="{{ url_for('core.edit_collection', id=collection.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
+                    <button type="button" data-toggle="modal" data-target="#deleteModal" class="btn btn-primary"><i class="far fa-trash-alt">&nbsp;</i>{{ _("Delete") }}</button>
+                {% endif %}
+            </div>
+            <div class="btn-group-vertical btn-group-sm d-block d-sm-none" role="group" aria-label="controls">
+                {% if not new %}
+                    <a id="historyModalTrigger" class="btn btn-primary text-white"><i class="history icon"></i>{{ _("History") }}</a>
+                    <a class="btn btn-primary" href="{{ url_for('core.edit_collection', id=collection.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
+                    <a id="deleteModalTrigger" class="btn btn-primary text-white"><i class="far fa-trash-alt">&nbsp;</i>{{ _("Delete") }}</a>
                 {% endif %}
             </div>
         </div>
-    </form>
-</div>
-<div class="ui bottom attached segment">
-    {{ form.submit(form='collectionForm', class="ui button positive") }}
-    <a class="ui button negative"href="{{ next }}">{{ _('Cancel') }}</a>
-</div>
-{% if not new %}
-    <div id="historyModal" class="ui tiny longer modal">
-        <div class="header">{{ _("History") }}</div>
-        <div class="scrolling content">
-            {% with history=collection.history %}
-                {% include 'snippets/historyitems.html' %}
-            {% endwith %}
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <form id="collectionForm" method="post" class="form" novalidate>
+                {{ form.csrf_token }}
+                <div class="form-row">
+                    <div class="{% if has_full_access %}col-md-8 {% endif %}col-sm-12 px-2 mb-3">
+                        <div class="form-group">
+                            {{ form.title.label(for_="title") }}
+                            {{ form.title(class_="form-control is-" + ('in' if form.title.errors else '') + 'valid', size=32) }}
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.title.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.description.label }}
+                            {{ form.description() }}
+                        </div>
+                    </div>
+                    {% if has_full_access %}
+                        <div class="col-md-4 col-sm-12 px-2 mb-3">
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    {{ form.is_meta(class_="custom-control-input is-" + ('in' if form.is_meta.errors else '') + 'valid') }}
+                                    {{ form.is_meta.label(for_="is_meta", class_="custom-control-label") }}
+                                    {% if form.is_meta.errors %}
+                                        <div class="invalid-feedback">
+                                            <ul>
+                                                {% for error in form.is_meta.errors %}
+                                                    <li>{{ error }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.meta_collections.label(for_="meta_collections") }}
+                                {{ form.meta_collections(class_='selectpicker form-control is-' + ('in' if form.meta_collections.errors else '') + 'valid', data_live_search="true", data_style="custom-select") }}
+                                {% if form.meta_collections.errors %}
+                                    <div class="invalid-feedback">
+                                        <ul>
+                                            {% for error in form.meta_collections.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.organizer.label(for_="organizer") }}
+                                {{ form.organizer(class_='selectpicker form-control is-' + ('in' if form.organizer.errors else '') + 'valid', data_live_search="true", data_style="custom-select") }}
+                                {% if form.organizer.errors %}
+                                    <div class="invalid-feedback">
+                                        <ul>
+                                            {% for error in form.organizer.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.editors.label(for_="editors") }}
+                                {{ form.editors(class_='selectpicker form-control is-' + ('in' if form.editors.errors else '') + 'valid', data_live_search="true", data_style="custom-select") }}
+                                {% if form.editors.errors %}
+                                    <div class="invalid-feedback">
+                                        <ul>
+                                            {% for error in form.editors.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-row">
+                    <div class="col-sm-6 mb-3 px-2 mb-3">
+                        {{ form.submit(form='collectionForm', class="form-control btn btn-success") }}
+                    </div>
+                    <div class="col-sm-6 mb-3 px-2 mb-3">
+                        <a class="form-control btn btn-danger" href="{{ next }}">{{ _('Cancel') }}</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-    <div id="deleteModal" class="ui tiny longer modal">
-        <div class="header">{{ _("Are you sure you want to delete this collection?") }}</div>
-        <div class="actions">
-            <a class="ui red labeled icon button" href="{{ url_for('core.delete_collection', id=collection.id) }}">
-                <i class="trash alternate outline icon"></i>{{ _('Delete') }}
-            </a>
-            <div class="ui deny button">{{ _('Cancel') }}</div>
+</div>
+{% if not new %}
+    <div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="historyModalLabel">{{ _("History") }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% with history=collection.history %}
+                        {% include 'snippets/historyitems.html' %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">{{ _("Are you sure you want to delete this collection?") }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-outline-danger" href="{{ url_for('core.delete_collection', id=collection.id) }}">
+                        <i class="far fa-trash-alt">&nbsp;</i>{{ _('Delete') }}
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 {% endif %}
@@ -88,10 +173,9 @@
 {% block script %}
 {{ super() }}
 <script>
-    var descriptionMDE = new SimpleMDE({ element: $('#description')[0] });
-    descriptionMDE.codemirror.on("change", function() { changed = true; });
-    $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
-    $('#deleteModal').modal('attach events', '#deleteModalTrigger', 'show');
-    $('.ui.dropdown').dropdown();
+    $(function(){
+        var descriptionMDE = new SimpleMDE({ element: $('#description')[0] });
+        descriptionMDE.codemirror.on("change", function() { changed = true; });
+    });
 </script>
 {% endblock script %}

@@ -1,72 +1,99 @@
 {% extends "base.html" %}
 
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Profile") }}</a></li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block content %}
-<div class="ui two column stackable page grid">
-    <div class="eight wide column">
-        <div class="ui segments">
-            <div class="ui top attached segment">
-                <h3>{{ _("Edit Profile") }}</h3>
-            </div>
-            {% if form.errors %}
-                <div class="ui attached small error message">
-                    <div class="header">{{ _("Errors") }}</div>
-                    <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
-                        <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
-                    </ul>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ _("Edit Profile") }}</h3>
                 </div>
-            {% endif %}
-            <div class="ui attached segment">
-                <form id="loginForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
-                    {{ form.csrf_token }}
-                    <div class="field">
-                        {{ user.display_name.label }}
-                        <input type="text" placeholder="{{ user.display_name }}" readonly>
-                    </div>
-                    <div class="field{% if form.email.errors %} error{% endif %}">
-                        {{ form.email.label }}
-                        {{ form.email(size=32) }}
-                    </div>
-                    <div class="field{% if form.password.errors %} error{% endif %}">
-                        {{ form.password.label }}
-                        {{ form.password(size=32) }}
-                    </div>
-                    <div class="field{% if form.password2.errors %} error{% endif %}">
-                        {{ form.password2.label }}
-                        {{ form.password2(size=32) }}
-                    </div>
-                </form>
-            </div>
-            <div class="ui bottom attached segment">
-                {{ form.submit(form='loginForm', class="ui button positive") }}
+                <div class="card-body">
+                    <form id="loginForm" method="post" class="form" novalidate>
+                        {{ form.csrf_token }}
+                        <div class="form-group">
+                            <label for="display_name">{{ _("Display Name") }}</label>
+                            <input id="display_name" class="form-control" type="text" readonly placehaolder="{{ current_user.display_name }}">
+                        </div>
+                        <div class="form-group">
+                            {{ form.email.label }}
+                            {{ form.email(class_="form-control is-" + ('in' if form.email.errors else '') + 'valid', size=32) }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.email.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password.label }}
+                            {{ form.password(class_="form-control is-" + ('in' if form.password.errors else '') + 'valid', size=32) }}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.password.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password2.label }}
+                            {{ form.password2(class_="form-control is-" + ('in' if form.password2.errors else '') + 'valid', size=32) }}
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.password2.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    {{ form.submit(form='loginForm', class="btn btn-success") }}
+                </div>
             </div>
         </div>
-    </div>
-    <div class="eight wide column">
-        <div class="ui segments">
-            <div class="ui segment">
-                <h3>{{ _("Subscriptions") }}</h3>
-            </div>
-            {% if current_user.subscriptions %}
-                {% for subscription in current_user.subscriptions %}
-                    <div class="ui segment" onclick="window.location='{{ url_for('core.collection', id=subscription.collection.id) }}';" style="cursor: pointer;">
-                        {{ subscription.collection.title }}
-                        <div class="ui right floated icon buttons">
-                            <a class="ui mini compact button" href="{{ url_for("auth.subscription", id=subscription.collection.id) }}"><i class="cogs icon"></i></a>
-                            <a class="ui mini compact button" href="{{ url_for("auth.unsubscribe", id=subscription.collection.id) }}"><i class="trash alternate icon"></i></a>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="ui segment">
-                    <small>{{ _("No Subscriptions yet.") }}</small>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ _("Subscriptions") }}</h3>
                 </div>
-            {% endif %}
+                <ul class="list-group list-group-flush">
+                    {% if current_user.subscriptions %}
+                        {% for subscription in current_user.subscriptions %}
+                            <li class="list-group-item p-0">
+                                <a class="d-block m-0 p-3 float-sm-left" href="{{ url_for('core.collection', id=subscription.collection.id) }}">
+                                    {{ subscription.collection.title }}
+                                </a>
+                                <div class="btn-group btn-sm-group float-sm-right my-2 mx-2">
+                                    <a class="btn btn-primary" href="{{ url_for("auth.subscription", id=subscription.collection.id) }}"><i class="cogs icon"></i></a>
+                                    <a class="btn btn-primary" href="{{ url_for("auth.unsubscribe", id=subscription.collection.id) }}"><i class="trash alternate icon"></i></a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item text-muted m-0 p-3">{{ _("This collection has no parent collections.") }}</li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
-{% block script %}
-<script>
-    $('.ui.dropdown').dropdown();
-</script>
 {% endblock %}

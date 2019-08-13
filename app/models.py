@@ -42,7 +42,7 @@ class HistoryStates(IntEnum):
         return {
             cls.CREATE: HistoryItemType(
                 True,
-                "green plus circle icon",
+                "fas fa-plus-circle text-success",
                 _l("create"),
                 lambda history_item: _l(
                     "%(user)s created %(name)s",
@@ -52,7 +52,7 @@ class HistoryStates(IntEnum):
             ),
             cls.EDIT: HistoryItemType(
                 True,
-                "yellow edit icon",
+                "far fa-edit text-warning",
                 _l("edit"),
                 lambda history_item: _l(
                     "%(user)s edited %(name)s",
@@ -62,7 +62,7 @@ class HistoryStates(IntEnum):
             ),
             cls.DELETE: HistoryItemType(
                 False,
-                "red trash alternate icon",
+                "far fa-trash-alt text-danger",
                 _l("delete"),
                 lambda history_item: _l(
                     "%(user)s deleted %(name)s",

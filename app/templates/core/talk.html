@@ -1,74 +1,97 @@
 {% extends "base.html" %}
 
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for("core.talks") }}">{{ _("Talks") }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ talk.title }} (#{{ talk.id }})</a></li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block content %}
-<div class="ui top attached secondary menu">
-    <div class="item">
-        <h3>{{ talk.title }}</h3>
-    </div>
-    <div class="right labeled icon menu">
-        {% if can_edit %}
-            <a class="ui small button item" href="{{ url_for('core.edit_talk', id=talk.id) }}?next={{ request.path }}"><i class="edit outline icon"></i>{{ _('Edit') }}</a>
-        {% endif %}
-    </div>
-</div>
-<div class="ui bottom attached segment two column stackable grid">
-    <div class="five wide column">
-        <div class="ui segments">
-            <div class="ui segment">
-                <h4><i class="info circle icon"></i>&nbsp;{{ _("Info") }}</h4>
-            </div>
-            <div class="ui segment">
-                <small class="text-muted">{{ _("Speaker") }}</small><br>
-                <span class="h6">{{ talk.speaker_name }}</span>
-            </div>
-            <div class="ui segment">
-                <small class="text-muted">{{ _("Date") }}</small><br>
-                <span class="h6">{{ talk.start_timestamp | render_datetime }} - {{ talk.end_timestamp | render_datetime }}</span>
-            </div>
-            <div class="ui segment">
-                <small class="text-muted">{{ _("Location") }}</small><br>
-                <span class="h6">{{ talk.location }}</span>
-            </div>
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-sm-7">
+            <h2>{{ talk.title }}</h2>
         </div>
-        {% if talk.collections.count %}
-            <div class="ui segments">
-                <div class="ui segment">
-                    <h4><i class="list icon"></i>&nbsp;{{ _("Collections") }}</h4>
-                </div>
-                {% for collection in talk.collections %}
-                    <div class="ui segment" onclick="window.location='{{ url_for('core.collection', id=collection.id) }}';" style="cursor: pointer;">
-                        {{ collection.title }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
-    <div class="eleven wide column">
-        <div class="ui top attached tabular menu">
-            <a class="item active" data-tab="description"><i class="readme icon"></i>&nbsp;{{ _("Description") }}</a>
-            <a class="item" data-tab="aboutme"><i class="chalkboard teacher icon"></i>&nbsp;{{ _("Speaker") }}</a>
-            {% if talk.can_edit(current_user) %}
-                <a class="item" data-tab="history"><i class="history icon"></i>&nbsp;{{ _("History") }}</a>
+        <div class="col-sm-5">
+            {% if can_edit %}
+                <a class="btn btn-primary btn-sm float-sm-right" href="{{ url_for('core.edit_talk', id=talk.id) }}?next={{ request.path }}"><i class="far fa-edit"></i>&nbsp;{{ _('Edit') }}</a>
             {% endif %}
         </div>
-        <div class="ui bottom attached tab segment active" data-tab="description">
-            <p class="md">{{ talk.description | markdown }}</p>
-        </div>
-        <div class="ui bottom attached tab segment" data-tab="aboutme">
-            <p class="md">{{ talk.speaker_aboutme | markdown }}</p>
-        </div>
-        {% if talk.can_edit(current_user) %}
-            <div class="ui bottom attached tab segment" data-tab="history">
-                {% with history=talk.history %}
-                    {% include 'snippets/historyitems.html' %}
-                {% endwith %}
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-4">
+            <div class="card mb-3">
+                <div class="card-header"><h4><i class="fas fa-info-circle"></i>&nbsp;{{ _("Info") }}</h4></div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <small class="text-muted">{{ _("Speaker") }}</small><br>
+                        <span class="h6">{{ talk.speaker_name }}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <small class="text-muted">{{ _("Date") }}</small><br>
+                        <span class="h6">{{ talk.start_timestamp | render_datetime }} - {{ talk.end_timestamp | render_datetime }}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <small class="text-muted">{{ _("Location") }}</small><br>
+                        <span class="h6">{{ talk.location }}</span>
+                    </li>
+                </ul>
             </div>
-        {% endif %}
+            {% if talk.collections.count %}
+                <div class="card mb-3">
+                    <div class="card-header"><h4><i class="fas fa-list-alt"></i>&nbsp;{{ _("Collections") }}</h4></div>
+                    <ul class="list-group list-group-flush">
+                        {% for collection in talk.collections %}
+                            <li class="list-group-item p-0"><a class="d-block m-0 p-3" href="{{ url_for('core.collection', id=collection.id) }}">{{ collection.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-sm-12 col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">
+                                <i class="fab fa-readme"></i>&nbsp;{{ _("Description") }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="speaker-tab" data-toggle="tab" href="#speaker" role="tab" aria-controls="speaker" aria-selected="true">
+                                <i class="fas fa-chalkboard-teacher"></i>&nbsp;{{ _("Speaker") }}
+                            </a>
+                        </li>
+                        {% if talk.can_edit(current_user) %}
+                            <li class="nav-item">
+                                <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="true">
+                                    <i class="fas fa-history"></i>&nbsp;{{ _("History") }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="card-body tab-content" >
+                    <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                        <p class="md">{{ talk.description | markdown }}</p>
+                    </div>
+                    <div class="tab-pane fade" id="speaker" role="tabpanel" aria-labelledby="speaker-tab">
+                        <p class="md">{{ talk.speaker_aboutme | markdown }}</p>
+                    </div>
+                    {% if talk.can_edit(current_user) %}
+                        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                            {% with history=talk.history %}
+                                {% include 'snippets/historyitems.html' %}
+                            {% endwith %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock content %}
-{% block script %}
-<script>
-$('.menu.tabular .item').tab();
-</script>
-{% endblock script %}

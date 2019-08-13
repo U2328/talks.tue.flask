@@ -1,15 +1,24 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Upcoming Talks") }}</a></li>
+        </ol>
+    </nav>
+{% endblock %}
 
 {% block content %}
-<div class="ui top attached secondary menu">
-    <div class="item">
-        <h3><i class="calendar icon"></i>&nbsp;{{ _('Upcoming Talks') }}</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3 mb-3">
+            <h2><i class="far fa-calendar-alt"></i>&nbsp;{{ _('Upcoming Talks') }}</h2>
+        </div>
     </div>
-</div>
-<div class="ui bottom attached segment">
     {{ table.generate_html() | safe }}
 </div>
-{% endblock content %}
+{% endblock %}
 {% block script %}
 {{ table.generate_js(url_for('api.user_talk_table')) | safe }}
 <script type="text/javascript">

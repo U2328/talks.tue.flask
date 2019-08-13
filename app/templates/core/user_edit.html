@@ -1,72 +1,120 @@
 {% extends "core/_edit_base.html" %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for("core.users") }}">{{ _("Users") }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ user.display_name }} (#{{ user.id }})</a></li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block content %}
-<div class="ui top attached secondary menu">
-    <div class="item">
-        <h3>{{ _("Edit User") }}</h3>
+<div class="container">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>{{ _("Edit User") }}</h2>
+        </div>
+        <div class="col">
+            <button type="button" data-toggle="modal" data-target="#historyModal" class="btn btn-primary btn-sm float-right"><i class="history icon"></i>{{ _("History") }}</button>
+        </div>
     </div>
-    <div class="right labeled icon menu">
-        <a id="historyModalTrigger" class="ui small button item"><i class="history icon"></i>{{ _("History") }}</a>
+    <div class="row mb-3">
+        <div class="col-sm-12">
+            <form id="userForm" method="post" class="form" novalidate>
+                {{ form.csrf_token }}
+                <div class="form-row">
+                    <div class="col-sm-5 px-2 mb-3">
+                        <div class="form-group">
+                            {{ form.display_name.label(for_="display_name") }}
+                            {{ form.display_name(class_="form-control is-" + ('in' if form.display_name.errors else '') + 'valid', size=32) }}
+                            {% if form.display_name.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.display_name.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-sm-5 px-2 mb-3">
+                        <div class="form-group">
+                            {{ form.email.label(for_="email") }}
+                            {{ form.email(class_="form-control is-" + ('in' if form.display_name.errors else '') + 'valid') }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.email.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-sm-2 px-2 mb-3">
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                {{ form.is_admin(class_="custom-control-input is-" + ('in' if form.is_admin.errors else '') + 'valid') }}
+                                {{ form.is_admin.label(for_="is_admin", class_="custom-control-label") }}
+                                {% if form.is_admin.errors %}
+                                    <div class="invalid-feedback">
+                                        <ul>
+                                            {% for error in form.is_admin.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                {{ form.is_organizer(class_="custom-control-input is-" + ('in' if form.is_organizer.errors else '') + 'valid') }}
+                                {{ form.is_organizer.label(for_="is_organizer", class_="custom-control-label") }}
+                                {% if form.is_organizer.errors %}
+                                    <div class="invalid-feedback">
+                                        <ul>
+                                            {% for error in form.is_organizer.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-sm-6 mb-3 px-2 mb-3">
+                        {{ form.submit(form='userForm', class="form-control btn btn-success") }}
+                    </div>
+                    <div class="col-sm-6 mb-3 px-2 mb-3">
+                        <a class="form-control btn btn-danger" href="{{ next }}">{{ _('Cancel') }}</a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-{% if form.errors %}
-    <div class="ui attached small error message">
-        <div class="header">{{ _("Errors") }}</div>
-        <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
-            <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
-        </ul>
-    </div>
-{% endif %}
-<div class="ui attached segment">
-    <form id="userForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
-        {{ form.csrf_token }}
-        <div class="ui stackable grid">
-            <div class="three column row">
-                <div class="six wide column">
-                    <div class="inline field{% if form.display_name.errors %} error{% endif %}">
-                        {{ form.display_name.label }}
-                        {{ form.display_name(size=32) }}
-                    </div>
-                </div>
-                <div class="six wide column">
-                    <div class="inline field{% if form.email.errors %} error{% endif %}">
-                        {{ form.email.label }}
-                        {{ form.email() }}
-                    </div>
-                </div>
-                <div class="four wide column">
-                    <div class="field{% if form.is_admin.errors %} error{% endif %}">
-                        <div class="ui toggle checkbox">
-                            {{ form.is_admin(class_="hidden") }}
-                            {{ form.is_admin.label }}
-                        </div>
-                    </div>
-                    <div class="field{% if form.is_organizer.errors %} error{% endif %}">
-                        <div class="ui toggle checkbox">
-                            {{ form.is_organizer(class_="hidden") }}
-                            {{ form.is_organizer.label }}
-                        </div>
-                    </div>
-                </div>
+<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="historyModalLabel">{{ _("History") }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% with history=user.history %}
+                    {% include 'snippets/historyitems.html' %}
+                {% endwith %}
             </div>
         </div>
-    </form>
-</div>
-<div class="ui bottom attached segment">
-    {{ form.submit(form='userForm', class="ui button positive") }}
-    <a class="ui button negative"href="{{ next }}">{{ _('Cancel') }}</a>
-</div>
-<div id="historyModal" class="ui tiny longer modal">
-    <div class="header">{{ _("History") }}</div>
-    <div class="scrolling content">
-        {% with history=user.history %}
-            {% include 'snippets/historyitems.html' %}
-        {% endwith %}
     </div>
 </div>
 {% endblock %}
-{% block script %}
-{{ super() }}
-<script>
-    $('#historyModal').modal('attach events', '#historyModalTrigger', 'show');
-</script>
-{% endblock script %}

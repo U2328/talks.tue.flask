@@ -1,10 +1,12 @@
 <script>
     $(document).ready(function() {
         var {{ table_id }} = $('#{{ table_id }}').DataTable({
-            "dom": "{% if dom %}{{ dom | safe }}{% else %}<'ui stackable grid'<'row'<'eight wide column'l><'right aligned eight wide column'f>><'row dt-table'<'sixteen wide column'tr>><'row'<'seven wide column'i><'right aligned nine wide column'p>>>{% endif %}",
+            "dom": "{% if dom %}{{ dom | safe }}{% else %}<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>{% endif %}",
             "processing": true,
             "serverSide": true,
-            "responsive": true,
+            "responsive": {
+                "details": false
+            },
             "ajax": {
                 "dataType": 'json',
                 "contentType": "application/json; charset=utf-8",

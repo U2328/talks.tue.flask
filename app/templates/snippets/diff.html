@@ -1,15 +1,13 @@
-<div class="diff ui mini relaxed list">
+<ul class="diff list-unstyled">
     {% if diff %}
         {% for field, changeset in diff.items() %}
-            <div class="item">
-                <div class="content">
-                    <span class="ui tiny label grey">{{ field }}</span>
-                    <code>{{ changeset["from"]|json }}</code>
-                    <i class="arrow right icon"></i>&nbsp;<code>{{ changeset["to"]|json }}</code>
-                </div>
-            </div>
+            <li>
+                <span class="badge badge-dark">{{ field }}</span>
+                <code>{{ changeset["from"]|json }}</code>
+                <i class="fas fa-arrow-right"></i>&nbsp;<code>{{ changeset["to"]|json }}</code>
+            </li>
         {% endfor %}
     {% else %}
-        No diff
+        <li>No diff</li>
     {% endif %}
-</div>
+</ul>

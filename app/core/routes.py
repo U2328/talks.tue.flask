@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, abort, current_app
 from flask_login import current_user, login_required
+from flask_babel import lazy_gettext as _l
 from sqlalchemy import or_
 
 from . import bp
@@ -27,17 +28,9 @@ __all__ = (
 
 
 @bp.route("/")
-@bp.route("/index")
 def index():
     talks = Talk.query[:9]
     return render_template("core/index.html", up_next=talks)
-
-
-
-@bp.route("/")
-@bp.route("/about")
-def about():
-    return render_template("core/about.html")
 
 
 #######################
