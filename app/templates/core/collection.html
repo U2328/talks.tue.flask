@@ -102,7 +102,7 @@
                     {% if collection.is_meta %}
                         {% if collection.sub_collections %}
                             {% for sub_collection in collection.sub_collections %}
-                                <li class="list-group-item p-0"><a class="d-block m-0 p-3" href="{{ url_for('core.collection', id=collection.id) }}">{{ collection.title }}</a></li>
+                                <li class="list-group-item p-0"><a class="d-block m-0 p-3" href="{{ url_for('core.collection', id=sub_collection.id) }}">{{ sub_collection.title }}</a></li>
                             {% endfor %}
                         {% else %}
                             <li class="list-group-item text-muted m-0 p-3">{{ _("This collection has no child collections.") }}</li>

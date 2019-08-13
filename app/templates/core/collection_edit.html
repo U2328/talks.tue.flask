@@ -26,14 +26,14 @@
                 {% if not new %}
                     <button type="button" data-toggle="modal" data-target="#historyModal" class="btn btn-primary"><i class="history icon"></i>{{ _("History") }}</button>
                     <a class="btn btn-primary" href="{{ url_for('core.edit_collection', id=collection.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
-                    <button type="button" data-toggle="modal" data-target="#deleteModal" class="btn btn-primary"><i class="trash alternate outline icon"></i>{{ _("Delete") }}</button>
+                    <button type="button" data-toggle="modal" data-target="#deleteModal" class="btn btn-primary"><i class="far fa-trash-alt">&nbsp;</i>{{ _("Delete") }}</button>
                 {% endif %}
             </div>
             <div class="btn-group-vertical btn-group-sm d-block d-sm-none" role="group" aria-label="controls">
                 {% if not new %}
                     <a id="historyModalTrigger" class="btn btn-primary text-white"><i class="history icon"></i>{{ _("History") }}</a>
                     <a class="btn btn-primary" href="{{ url_for('core.edit_collection', id=collection.id) }}?copy=1"><i class="clone outline icon"></i>{{ _("Copy") }}</a>
-                    <a id="deleteModalTrigger" class="btn btn-primary text-white"><i class="trash alternate outline icon"></i>{{ _("Delete") }}</a>
+                    <a id="deleteModalTrigger" class="btn btn-primary text-white"><i class="far fa-trash-alt">&nbsp;</i>{{ _("Delete") }}</a>
                 {% endif %}
             </div>
         </div>
@@ -162,7 +162,7 @@
                 </div>
                 <div class="modal-footer">
                     <a class="btn btn-outline-danger" href="{{ url_for('core.delete_collection', id=collection.id) }}">
-                        <i class="trash alternate outline icon"></i>{{ _('Delete') }}
+                        <i class="far fa-trash-alt">&nbsp;</i>{{ _('Delete') }}
                     </a>
                 </div>
             </div>

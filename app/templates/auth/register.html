@@ -1,50 +1,89 @@
 {% extends "base.html" %}
 
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Register") }}</a></li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block content %}
-<div class="ui one column stackable centered aligned page grid">
-    <div class="column twelve wide">
-        <div class="ui top attached secondary menu">
-            <div class="item">
-                <h3>{{ _('Register') }}</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <div class="card mx-auto">
+                <div class="card-header text-center">
+                    <h3>{{ _('Register') }}</h3>
+                </div>
+                <div class="card-body">
+                    <form id="loginForm" method="post" class="form" novalidate>
+                        {{ form.csrf_token }}
+                        <div class="form-group">
+                            {{ form.display_name.label(for_="display_name") }}
+                            {{ form.display_name(class_="form-control is-" + ('in' if form.display_name.errors else '') + 'valid', size=32) }}
+                            <small class="form-text text-muted">{{ _('Please note that the display name will be treated as though it were your real name.') }}</small>
+                            {% if form.display_name.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.display_name.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.email.label(for_="email") }}
+                            {{ form.email(class_="form-control is-" + ('in' if form.email.errors else '') + 'valid', size=32) }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.email.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password.label(for_="password") }}
+                            {{ form.password(class_="form-control is-" + ('in' if form.password.errors else '') + 'valid', size=32) }}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.password.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password2.label(for_="password2") }}
+                            {{ form.password2(class_="form-control is-" + ('in' if form.password2.errors else '') + 'valid', size=32) }}
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback">
+                                    <ul>
+                                        {% for error in form.password2.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    {{ form.submit(form='loginForm', class="btn btn-success") }}
+                    <a class="btn btn-info" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
+                    <a class="btn btn-danger" href="{{ url_for('core.index') }}">{{ _('Cancel') }}</a>
+                </div>
             </div>
         </div>
-        <div class="ui attached small info message">
-            <p>{{ _('Please note that the display name will be treated as though it were your real name.') }}</p>
-        </div>
-        {% if form.errors %}
-            <div class="ui attached small error message">
-                <div class="header">{{ _("Errors") }}</div>
-                <ul>{% for field_name, errors in form.errors.items() %}{% with field=form[field_name] %}{% for error in errors %}
-                    <li>{{ field.label.text }}: {{ error }}</li>{% endfor %}{% endwith %}{% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-        <div class="ui attached segment">
-            <form id="loginForm" method="post" class="ui {% if form.errors %}error {% endif %}form" novalidate>
-                {{ form.csrf_token }}
-                <div class="field{% if form.display_name.errors %} error{% endif %}">
-                    {{ form.display_name.label }}
-                    {{ form.display_name(size=32) }}
-                </div>
-                <div class="field{% if form.email.errors %} error{% endif %}">
-                    {{ form.email.label }}
-                    {{ form.email(size=32) }}
-                </div>
-                <div class="field{% if form.password.errors %} error{% endif %}">
-                    {{ form.password.label }}
-                    {{ form.password(size=32) }}
-                </div>
-                <div class="field{% if form.password2.errors %} error{% endif %}">
-                    {{ form.password2.label }}
-                    {{ form.password2(size=32) }}
-                </div>
-            </form>
-        </div>
-        <div class="ui bottom attached segment">
-            {{ form.submit(form='loginForm', class="ui button positive") }}
-            <a class="ui button" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
-            <a class="ui button negative" href="{{ url_for('core.index') }}">{{ _('Cancel') }}</a>
-        </div>
+        <div class="col-sm-3"></div>
     </div>
 </div>
 {% endblock %}

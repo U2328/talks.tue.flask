@@ -44,7 +44,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash(_("Invalid email or password"), "error")
+            flash(_("Invalid email or password"), "danger")
             return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
         flash(

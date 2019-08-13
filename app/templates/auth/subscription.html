@@ -1,54 +1,74 @@
-{% extends "base.html" %}
+{% extends "core/_edit_base.html" %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for("core.index") }}">{{ _("Home") }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for("auth.profile") }}">{{ _("Profile") }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ _("Subscription to ''%(collection)s'", collection=subscription.collection.title) }}</a></li>
+        </ol>
+    </nav>
+{% endblock %}
 
 {% block content %}
-<div class="ui one column stackable centered aligned page grid">
-    <div class="column twelve wide">
-        <div class="ui top attached secondary menu">
-            <div class="item">
-                <h3>{{ _("Subscription to '%(collection)s'", collection=subscription.collection.title) }}</h3>
-            </div>
-            <div class="right labeled icon menu">
-                <a id="deleteModalTrigger" class="ui small button item"><i class="trash alternate outline icon"></i>{{ _("Delete") }}</a>
-            </div>
-        </div>
-        <div class="ui attached segment">
-            <form id="subscriptionForm" method="post" action="{{ url_for("auth.subscription", id=subscription.collection.id) }}?next={{ next }}" class="ui {% if form.errors %}error {% endif %}form" novalidate>
-                {{ form.csrf_token }}
-                <div class="field">
-                    <label>{{ _("Collection") }}</label>
-                    <input type="text" placeholder="{{ subscription.collection.title }}" readonly>
-                </div>
-                <div class="field{% if form.mode.errors %} error{% endif %}">
-                    {{ form.mode.label }}
-                    {{ form.mode(class_='ui dropdown') }}
-                </div>
-                <div class="inline field{% if form.remind_me.errors %} error{% endif %}">
-                    <div class="ui toggle checkbox">
-                        {{ form.remind_me(class_="hidden") }}
-                        {{ form.remind_me.label }}
+<div class="container">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-9">
+                            <h3>{{ _("Subscription to '%(collection)s'", collection=subscription.collection.title) }}</h3>
+                        </div>
+                        <div class="col-3">
+                            <button type="button" data-toggle="modal" data-target="#deleteModal" class="btn btn-primary float-sm-right"><i class="far fa-trash-alt">&nbsp;</i>{{ _("Delete") }}</button>
+                        </div>
                     </div>
                 </div>
-            </form>
+                <div class="card-body">
+                    <form id="subscriptionForm" method="post" action="{{ url_for("auth.subscription", id=subscription.collection.id) }}?next={{ next }}" class="ui {% if form.errors %}error {% endif %}form" novalidate>
+                        {{ form.csrf_token }}
+                        <div class="form-group">
+                            <label for="collection">{{ _("Collection") }}</label>
+                            <input id="collection" class="form-control" type="text" placeholder="{{ subscription.collection.title }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            {{ form.mode.label(for_="label") }}
+                            {{ form.mode(class_='form-control selectpicker', data_style="custom-select") }}
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                {{ form.remind_me(class_="custom-control-input") }}
+                                {{ form.remind_me.label(for_="remind_me", class_="custom-control-label") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    {{ form.submit(form='subscriptionForm', class="btn btn-success") }}
+                    <a class="btn btn-danger" href="{{ next }}">{{ _('Cancel') }}</a>
+                </div>
+            </div>
         </div>
-        <div class="ui bottom attached segment">
-            {{ form.submit(form='subscriptionForm', class="ui button positive") }}
-            <a class="ui button negative" href="{{ next }}">{{ _('Cancel') }}</a>
+        <div class="col-3"></div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">{{ _("Are you sure you want to delete this subscription?") }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-outline-danger" href="{{ url_for('auth.unsubscribe', id=subscription.collection.id) }}">
+                    <i class="far fa-trash-alt">&nbsp;</i>{{ _('Delete') }}
+                </a>
+            </div>
         </div>
     </div>
 </div>
-<div id="deleteModal" class="ui tiny longer modal">
-    <div class="header">{{ _("Are you sure you want to delete this subscription?") }}</div>
-    <div class="actions">
-        <a class="ui red labeled icon button" href="{{ url_for("auth.unsubscribe", id=subscription.collection.id) }}">
-            <i class="trash alternate outline icon"></i>{{ _('Delete') }}
-        </a>
-        <div class="ui deny button">{{ _('Cancel') }}</div>
-    </div>
-</div>
-{% endblock %}
-{% block script %}
-<script>
-    $('.ui.dropdown').dropdown();
-    $('#deleteModal').modal('attach events', '#deleteModalTrigger', 'show');
-</script>
 {% endblock %}

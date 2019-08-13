@@ -1,18 +1,18 @@
-<div class="historyitem ui styled fluid accordion">
+<div class="historyitem" id="accordion">
     {% for historyitem in history %}
-        <div class="title">
-            <i class='{{ historyitem.type.icon }}'></i>&nbsp;{{ historyitem.message }}<br>
-            <small>{{ historyitem.timestamp | render_datetime }}</small>
-        </div>
-        <div class="content">
-            {% if historyitem.diff %}
-                {{ historyitem.rendered_diff | safe }}
-            {% else %}
-                <small>{{ _("No diff") }}</small>
-            {% endif %}
+        <div class="card">
+            <div class="card-header p-0">
+                <a class="d-block p-3 m-0" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="true" aria-controls="collapse{{loop.index}}">
+                    <i class='{{ historyitem.type.icon }}'></i>&nbsp;{{ historyitem.message }}<br>
+                    <small>{{ historyitem.timestamp | render_datetime }}</small>
+                </a>
+            </div>
+
+            <div id="collapse{{loop.index}}" class="collapse" data-parent="#accordion">
+                <div class="card-body">
+                    {{ historyitem.rendered_diff | safe }}
+                </div>
+            </div>
         </div>
     {% endfor %}
 </div>
-{% block script %}
-<script>$('.ui.accordion').accordion();</script>
-{% endblock script %}
