@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-13 09:36+0000\n"
+"POT-Creation-Date: 2019-08-15 14:42+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -135,7 +135,7 @@ msgstr "Speichern"
 
 #: app/auth/forms.py:24 app/templates/auth/login.html:7
 #: app/templates/auth/login.html:19 app/templates/auth/register.html:81
-#: app/templates/base.html:54
+#: app/templates/base.html:62
 msgid "Login"
 msgstr "Einloggen"
 
@@ -145,7 +145,7 @@ msgstr "Passwort widerholen"
 
 #: app/auth/forms.py:34 app/templates/auth/login.html:60
 #: app/templates/auth/register.html:7 app/templates/auth/register.html:19
-#: app/templates/base.html:55
+#: app/templates/base.html:63
 msgid "Register"
 msgstr "Registrieren"
 
@@ -242,7 +242,7 @@ msgstr "Name des Redners"
 msgid "Speaker's Bio"
 msgstr "Informationen über den Redner"
 
-#: app/core/forms.py:61 app/templates/base.html:45
+#: app/core/forms.py:61 app/templates/base.html:53
 #: app/templates/core/collection.html:7
 #: app/templates/core/collection_edit.html:7
 #: app/templates/core/collections.html:7 app/templates/core/index.html:37
@@ -278,76 +278,69 @@ msgstr "Organisator"
 msgid "Editors"
 msgstr "Editoren"
 
-#: app/templates/base.html:44 app/templates/core/collection.html:99
+#: app/templates/base.html:52 app/templates/core/collection.html:99
 #: app/templates/core/index.html:36 app/templates/core/talk.html:7
 #: app/templates/core/talk_edit.html:7 app/templates/core/talks.html:7
 #: app/templates/core/talks.html:16
 msgid "Talks"
 msgstr "Talks"
 
-#: app/templates/base.html:47 app/templates/core/user_edit.html:7
+#: app/templates/base.html:55 app/templates/core/user_edit.html:7
 #: app/templates/core/users.html:7 app/templates/core/users.html:16
 msgid "Users"
 msgstr "Nutzer"
 
 #: app/templates/auth/profile.html:7 app/templates/auth/subscription.html:7
-#: app/templates/base.html:57
+#: app/templates/base.html:65
 msgid "Profile"
 msgstr "Profil"
 
-#: app/templates/base.html:58
+#: app/templates/base.html:66
 msgid "Subscribed talks"
 msgstr "Abonierte Talks"
 
-#: app/templates/base.html:59
+#: app/templates/base.html:67
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: app/templates/base.html:84
+#: app/templates/base.html:92
 msgid "Back to top"
 msgstr "Zurück an den Seitenanfang"
 
-#: app/templates/base.html:87
+#: app/templates/base.html:95
+msgid "Have an issue?"
+msgstr "Hast du ein Problem entdeckt?"
+
+#: app/templates/base.html:96
 msgid "About"
 msgstr "Über Talks.Tue"
 
-#: app/templates/base.html:92
+#: app/templates/base.html:103
 msgid ""
 "\n"
-"                            <p>\n"
-"                                Talks.Tue is project by the <a "
+"                                    Talks.Tue is project by the <a "
 "href=\"http://mml.cs.uni-"
 "tuebingen.de\">Chair&nbsp;for&nbsp;the&nbsp;Methods&nbsp;of&nbsp;Machine&nbsp;Learning</a>"
 "\n"
-"                                of the <a href=\"https://uni-"
+"                                    of the <a href=\"https://uni-"
 "tuebingen.de/\">Eberhard&nbsp;Karls&nbsp;University&nbsp;of&nbsp;Tübingen</a>."
 " Additionally it is financially\n"
-"                                backed by the <a href=\"https://cyber-"
-"valley.de\">CyberValley&nbsp;Initiative</a>. The current team behind it "
-"consists of:\n"
-"                                <a "
+"                                    backed by the <a href=\"https"
+"://cyber-valley.de\">CyberValley&nbsp;Initiative</a>. The current team "
+"behind it consists of:\n"
+"                                    <a "
 "href=\"https://timfi.dev\">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>."
 "\n"
-"                            </p>\n"
-"                        "
+"                                "
 msgstr ""
-"\n"
-"                            <p>\n"
-"                                Talks.Tue ist ein Projekt des <a "
-"href=\"http://mml.cs.uni-"
+" Talks.Tue ist ein Projekt des <a href=\"http://mml.cs.uni-"
 "tuebingen.de\">Lehrstuhls&nbsp;für&nbsp;die&nbsp;Methoden&nbsp;des&nbsp;Machinellen&nbsp;Lernens</a>"
-"\n"
-"                                der <a href=\"https://uni-"
+" der <a href=\"https://uni-"
 "tuebingen.de/\">Eberhard&nbsp;Karls&nbsp;Universität&nbsp;Tübingen</a>. "
-"Es ist finanziell\n"
-"                                unterstützt von der <a href=\"https"
-"://cyber-valley.de\">CyberValley&nbsp;Initiative</a>. Das aktuelle Team "
-"für diese Projekt besteht aus:\n"
-"                                <a "
-"href=\"https://timfi.dev\">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>."
-"\n"
-"                            </p>\n"
-"                        "
+"Es ist finanziell unterstützt von der <a href=\"https://cyber-"
+"valley.de\">CyberValley&nbsp;Initiative</a>. Das aktuelle Team für diese "
+"Projekt besteht aus: "
+"<ahref=\"https://timfi.dev\">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>."
 
 #: app/templates/auth/login.html:6 app/templates/auth/profile.html:6
 #: app/templates/auth/register.html:6 app/templates/auth/subscription.html:6

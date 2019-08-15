@@ -31,6 +31,14 @@
             footer p {
                 margin-bottom: .25rem;
             }
+            .uni-logo-bg {
+                background-image: url({{ url_for('static', filename='img/uni_logo.png') }});
+                background-image: url({{ url_for('static', filename='img/uni_logo.svg') }}), none;
+            }
+            .cyvy-logo-bg {
+                background-image: url({{ url_for('static', filename='img/cyvy_logo.png') }});
+                background-image: url({{ url_for('static', filename='img/cyvy_logo.svg') }}), none;
+            }
         </style>
     </head>
     <body>
@@ -84,19 +92,34 @@
                             <a href="#">{{ _('Back to top') }}</a>
                         </p>
                         <p>Talks.Tue v{{ config.VERSION }}</p>
+                        <a href="https://github.com/talks-tue/talks.tue.flask/issues/new/choose" class="mr-3">{{ _("Have an issue?") }}</a>
                         <a data-toggle="collapse" href="#aboutCollapse" role="button" aria-expanded="false" aria-controls="aboutCollapse">{{ _("About") }}</a>
                     </div>
                 </div>
                 <div class="row">
                     <div class="collapse" id="aboutCollapse">
-                        {% trans %}
-                            <p>
-                                Talks.Tue is project by the <a href="http://mml.cs.uni-tuebingen.de">Chair&nbsp;for&nbsp;the&nbsp;Methods&nbsp;of&nbsp;Machine&nbsp;Learning</a>
-                                of the <a href="https://uni-tuebingen.de/">Eberhard&nbsp;Karls&nbsp;University&nbsp;of&nbsp;Tübingen</a>. Additionally it is financially
-                                backed by the <a href="https://cyber-valley.de">CyberValley&nbsp;Initiative</a>. The current team behind it consists of:
-                                <a href="https://timfi.dev">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>.
-                            </p>
-                        {% endtrans %}
+                        <div class="row">
+                            <div class="col mx-3">
+                                {% trans %}
+                                    Talks.Tue is project by the <a href="http://mml.cs.uni-tuebingen.de">Chair&nbsp;for&nbsp;the&nbsp;Methods&nbsp;of&nbsp;Machine&nbsp;Learning</a>
+                                    of the <a href="https://uni-tuebingen.de/">Eberhard&nbsp;Karls&nbsp;University&nbsp;of&nbsp;Tübingen</a>. Additionally it is financially
+                                    backed by the <a href="https://cyber-valley.de">CyberValley&nbsp;Initiative</a>. The current team behind it consists of:
+                                    <a href="https://timfi.dev">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>.
+                                {% endtrans %}
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-sm-6 mt-3">
+                                <a href="https://uni-tuebingen.de/">
+                                    <img src="{{ url_for('static', filename='img/uni_logo.svg') }}" onerror="this.src='{{ url_for('static', filename='img/uni_logo.png') }}'" style="width: 50%;">
+                                </a>
+                            </div>
+                            <div class="col-sm-6 mt-3">
+                                <a href="https://cyber-valley.de">
+                                    <img src="{{ url_for('static', filename='img/cyvy_logo.svg') }}" onerror="this.src='{{ url_for('static', filename='img/cyvy_logo.png') }}'" style="width: 50%;">
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
