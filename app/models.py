@@ -198,6 +198,8 @@ class User(UserMixin, db.Model):  # type: ignore
     is_admin = db.Column(db.Boolean, default=False)
     is_organizer = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(128))
+    is_verified = db.Column(db.Boolean, default=False)
+    verification_code_hash = db.Column(db.String(128))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -213,6 +215,15 @@ class User(UserMixin, db.Model):  # type: ignore
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def check_verification_code(self, verification_code):
+        return check_password_hash(self.verification_code_hash, verification_code)
+
+    def generate_verification_code(self):
+        verification_code = str(uuid4())
+        self.verification_code_hash = generate_password_hash(verification_code)
+        self.is_verified = False
+        return verification_code
 
     @property  # type: ignore
     @cache.memoize(60)

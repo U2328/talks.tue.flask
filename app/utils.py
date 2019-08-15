@@ -1,18 +1,23 @@
 from urllib.parse import urlparse, urljoin
-from typing import Any, NamedTuple, Type
-from functools import wraps
-from collections import namedtuple
+from typing import Any, NamedTuple, Type, Union, List, Dict, Optional
 
 import dill
-from flask import request, g, session, request
+from flask import request, render_template
 from sqlalchemy import inspect
 from sqlalchemy.types import TypeDecorator, LargeBinary
 
 
-from app import db, cache
+from app import db, cache, mail
 
 
-__all__ = ("is_safe_url", "copy_row", "DillField", "ModelProxy")
+__all__ = (
+    "is_safe_url",
+    "copy_row",
+    "DillField",
+    "ModelProxy",
+    "send_mail",
+    "send_mails",
+)
 
 
 def is_safe_url(target):
@@ -92,3 +97,39 @@ class DillField(TypeDecorator):
             return type(data)(f(value) for value in data)
         else:
             return data
+
+
+def send_mail(
+    recipient: Union[str, List[str]],
+    subject: str,
+    template: str,
+    context: Dict[str, Any],
+    sender: Optional[str] = None,
+):
+    """Send a single mail
+
+    :param recipient: recipient/s that are to receive the mail
+    :param subject: subject to head the mail
+    :param template: template to render
+    :param context: context to render the template with
+    :param sender: sender of the mail, defaults to config.DEFAULT_MAIL_SENDER
+    """
+    mail.send_message(
+        subject=subject,
+        recipients=recipient if isinstance(recipient, list) else [recipient],
+        html=render_template(template, **context),
+        sender=sender,
+    )
+
+
+def send_mails(recipients, subject, template, context, sender=None):
+    for recipient in recipients:
+        send_mail(
+            recipient,
+            subject(recipient) if callable(recipient) else subject,
+            template,
+            {
+                key: value(recipient) if callable(value) else value
+                for key, value in context.items()
+            },
+        )

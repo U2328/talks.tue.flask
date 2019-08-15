@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from flask import (
     render_template,
     redirect,
@@ -12,7 +14,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import gettext as _, lazy_gettext as _l
 
 from app import db
-from app.utils import is_safe_url
+from app.utils import is_safe_url, send_mail
 from app.models import User, Subscription, Collection, Talk, AccessToken
 from app.api.routes import TalkTable
 from . import bp
@@ -74,12 +76,68 @@ def register():
     if form.validate_on_submit():
         user = User(display_name=form.display_name.data, email=form.email.data)
         user.set_password(form.password.data)
+        send_mail(
+            user.email,
+            "Mail Verification",
+            "messages/verification.jinja2",
+            {"user": user, "verification_code": user.generate_verification_code()},
+        )
         db.session.add(user)
         db.session.commit()
         flash(_("Congratulations, you are now a registered user!"), "success")
+        flash(
+            _("Remember to verify your email address to make full use of Talks.Tue!"),
+            "warning",
+        )
         current_app.logger.info(f"New user registered: {user}")
         return redirect(url_for("auth.login"))
     return render_template("auth/register.html", title="Register", form=form)
+
+
+@bp.route("/reverify", methods=["GET"])
+@login_required
+def reverify():
+    send_mail(
+        current_user.email,
+        "Mail Verification",
+        "messages/verification.jinja2",
+        {
+            "user": current_user,
+            "verification_code": current_user.generate_verification_code(),
+        },
+    )
+    db.session.commit()
+    flash(
+        _("Remember to verify your email address to make full use of Talks.Tue!"),
+        "warning",
+    )
+
+    next = request.args.get("next")
+    if not is_safe_url(next):
+        return abort(400)
+    else:
+        next = next or url_for("core.index")
+    return redirect(next)
+
+
+@bp.route("/verify/<uuid>", methods=["GET"])
+@login_required
+def verify(uuid):
+    if current_user.is_verified:
+        flash(
+            _(
+                "The current user is already verified! Are you sure you are logged into the right account?"
+            ),
+            "warning",
+        )
+    elif current_user.check_verification_code(uuid):
+        current_user.is_verified = True
+        current_user.verification_code_hash = None
+        db.session.commit()
+        flash(_("Your email address has now been verified!"), "success")
+    else:
+        flash(_("That was the wrong verification code!"), "danger")
+    return redirect(url_for("core.index"))
 
 
 @bp.route("/profile", methods=["GET", "POST"])
@@ -92,6 +150,7 @@ def profile():
             user.set_password(form.password.data)
         if form.email is not None:
             user.email = form.email.data
+            reverify()
         if form.topics is not None:
             user.topics = form.topics.data
         db.session.commit()

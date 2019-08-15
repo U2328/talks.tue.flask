@@ -1,0 +1,8 @@
+Hello {{ user.display_name }},<br><br>
+To make full use of Talks.Tue you still need to verify this email address.
+To do so all you need to do is access this link and log in.<br><br>
+
+--> {% with url=url_for("auth.verify", uuid=verification_code, _external=True) %}<a href="{{url}}">{{url}}</a>{% endwith %}<br><br>
+
+Sincerley,<br>
+- Your Talks.Tue-Team
