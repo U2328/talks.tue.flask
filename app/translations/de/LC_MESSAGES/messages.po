@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-15 14:42+0000\n"
+"POT-Creation-Date: 2019-08-15 20:21+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -49,15 +49,15 @@ msgstr "Löschung"
 msgid "%(user)s deleted %(name)s"
 msgstr "%(user)s löschte %(name)s"
 
-#: app/models.py:263
+#: app/models.py:274
 msgid "daily"
 msgstr "täglich"
 
-#: app/models.py:263
+#: app/models.py:274
 msgid "weekly"
 msgstr "wöchentlich"
 
-#: app/models.py:263
+#: app/models.py:274
 msgid "daily and weekly"
 msgstr "täglich und wöchentlich"
 
@@ -186,37 +186,59 @@ msgstr "Modus"
 msgid "Enable"
 msgstr "Aktivieren"
 
-#: app/auth/routes.py:47
+#: app/auth/routes.py:49
 msgid "Invalid email or password"
 msgstr "Ungülitge Email oder Passwort"
 
-#: app/auth/routes.py:51
+#: app/auth/routes.py:53
 #, python-format
 msgid "Logged in as %(display_name)s."
 msgstr "Eingeloggt als %(display_name)s"
 
-#: app/auth/routes.py:65
+#: app/auth/routes.py:67
 msgid "Logged out."
 msgstr "Ausgeloggt."
 
-#: app/auth/routes.py:79
+#: app/auth/routes.py:87
 msgid "Congratulations, you are now a registered user!"
 msgstr "herzlich glückwunsch, sie sind ein registrierter Benutzer!"
 
-#: app/auth/routes.py:98
+#: app/auth/routes.py:89 app/auth/routes.py:111
+msgid "Remember to verify your email address to make full use of Talks.Tue!"
+msgstr ""
+"Vergessen Sie nicht ihre E-Mail Adresse zu verifizieren um Talks.Tue ganz"
+" auszunutzen."
+
+#: app/auth/routes.py:128
+msgid ""
+"The current user is already verified! Are you sure you are logged into "
+"the right account?"
+msgstr ""
+"Der angemeldete Benutzer is bereits verifiziert! Sind Sie sich sicher, "
+"dass Sie sich mit dem richtigen Account angemeldet haben?"
+
+#: app/auth/routes.py:137
+msgid "Your email address has now been verified!"
+msgstr "Ihre E-Mail Adresse ist jetzt verifiziert!"
+
+#: app/auth/routes.py:139
+msgid "That was the wrong verification code!"
+msgstr "Das war der falsche Verfizierungs-Code"
+
+#: app/auth/routes.py:157
 msgid "Your profile has been updated."
 msgstr "Ihr Profil wurde aktualisiert."
 
-#: app/auth/routes.py:152
+#: app/auth/routes.py:211
 #, python-format
 msgid "Subscription to %(collection)s"
 msgstr "Abonement für %(collection)s"
 
-#: app/auth/routes.py:203
+#: app/auth/routes.py:262
 msgid "Invalid password"
 msgstr "Invalides passwort"
 
-#: app/auth/routes.py:209
+#: app/auth/routes.py:268
 #, python-format
 msgid "Enabled access token %(uuid)s."
 msgstr "Zugriffstoken %(uuid)s aktiviert."
@@ -369,13 +391,21 @@ msgstr "Profil bearbeiten"
 msgid "Display Name"
 msgstr "Anzeige Name"
 
-#: app/templates/auth/profile.html:76
+#: app/templates/auth/profile.html:71
+msgid "E-Mail verified"
+msgstr "E-Mail verifiziert"
+
+#: app/templates/auth/profile.html:73
+msgid "Resend verfication mail?"
+msgstr "E-Mail-Verifizierung erneut senden?"
+
+#: app/templates/auth/profile.html:81
 msgid "Subscriptions"
 msgstr "Abonnements"
 
-#: app/templates/auth/profile.html:92 app/templates/core/collection.html:133
-msgid "This collection has no parent collections."
-msgstr "Diese Kollektion ist in keiner Meta-Kollektion enthalten."
+#: app/templates/auth/profile.html:97
+msgid "No subscriptions."
+msgstr "Keine Abonnements"
 
 #: app/templates/auth/register.html:27
 msgid ""
@@ -474,6 +504,10 @@ msgstr "Diese Kollektion enthält keine Talks."
 #: app/templates/core/collection.html:125
 msgid "Parent Collections"
 msgstr "Meta-Kollektionen"
+
+#: app/templates/core/collection.html:133
+msgid "This collection has no parent collections."
+msgstr "Diese Kollektion ist in keiner Meta-Kollektion enthalten."
 
 #: app/templates/core/collection_edit.html:9
 #: app/templates/core/talk_edit.html:9

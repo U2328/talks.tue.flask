@@ -12,7 +12,7 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-6 mb-3">
             <div class="card">
                 <div class="card-header">
                     <h3>{{ _("Edit Profile") }}</h3>
@@ -67,10 +67,15 @@
                 </div>
                 <div class="card-footer">
                     {{ form.submit(form='loginForm', class="btn btn-success") }}
+                    {% if current_user.is_verified %}
+                        <a class="btn btn-success disabled float-right" role="button" aria-disabled="true" href="#">{{ _("E-Mail verified") }}</a>
+                    {% else %}
+                        <a class="btn btn-warning float-right" role="button" href="{{ url_for("auth.reverify") }}?next={{ request.path }}">{{ _("Resend verfication mail?") }}</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-6 mb-3">
             <div class="card">
                 <div class="card-header">
                     <h3>{{ _("Subscriptions") }}</h3>
@@ -79,17 +84,17 @@
                     {% if current_user.subscriptions %}
                         {% for subscription in current_user.subscriptions %}
                             <li class="list-group-item p-0">
-                                <a class="d-block m-0 p-3 float-sm-left" href="{{ url_for('core.collection', id=subscription.collection.id) }}">
+                                <a class="d-block m-0 p-3 float-left" href="{{ url_for('core.collection', id=subscription.collection.id) }}">
                                     {{ subscription.collection.title }}
                                 </a>
-                                <div class="btn-group btn-sm-group float-sm-right my-2 mx-2">
-                                    <a class="btn btn-primary" href="{{ url_for("auth.subscription", id=subscription.collection.id) }}"><i class="cogs icon"></i></a>
-                                    <a class="btn btn-primary" href="{{ url_for("auth.unsubscribe", id=subscription.collection.id) }}"><i class="trash alternate icon"></i></a>
+                                <div class="btn-group btn-sm-group float-right my-2 mx-2">
+                                    <a class="btn btn-primary" href="{{ url_for("auth.subscription", id=subscription.collection.id) }}"><i class="fas fa-wrench"></i></a>
+                                    <a class="btn btn-primary" href="{{ url_for("auth.unsubscribe", id=subscription.collection.id) }}"><i class="far fa-trash-alt"></i></a>
                                 </div>
                             </li>
                         {% endfor %}
                     {% else %}
-                        <li class="list-group-item text-muted m-0 p-3">{{ _("This collection has no parent collections.") }}</li>
+                        <li class="list-group-item text-muted m-0 p-3">{{ _("No subscriptions.") }}</li>
                     {% endif %}
                 </ul>
             </div>

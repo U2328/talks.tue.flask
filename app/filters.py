@@ -16,9 +16,13 @@ def length(obj):
 
 def render_bool(val):
     """Render a boolean as checkmark or cross icon."""
-    return f"<i class=\"{'green check circle icon' if val else 'red times circle icon'}\"></i>"
+    return f"<i class=\"fas {'fa-check-circle text-success' if val else 'fa-times-circle text-danger'}\"></i>"
 
 
 def render_datetime(dt, default=None):
     """Render a datetime to a standardized format."""
-    return dt.strftime(current_app.config["DATETIME_FORMAT"]) if dt is not None else (default or "-")
+    return (
+        dt.strftime(current_app.config["DATETIME_FORMAT"])
+        if dt is not None
+        else (default or "-")
+    )
