@@ -1,5 +1,5 @@
-<table id="{{ table_id }}" class="ui celled tablet stackable table {{ css_class }}">
-    <thead>
+<table id="{{ table_id }}" class="table {{ css_class }}">
+    <thead class="{{ head_css_class }}">
         <tr>
             {% for col in cols %}
                 <th>{{ col.get("name") or col["field"] }}</th>

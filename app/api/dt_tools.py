@@ -35,27 +35,29 @@ class DataTable:
     search_delimiter = "|"
 
     @classmethod
-    def generate_html(cls, css_class=None):
+    def generate_html(cls, css_class=None, head_css_class=None):
         return minify(
             render_template(
                 "api/dt_tools/table.html",
                 table_id=cls.table_id,
                 cols=cls.cols,
                 css_class=css_class or "",
+                head_css_class=head_css_class or "",
             )
         )
 
     @classmethod
-    def generate_js(cls, table_url, dom=None, **kwargs):
+    def generate_js(cls, table_url, dom=None, eager_search=False, **kwargs):
         return minify(
             render_template(
                 "api/dt_tools/script.html",
                 dom=dom,
+                eager_search=eager_search,
                 cols=cls.cols,
                 table_id=cls.table_id,
                 table_url=table_url,
                 js_kwargs={**(cls.js_kwargs or {}), **kwargs.pop("js_kwargs", dict())},
-                kwargs=kwargs
+                kwargs=kwargs,
             )
         )
 

@@ -16,7 +16,11 @@
             <h2><i class="fas fa-users"></i>&nbsp;{{ _('Users') }}</h2>
         </div>
     </div>
-    {{ user_table.generate_html() | safe }}
+    <div class="row">
+        <div class="col">
+            {{ user_table.generate_html(css_class="table-bordered table-hover", head_css_class="thead-light") | safe }}
+        </div>
+    </div>
 </div>
 {% endblock %}
 {% block script %}

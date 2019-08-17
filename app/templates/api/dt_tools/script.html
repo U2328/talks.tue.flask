@@ -4,9 +4,8 @@
             "dom": "{% if dom %}{{ dom | safe }}{% else %}<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>{% endif %}",
             "processing": true,
             "serverSide": true,
-            "responsive": {
-                "details": false
-            },
+            "sScrollX": "100%",
+            "sScrollXInner": "100%",
             "ajax": {
                 "dataType": 'json',
                 "contentType": "application/json; charset=utf-8",
@@ -33,10 +32,12 @@
             {% endfor %}
         });
         $('#{{ table_id }}_filter input').unbind();
-        $('#{{ table_id }}_filter input').bind('keyup', function(e) {
-            if (e.keyCode == 13) {
-                {{ table_id }}.search($(this).val()).draw();
-            }
-        });
+        {% if not eager_search %}
+            $('#{{ table_id }}_filter input').bind('keyup', function(e) {
+                if (e.keyCode == 13) {
+                    {{ table_id }}.search($(this).val()).draw();
+                }
+            });
+        {% endif %}
     });
 </script>

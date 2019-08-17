@@ -38,7 +38,11 @@
             {% endif %}
         </div>
     </div>
-    {{ table.generate_html() | safe }}
+    <div class="row">
+        <div class="col">
+            {{ table.generate_html(css_class="table-bordered table-hover", head_css_class="thead-light") | safe }}
+        </div>
+    </div>
 </div>
 {% endblock content %}
 {% block script %}
