@@ -3,11 +3,9 @@ import os
 import click
 from flask_migrate import upgrade
 
-from app import create_app, db, tasks
+from app import app, db, tasks
 from app import models
-
-
-app = create_app()
+from app.auth.routes import reverify
 
 
 def get_all_in_all(module):
@@ -49,6 +47,8 @@ def createsuperuser(display_name, email, password):
     u.set_password(password)
     db.session.add(u)
     db.session.commit()
+    with app.test_request_context("/"):
+        reverify()
 
 
 @app.cli.command()
@@ -58,4 +58,4 @@ def deploy():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(ssl_context="adhoc")

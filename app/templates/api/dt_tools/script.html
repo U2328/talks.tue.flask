@@ -1,4 +1,4 @@
-<script>
+<script type="text/javascript">
     $(document).ready(function() {
         var {{ table_id }} = $('#{{ table_id }}').DataTable({
             "dom": "{% if dom %}{{ dom | safe }}{% else %}<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>{% endif %}",
@@ -31,8 +31,8 @@
                 "{{ name }}": {{ value | safe }}{% if not loop.last %},{% endif %}
             {% endfor %}
         });
-        $('#{{ table_id }}_filter input').unbind();
         {% if not eager_search %}
+            $('#{{ table_id }}_filter input').unbind();
             $('#{{ table_id }}_filter input').bind('keyup', function(e) {
                 if (e.keyCode == 13) {
                     {{ table_id }}.search($(this).val()).draw();

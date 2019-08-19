@@ -1,168 +1,103 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>
+{% extends "_base.html" %}
+
+{% block head %}
+    <title>
         {% block title %}
             {% if title %}{{ title }} - Talks.Tue{% else %}Talks.Tue{% endif %}
         {% endblock %}
-        </title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/r-2.2.2/datatables.min.css"/>
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pygment_highlighting.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap_uni_theme.css') }}">
-              
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://unpkg.com/popper.js/dist/umd/popper.min.js"  crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/r-2.2.2/datatables.min.js"></script>
-        <script type="text/javascript" defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js" integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://kit.fontawesome.com/302b6f4be5.js"></script>
+    </title>
+    <style>
+        footer {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        footer p {
+            margin-bottom: .25rem;
+        }
+    </style>
+{% endblock %}
 
-        {% block head %}{% endblock head %}
-        <style>
-            footer {
-                padding-top: 3rem;
-                padding-bottom: 3rem;
-            }
-            footer p {
-                margin-bottom: .25rem;
-            }
-            .uni-logo-bg {
-                background-image: url({{ url_for('static', filename='img/uni_logo.png') }});
-                background-image: url({{ url_for('static', filename='img/uni_logo.svg') }}), none;
-            }
-            .cyvy-logo-bg {
-                background-image: url({{ url_for('static', filename='img/cyvy_logo.png') }});
-                background-image: url({{ url_for('static', filename='img/cyvy_logo.svg') }}), none;
-            }
-        </style>
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand mb-0 h1" href="{{ url_for('core.index') }}"><i class="fas fa-university fa-lg"></i>&nbsp;Talks.Tue</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('core.talks') }}">{{ _('Talks') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('core.collections') }}">{{ _('Collections') }}</a></li>
-                    {% if current_user.is_admin %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('core.users') }}">{{ _('Users') }}</a></li>
+{% block body %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand mb-0 h1" href="{{ url_for('core.index') }}"><i class="fas fa-university fa-lg"></i>&nbsp;Talks.Tue</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('core.talks') }}">{{ _('Talks') }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('core.collections') }}">{{ _('Collections') }}</a></li>
+                {% if current_user.is_admin %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('core.users') }}">{{ _('Users') }}</a></li>
+                {% endif %}
+            </ul>
+            {% block navbar %}{% endblock %}
+            <ul class="navbar-nav">
+                <div class="nav-item btn-group" role="group" aria-label="profile controls">
+                    {% if current_user.is_anonymous %}
+                        <a class="btn btn-secondary text-white" href="{{ url_for('auth.login') }}?next={{ request.path }}">{{ _('Login') }}</a>
+                        <a class="btn btn-secondary text-white" href="{{ url_for('auth.register') }}">{{ _('Register') }}</a>
+                    {% else %}
+                        <a class="btn btn-secondary text-white" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
+                        <a class="btn btn-secondary text-white" href="{{ url_for('auth.subscriptions') }}">{{ _('Subscribed talks') }}</a>
+                        <a class="btn btn-secondary text-white" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
                     {% endif %}
-                </ul>
-                {% block navbar %}{% endblock %}
-                <ul class="navbar-nav">
-                    <div class="nav-item btn-group" role="group" aria-label="profile controls">
-                        {% if current_user.is_anonymous %}
-                            <a class="btn btn-secondary text-white" href="{{ url_for('auth.login') }}?next={{ request.path }}">{{ _('Login') }}</a>
-                            <a class="btn btn-secondary text-white" href="{{ url_for('auth.register') }}">{{ _('Register') }}</a>
-                        {% else %}
-                            <a class="btn btn-secondary text-white" href="{{ url_for('auth.profile') }}">{{ _('Profile') }}</a>
-                            <a class="btn btn-secondary text-white" href="{{ url_for('auth.subscriptions') }}">{{ _('Subscribed talks') }}</a>
-                            <a class="btn btn-secondary text-white" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
-                        {% endif %}
-                    </div>
-                </ul>
-            </div>
-        </nav>
-        {% block breadcrumbs %}{% endblock %}
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show mx-4" role="alert">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <main role="main">{% block content %}{% endblock content%}</main>
-        <footer class="text-muted">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <p class="float-right">
-                            <a href="#">{{ _('Back to top') }}</a>
-                        </p>
-                        <p>Talks.Tue v{{ config.VERSION }}</p>
-                        <a href="https://github.com/talks-tue/talks.tue.flask/issues/new/choose" class="mr-3">{{ _("Have an issue?") }}</a>
-                        <a data-toggle="collapse" href="#aboutCollapse" role="button" aria-expanded="false" aria-controls="aboutCollapse">{{ _("About") }}</a>
-                    </div>
                 </div>
-                <div class="row">
-                    <div class="collapse" id="aboutCollapse">
-                        <div class="row">
-                            <div class="col mx-3">
-                                {% trans %}
-                                    Talks.Tue is project by the <a href="http://mml.cs.uni-tuebingen.de">Chair&nbsp;for&nbsp;the&nbsp;Methods&nbsp;of&nbsp;Machine&nbsp;Learning</a>
-                                    of the <a href="https://uni-tuebingen.de/">Eberhard&nbsp;Karls&nbsp;University&nbsp;of&nbsp;Tübingen</a>. Additionally it is financially
-                                    backed by the <a href="https://cyber-valley.de">CyberValley&nbsp;Initiative</a>. The current team behind it consists of:
-                                    <a href="https://timfi.dev">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>.
-                                {% endtrans %}
-                            </div>
+            </ul>
+        </div>
+    </nav>
+    {% block breadcrumbs %}{% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show mx-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <main role="main">{% block content %}{% endblock content%}</main>
+    <footer class="text-muted">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p class="float-right">
+                        <a href="#">{{ _('Back to top') }}</a>
+                    </p>
+                    <p>Talks.Tue v{{ config.VERSION }}</p>
+                    <a href="https://github.com/talks-tue/talks.tue.flask/issues/new/choose" class="mr-3">{{ _("Have an issue?") }}</a>
+                    <a data-toggle="collapse" href="#aboutCollapse" role="button" aria-expanded="false" aria-controls="aboutCollapse">{{ _("About") }}</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="collapse" id="aboutCollapse">
+                    <div class="row">
+                        <div class="col mx-3">
+                            {% trans %}
+                                Talks.Tue is project by the <a href="http://mml.cs.uni-tuebingen.de">Chair&nbsp;for&nbsp;the&nbsp;Methods&nbsp;of&nbsp;Machine&nbsp;Learning</a>
+                                of the <a href="https://uni-tuebingen.de/">Eberhard&nbsp;Karls&nbsp;University&nbsp;of&nbsp;Tübingen</a>. Additionally it is financially
+                                backed by the <a href="https://cyber-valley.de">CyberValley&nbsp;Initiative</a>. The current team behind it consists of:
+                                <a href="https://timfi.dev">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>.
+                            {% endtrans %}
                         </div>
-                        <div class="row text-center">
-                            <div class="col-sm-6 mt-3">
-                                <a href="https://uni-tuebingen.de/">
-                                    <img src="{{ url_for('static', filename='img/uni_logo.svg') }}" onerror="this.src='{{ url_for('static', filename='img/uni_logo.png') }}'" style="width: 50%;">
-                                </a>
-                            </div>
-                            <div class="col-sm-6 mt-3">
-                                <a href="https://cyber-valley.de">
-                                    <img src="{{ url_for('static', filename='img/cyvy_logo.svg') }}" onerror="this.src='{{ url_for('static', filename='img/cyvy_logo.png') }}'" style="width: 50%;">
-                                </a>
-                            </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-sm-6 mt-3">
+                            <a href="https://uni-tuebingen.de/">
+                                <img src="{{ url_for('static', filename='img/uni_logo.svg') }}" onerror="this.src='{{ url_for('static', filename='img/uni_logo.png') }}'" style="width: 50%;">
+                            </a>
+                        </div>
+                        <div class="col-sm-6 mt-3">
+                            <a href="https://cyber-valley.de">
+                                <img src="{{ url_for('static', filename='img/cyvy_logo.svg') }}" onerror="this.src='{{ url_for('static', filename='img/cyvy_logo.png') }}'" style="width: 50%;">
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </footer>
-        <script type="text/javascript">
-            $(function () {
-                $('[data-toggle="tooltip"]').tooltip()
-            });
-            // setup katex for use with 
-            (function () {
-                'use strict';
-                var katexMath = (function () {
-                    var maths = document.querySelectorAll('.arithmatex'), tex;
-                    for (var i = 0; i < maths.length; i++) {
-                        tex = maths[i].textContent || maths[i].innerText;
-                        if (tex.startsWith('\\(') && tex.endsWith('\\)')) {
-                            katex.render(tex.slice(2, -2), maths[i], {'displayMode': false});
-                        } else if (tex.startsWith('\\[') && tex.endsWith('\\]')) {
-                            katex.render(tex.slice(2, -2), maths[i], {'displayMode': true});
-                        }
-                    }
-                });
-                (function () {
-                    var onReady = function onReady(fn) {
-                        if (document.addEventListener) {
-                            document.addEventListener("DOMContentLoaded", fn);
-                        } else {
-                            document.attachEvent("onreadystatechange", function () {
-                                if (document.readyState === "interactive") {
-                                    fn();
-                                }
-                            });
-                        }
-                    };
-                    onReady(function () {
-                        if (typeof katex !== "undefined") {
-                            katexMath();
-                        }
-                    });
-                })();
-            }());
-        </script>
-        {% block script %}
-        {% endblock script %}
-    </body>
-</html>
+        </div>
+    </footer>
+{% endblock %}

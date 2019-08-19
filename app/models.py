@@ -5,13 +5,16 @@ from uuid import uuid4
 
 from sqlalchemy import and_, or_, event, inspect
 from sqlalchemy.orm import foreign, backref, remote
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import (
+    generate_password_hash as generate_hash,
+    check_password_hash as check_hash,
+)
 from flask import render_template, url_for, current_app
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from flask_babel import lazy_gettext as _l, gettext as _
 
 from . import db, login, cache
-from .utils import DillField
+from .serialization import DillField
 
 
 __all__ = (
@@ -23,7 +26,16 @@ __all__ = (
     "HistoryItem",
     "HISTORY_DISCRIMINATOR_MAP",
     "Subscription",
+    "MODEL_REGISTRY",
 )
+
+
+MODEL_REGISTRY = {}
+
+
+def register_model(cls):
+    MODEL_REGISTRY[cls.__name__] = cls
+    return cls
 
 
 HistoryItemType = namedtuple(
@@ -73,6 +85,7 @@ class HistoryStates(IntEnum):
         }.get(state)
 
 
+@register_model
 class HistoryItem(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     _type = db.Column(db.Enum(HistoryStates))
@@ -191,6 +204,7 @@ def setup_listener(mapper, cls):
     )
 
 
+@register_model
 class User(UserMixin, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     display_name = db.Column(db.String(64), index=True, unique=True)
@@ -211,17 +225,17 @@ class User(UserMixin, db.Model):  # type: ignore
         return self.display_name
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_hash(self.password_hash, password)
 
     def check_verification_code(self, verification_code):
-        return check_password_hash(self.verification_code_hash, verification_code)
+        return check_hash(self.verification_code_hash, verification_code)
 
     def generate_verification_code(self):
         verification_code = str(uuid4())
-        self.verification_code_hash = generate_password_hash(verification_code)
+        self.verification_code_hash = generate_hash(verification_code)
         self.is_verified = False
         return verification_code
 
@@ -255,6 +269,7 @@ class User(UserMixin, db.Model):  # type: ignore
         )
 
 
+@register_model
 class Subscription(db.Model):  # type: ignore
     @unique
     class Modes(IntEnum):
@@ -312,6 +327,7 @@ talk_topics = db.Table(
 )
 
 
+@register_model
 class Talk(HasHistory, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
@@ -409,6 +425,7 @@ collection_editors = db.Table(
 )
 
 
+@register_model
 class Collection(HasHistory, db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
@@ -490,6 +507,7 @@ class Collection(HasHistory, db.Model):  # type: ignore
         )
 
 
+@register_model
 class Topic(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
@@ -504,6 +522,7 @@ class Topic(db.Model):  # type: ignore
         return self.name
 
 
+@register_model
 class AccessToken(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(128), unique=True)
@@ -519,7 +538,7 @@ class AccessToken(db.Model):  # type: ignore
         self.uuid = uuid
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_hash(self.password_hash, password)

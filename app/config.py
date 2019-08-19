@@ -2,6 +2,7 @@ import os
 
 from celery.schedules import crontab
 
+
 __all__ = ("get_config", "ProductionConfig", "DevelopmentConfig", "TestingConfig")
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -26,7 +27,8 @@ class Config:
     DEBUG = False
     TESTING = False
     SECRET_KEY = os.getenv("SECRET_KEY", "ultra-secret-key")
-    DATETIME_FORMAT = "%d.%m.%Y %H:%M"
+    DATE_FORMAT = "%d.%m.%Y"
+    TIME_FORMAT = "%H:%M"
     SERVER_NAME = os.getenv("SERVER_NAME", "localhost")
 
     # SQLAlchemy
@@ -39,12 +41,26 @@ class Config:
     LANGUAGES = list(os.getenv("LANGUAGES", "en,de").split(","))
 
     # Celery
-    BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://talks_tue@rabbit:5672//")
+    CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://talks_tue@rabbit:5672//")
     CELERY_RESULT_BACKEND = os.getenv(
         "CELERY_BACKEND_URL", "rpc://talks_tue@rabbit:5672//"
     )
+    CELERY_ACCEPT_CONTENT = ["bin"]
+    CELERY_TASK_SERIALIZER = "bin"
+    CELERY_RESULT_SERIALIZER = "bin"
     CELERY_IMPORTS = ("app.tasks",)
-    CELERYBEAT_SCHEDULE = dict()  # type: ignore
+    CELERYBEAT_SCHEDULE = {
+        "daily-reminder": {
+            "task": "app.tasks.send_subscription_emails",
+            "args": ("daily",),
+            "schedule": crontab(hour="4", minute="0"),
+        },
+        "weekly-reminder": {
+            "task": "app.tasks.send_subscription_emails",
+            "args": ("weekly",),
+            "schedule": crontab(day_of_week="0", hour="4", minute="0"),
+        },
+    }
 
     # Mail
     MAIL_SERVER = os.getenv("MAIL_SERVER", "")

@@ -1,5 +1,3 @@
-from urllib.parse import urlencode
-
 from flask import (
     render_template,
     redirect,
@@ -14,7 +12,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import gettext as _, lazy_gettext as _l
 
 from app import db
-from app.utils import is_safe_url, send_mail
+from app.utils import is_safe_url
+from app.tasks import send_mail
 from app.models import User, Subscription, Collection, Talk, AccessToken
 from app.api.routes import TalkTable
 from . import bp
@@ -76,11 +75,14 @@ def register():
     if form.validate_on_submit():
         user = User(display_name=form.display_name.data, email=form.email.data)
         user.set_password(form.password.data)
-        send_mail(
-            user.email,
-            "Mail Verification",
-            "messages/verification.jinja2",
-            {"user": user, "verification_code": user.generate_verification_code()},
+        send_mail.delay(
+            recipient=user.email,
+            subject="Mail Verification",
+            template="messages/verification.html",
+            context={
+                "user": user.display_name,
+                "verification_code": user.generate_verification_code(),
+            },
         )
         db.session.add(user)
         db.session.commit()
@@ -97,12 +99,12 @@ def register():
 @bp.route("/reverify", methods=["GET"])
 @login_required
 def reverify():
-    send_mail(
-        current_user.email,
-        "Mail Verification",
-        "messages/verification.jinja2",
-        {
-            "user": current_user,
+    send_mail.delay(
+        recipient=current_user.email,
+        subject="Mail Verification",
+        template="messages/verification.html",
+        context={
+            "user": current_user.display_name,
             "verification_code": current_user.generate_verification_code(),
         },
     )
