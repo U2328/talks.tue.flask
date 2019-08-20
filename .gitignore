@@ -222,3 +222,5 @@ celerybeat.pid
 postgres-data/*
 postgres-backups/*
 XDG_CACHE_HOME/*
+*.pem
+openssl.conf
