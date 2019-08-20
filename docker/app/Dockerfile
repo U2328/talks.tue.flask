@@ -14,4 +14,5 @@ RUN pipenv install --system --deploy --ignore-pipfile
 # Add non-su user
 RUN adduser -D -g '' -u 1000 talks_tue
 
-# command set in docker-compose
+# Move ownership of code to non-su user
+RUN chown -R talks_tue /code

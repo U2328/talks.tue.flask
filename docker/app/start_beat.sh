@@ -12,7 +12,7 @@ done
 
 echo "Starting celery beat"
 if [[ ${FLASK_DEBUG-0} -eq 0 ]]; then
-    celery -A app.celery beat --uid 1000
+    celery -A app.celery beat
 else
-    watchmedo auto-restart -d /code -p 'app/config.py;app/celery.py;app/tasks.py' -- celery -A app.celery beat --uid 1000
+    watchmedo auto-restart -d /code -p 'app/config.py;app/celery.py;app/tasks.py' -- celery -A app.celery beat
 fi
