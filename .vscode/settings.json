@@ -1,3 +1,8 @@
 {
-    "python.pythonPath": "/home/timfi/.local/share/virtualenvs/talks.tue-YJPJQTFx/bin/python"
+    "python.pythonPath": "/home/timfi/.local/share/virtualenvs/talks.tue-YJPJQTFx/bin/python",
+    "python.linting.mypyEnabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black"
 }

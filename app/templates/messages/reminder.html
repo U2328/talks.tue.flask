@@ -1,0 +1,9 @@
+Hello {{ user }}, this is you automatic {{ target }} reminder from Talks.Tue.<br>
+<br>
+{% if talks %}
+----------------------------------------------------------------------------<br>
+Here is a short list of upcoming talks in collections you have subscribed to.<br>
+{% for date, talks in talks.items() %}
+{{ date | render_date }}:<br>
+{% for talk in talks %}{{ talk["time"][0] | render_time }} - {{ talk["time"][1] | render_time }}: <a href="{{ url_for("core.talk", id=talk.id, _external=True) }}">'{{ talk["title"] }}' by {{ talk["speaker"] }}</a><br>{% endfor %}{% endfor %}<br>
+{% else %}As of now, we have nothing to remind you about.{% endif %}

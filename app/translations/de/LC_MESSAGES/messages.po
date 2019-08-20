@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-13 09:36+0000\n"
+"POT-Creation-Date: 2019-08-15 20:21+0000\n"
 "PO-Revision-Date: 2019-02-27 22:26+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -49,15 +49,15 @@ msgstr "Löschung"
 msgid "%(user)s deleted %(name)s"
 msgstr "%(user)s löschte %(name)s"
 
-#: app/models.py:263
+#: app/models.py:274
 msgid "daily"
 msgstr "täglich"
 
-#: app/models.py:263
+#: app/models.py:274
 msgid "weekly"
 msgstr "wöchentlich"
 
-#: app/models.py:263
+#: app/models.py:274
 msgid "daily and weekly"
 msgstr "täglich und wöchentlich"
 
@@ -135,7 +135,7 @@ msgstr "Speichern"
 
 #: app/auth/forms.py:24 app/templates/auth/login.html:7
 #: app/templates/auth/login.html:19 app/templates/auth/register.html:81
-#: app/templates/base.html:54
+#: app/templates/base.html:62
 msgid "Login"
 msgstr "Einloggen"
 
@@ -145,7 +145,7 @@ msgstr "Passwort widerholen"
 
 #: app/auth/forms.py:34 app/templates/auth/login.html:60
 #: app/templates/auth/register.html:7 app/templates/auth/register.html:19
-#: app/templates/base.html:55
+#: app/templates/base.html:63
 msgid "Register"
 msgstr "Registrieren"
 
@@ -186,37 +186,59 @@ msgstr "Modus"
 msgid "Enable"
 msgstr "Aktivieren"
 
-#: app/auth/routes.py:47
+#: app/auth/routes.py:49
 msgid "Invalid email or password"
 msgstr "Ungülitge Email oder Passwort"
 
-#: app/auth/routes.py:51
+#: app/auth/routes.py:53
 #, python-format
 msgid "Logged in as %(display_name)s."
 msgstr "Eingeloggt als %(display_name)s"
 
-#: app/auth/routes.py:65
+#: app/auth/routes.py:67
 msgid "Logged out."
 msgstr "Ausgeloggt."
 
-#: app/auth/routes.py:79
+#: app/auth/routes.py:87
 msgid "Congratulations, you are now a registered user!"
 msgstr "herzlich glückwunsch, sie sind ein registrierter Benutzer!"
 
-#: app/auth/routes.py:98
+#: app/auth/routes.py:89 app/auth/routes.py:111
+msgid "Remember to verify your email address to make full use of Talks.Tue!"
+msgstr ""
+"Vergessen Sie nicht ihre E-Mail Adresse zu verifizieren um Talks.Tue ganz"
+" auszunutzen."
+
+#: app/auth/routes.py:128
+msgid ""
+"The current user is already verified! Are you sure you are logged into "
+"the right account?"
+msgstr ""
+"Der angemeldete Benutzer is bereits verifiziert! Sind Sie sich sicher, "
+"dass Sie sich mit dem richtigen Account angemeldet haben?"
+
+#: app/auth/routes.py:137
+msgid "Your email address has now been verified!"
+msgstr "Ihre E-Mail Adresse ist jetzt verifiziert!"
+
+#: app/auth/routes.py:139
+msgid "That was the wrong verification code!"
+msgstr "Das war der falsche Verfizierungs-Code"
+
+#: app/auth/routes.py:157
 msgid "Your profile has been updated."
 msgstr "Ihr Profil wurde aktualisiert."
 
-#: app/auth/routes.py:152
+#: app/auth/routes.py:211
 #, python-format
 msgid "Subscription to %(collection)s"
 msgstr "Abonement für %(collection)s"
 
-#: app/auth/routes.py:203
+#: app/auth/routes.py:262
 msgid "Invalid password"
 msgstr "Invalides passwort"
 
-#: app/auth/routes.py:209
+#: app/auth/routes.py:268
 #, python-format
 msgid "Enabled access token %(uuid)s."
 msgstr "Zugriffstoken %(uuid)s aktiviert."
@@ -242,7 +264,7 @@ msgstr "Name des Redners"
 msgid "Speaker's Bio"
 msgstr "Informationen über den Redner"
 
-#: app/core/forms.py:61 app/templates/base.html:45
+#: app/core/forms.py:61 app/templates/base.html:53
 #: app/templates/core/collection.html:7
 #: app/templates/core/collection_edit.html:7
 #: app/templates/core/collections.html:7 app/templates/core/index.html:37
@@ -278,76 +300,69 @@ msgstr "Organisator"
 msgid "Editors"
 msgstr "Editoren"
 
-#: app/templates/base.html:44 app/templates/core/collection.html:99
+#: app/templates/base.html:52 app/templates/core/collection.html:99
 #: app/templates/core/index.html:36 app/templates/core/talk.html:7
 #: app/templates/core/talk_edit.html:7 app/templates/core/talks.html:7
 #: app/templates/core/talks.html:16
 msgid "Talks"
 msgstr "Talks"
 
-#: app/templates/base.html:47 app/templates/core/user_edit.html:7
+#: app/templates/base.html:55 app/templates/core/user_edit.html:7
 #: app/templates/core/users.html:7 app/templates/core/users.html:16
 msgid "Users"
 msgstr "Nutzer"
 
 #: app/templates/auth/profile.html:7 app/templates/auth/subscription.html:7
-#: app/templates/base.html:57
+#: app/templates/base.html:65
 msgid "Profile"
 msgstr "Profil"
 
-#: app/templates/base.html:58
+#: app/templates/base.html:66
 msgid "Subscribed talks"
 msgstr "Abonierte Talks"
 
-#: app/templates/base.html:59
+#: app/templates/base.html:67
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: app/templates/base.html:84
+#: app/templates/base.html:92
 msgid "Back to top"
 msgstr "Zurück an den Seitenanfang"
 
-#: app/templates/base.html:87
+#: app/templates/base.html:95
+msgid "Have an issue?"
+msgstr "Hast du ein Problem entdeckt?"
+
+#: app/templates/base.html:96
 msgid "About"
 msgstr "Über Talks.Tue"
 
-#: app/templates/base.html:92
+#: app/templates/base.html:103
 msgid ""
 "\n"
-"                            <p>\n"
-"                                Talks.Tue is project by the <a "
+"                                    Talks.Tue is project by the <a "
 "href=\"http://mml.cs.uni-"
 "tuebingen.de\">Chair&nbsp;for&nbsp;the&nbsp;Methods&nbsp;of&nbsp;Machine&nbsp;Learning</a>"
 "\n"
-"                                of the <a href=\"https://uni-"
+"                                    of the <a href=\"https://uni-"
 "tuebingen.de/\">Eberhard&nbsp;Karls&nbsp;University&nbsp;of&nbsp;Tübingen</a>."
 " Additionally it is financially\n"
-"                                backed by the <a href=\"https://cyber-"
-"valley.de\">CyberValley&nbsp;Initiative</a>. The current team behind it "
-"consists of:\n"
-"                                <a "
+"                                    backed by the <a href=\"https"
+"://cyber-valley.de\">CyberValley&nbsp;Initiative</a>. The current team "
+"behind it consists of:\n"
+"                                    <a "
 "href=\"https://timfi.dev\">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>."
 "\n"
-"                            </p>\n"
-"                        "
+"                                "
 msgstr ""
-"\n"
-"                            <p>\n"
-"                                Talks.Tue ist ein Projekt des <a "
-"href=\"http://mml.cs.uni-"
+" Talks.Tue ist ein Projekt des <a href=\"http://mml.cs.uni-"
 "tuebingen.de\">Lehrstuhls&nbsp;für&nbsp;die&nbsp;Methoden&nbsp;des&nbsp;Machinellen&nbsp;Lernens</a>"
-"\n"
-"                                der <a href=\"https://uni-"
+" der <a href=\"https://uni-"
 "tuebingen.de/\">Eberhard&nbsp;Karls&nbsp;Universität&nbsp;Tübingen</a>. "
-"Es ist finanziell\n"
-"                                unterstützt von der <a href=\"https"
-"://cyber-valley.de\">CyberValley&nbsp;Initiative</a>. Das aktuelle Team "
-"für diese Projekt besteht aus:\n"
-"                                <a "
-"href=\"https://timfi.dev\">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>."
-"\n"
-"                            </p>\n"
-"                        "
+"Es ist finanziell unterstützt von der <a href=\"https://cyber-"
+"valley.de\">CyberValley&nbsp;Initiative</a>. Das aktuelle Team für diese "
+"Projekt besteht aus: "
+"<ahref=\"https://timfi.dev\">Tim&nbsp;Fischer&nbsp;(Lead&nbsp;Developer)</a>."
 
 #: app/templates/auth/login.html:6 app/templates/auth/profile.html:6
 #: app/templates/auth/register.html:6 app/templates/auth/subscription.html:6
@@ -376,13 +391,21 @@ msgstr "Profil bearbeiten"
 msgid "Display Name"
 msgstr "Anzeige Name"
 
-#: app/templates/auth/profile.html:76
+#: app/templates/auth/profile.html:71
+msgid "E-Mail verified"
+msgstr "E-Mail verifiziert"
+
+#: app/templates/auth/profile.html:73
+msgid "Resend verfication mail?"
+msgstr "E-Mail-Verifizierung erneut senden?"
+
+#: app/templates/auth/profile.html:81
 msgid "Subscriptions"
 msgstr "Abonnements"
 
-#: app/templates/auth/profile.html:92 app/templates/core/collection.html:133
-msgid "This collection has no parent collections."
-msgstr "Diese Kollektion ist in keiner Meta-Kollektion enthalten."
+#: app/templates/auth/profile.html:97
+msgid "No subscriptions."
+msgstr "Keine Abonnements"
 
 #: app/templates/auth/register.html:27
 msgid ""
@@ -481,6 +504,10 @@ msgstr "Diese Kollektion enthält keine Talks."
 #: app/templates/core/collection.html:125
 msgid "Parent Collections"
 msgstr "Meta-Kollektionen"
+
+#: app/templates/core/collection.html:133
+msgid "This collection has no parent collections."
+msgstr "Diese Kollektion ist in keiner Meta-Kollektion enthalten."
 
 #: app/templates/core/collection_edit.html:9
 #: app/templates/core/talk_edit.html:9

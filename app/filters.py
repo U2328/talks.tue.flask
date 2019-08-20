@@ -1,7 +1,16 @@
+from datetime import datetime
 import json as _json
 from flask import current_app
 
-__all__ = ("json", "render_bool", "render_datetime", "length")
+__all__ = (
+    "json",
+    "render_bool",
+    "render_datetime",
+    "render_date",
+    "render_time",
+    "length",
+    "dt_from_epoch",
+)
 
 
 def json(obj):
@@ -16,9 +25,24 @@ def length(obj):
 
 def render_bool(val):
     """Render a boolean as checkmark or cross icon."""
-    return f"<i class=\"{'green check circle icon' if val else 'red times circle icon'}\"></i>"
+    return f"<i class=\"fas {'fa-check-circle text-success' if val else 'fa-times-circle text-danger'}\"></i>"
 
 
-def render_datetime(dt, default=None):
+def render_datetime(dt):
     """Render a datetime to a standardized format."""
-    return dt.strftime(current_app.config["DATETIME_FORMAT"]) if dt is not None else (default or "-")
+    return f"{render_date(dt)} {render_time(dt)}"
+
+
+def render_time(dt):
+    return dt.strftime(current_app.config["TIME_FORMAT"]) if dt is not None else "-"
+
+
+def render_date(dt):
+    return dt.strftime(current_app.config["DATE_FORMAT"]) if dt is not None else "-"
+
+
+def dt_from_epoch(epoch):
+    if not isinstance(epoch, datetime):
+        return datetime.fromtimestamp(int(epoch))
+    else:
+        return epoch
