@@ -11,7 +11,7 @@ flask deploy
 
 echo "Starting server"
 if [[ ${FLASK_DEBUG-0} -eq 0 ]]; then
-  gunicorn -w 4 -u 1000 -b "0.0.0.0:5000" "talkstue:app"
+  gunicorn -w 4 -u 1000 -b "0.0.0.0:5000" "talkstue:app" --certfile docker/app/cert/cert.pem --keyfile docker/app/cert/key.pem
 else
   flask run -h "0.0.0.0" -p "5000" --cert=adhoc
 fi
